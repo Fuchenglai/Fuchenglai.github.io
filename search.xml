@@ -48,6 +48,33 @@
     
     
     <entry>
+      <title>深入理解MVCC机制</title>
+      <link href="/2024/01/20/shen-ru-li-jie-mvcc-ji-zhi/"/>
+      <url>/2024/01/20/shen-ru-li-jie-mvcc-ji-zhi/</url>
+      
+        <content type="html"><![CDATA[<p>我们先回顾一下事务并发执行过程中可能遇到的现象，按照一致性问题的严重性给他们排一下序：</p><p><strong>肮写&gt;脏读&gt;不可重复读&gt;幻读</strong></p><p>在SQL标准中设立了4个隔离级别，级别越低就约有可能发生严重的问题，从低到高为：</p><table><thead><tr><th align="center">隔离级别</th><th align="center">脏读</th><th align="center">不可重复读</th><th align="center">幻读</th></tr></thead><tbody><tr><td align="center">READ UNCOMMITTED（读未提交）</td><td align="center">可能</td><td align="center">可能</td><td align="center">可能</td></tr><tr><td align="center">READ COMMITTED（读提交）</td><td align="center">不可能</td><td align="center">可能</td><td align="center">可能</td></tr><tr><td align="center">REPEATABLE READ（可重复读）</td><td align="center">不可能</td><td align="center">不可能</td><td align="center">可能</td></tr><tr><td align="center">SERIALIZABLE（串行化）</td><td align="center">不可能</td><td align="center">不可能</td><td align="center">不可能</td></tr></tbody></table><p>因为脏写这个现象对一致性的影响太严重，所以无论哪种隔离级别，都不允许脏写出现。在MySQL中一个为未提交事务在对一条记录写操作前会对这条记录加锁，其他事务就不能再进行写操作，当事务提交后才会释放锁，所以可以认为写-写操作是串行化执行的。</p><p>在MySQL中默认的隔离级别是可重复读。</p><p>回顾完前置知识，我们接下来讲解NVCC原理。</p><h4 id="版本链"><a href="#版本链" class="headerlink" title="版本链"></a>版本链</h4><p>对于使用InnoDB存储引擎的表来说，它的聚簇索引记录中都包含下面两个必要的因此列（row_id并不是必要的；在创建的表中有主键时，或者有不允许为NULL的UNIQUE键时，都不会包含row_id）。</p><ul><li>trx_id：一个事务每次对某条聚簇索引记录进行改动时，都会把该事务的事务id赋值给trx_id隐藏列。</li><li>roll_pointer：每次对某条聚簇索引记录进行改动时，都会把旧的版本写入到undo日志中。这个隐藏列就相当于一个指针，可以通过它找到修改前的信息。</li></ul><blockquote><p>实际上undo日志只在事务回滚时发生作用。当事务提交后，该类型的undo日志就没用了，它占用的Undo Log Segment也会被系统回收。虽然真正的undo日志占用的存储空间被回收了，但是roll_pointer的值并不会被清除。</p></blockquote><p>每对记录进行一次改动，都会记录一条undo日志。每条undo日志也都有一个roll_pointer属性（INSERT操作对应的undo日志没有该属性，因为INSERT前没有更早的操作），通过这个属性可以将undo日志串成一个链表。这就链表就称为<strong>版本链</strong>。版本链的头节点就是当前记录的最新值。我们可以用这个版本链来控制并发事务访问相同记录时的行为。我们把这种机制称之为**多版本并发控制（Multi-Version Concurrency Control, MVCC）。</p><h4 id="ReadView"><a href="#ReadView" class="headerlink" title="ReadView"></a>ReadView</h4><p>对于使用READ UNCOMMITTED隔离级别的事务来说，由于可以读到未提交事务修改过的记录，所以直接读取记录的最新版本就好了；对于使用SERIALIZABLE隔离级别的事务来说，InnoDB规定使用加锁的方式来访问记录；对于使用READ COMMITTED和REPEATABLE READ隔离级别的事务来说，都必须保证读到已提交的事务修改过的记录。也就是说假如另一个事务已经修改了记录但是还未提交，则不能直接读取最新版本的记录。核心问题是：需要判断版本链中的哪一个版本是当前事务可见的。为此，InnoDB提出了ReadView（有点地方翻译成“一致性视图”）的概念。</p><p>这个ReadView中主要包含4个比较重要的内容。</p><ul><li>m_ids：在生成ReadView时，当前系统中活跃的读写事务的事务id列表。</li><li>min_trx_id：在生成ReadView时，当前系统中活跃的读写事务中最小的事务id；也就是m_ids中的最小值。</li><li>max_trx_id：在生成ReadView时，系统应该分配给下一个事务的事务id值。</li></ul><blockquote><p>注意max_trx_id并不是m_ids中的最大值。事务id是递增分配的。比如现在有事务id分别为1、2、3的这3个事务，之后id为3的事务提交了，那么一个新的事务在生成ReadView时，m_ids就包括1和2，min_trx_id的值就是1，max_trx_id的值就是4.</p></blockquote><ul><li>creator_trx_id：生成该ReadView的事务的事务id。</li></ul><blockquote><p>注意，只有在对表中的记录进行改动时（执行INSERT、DELETE、UPDATE）才会为事务分配唯一的事务id，否则一个事务的id默认值为0.</p></blockquote><p>有了这个ReadView后，在访问某条记录时，只需要按照下面的步骤来判断记录的某个版本是否可见。</p><ul><li>如果被访问版本的trx_id属性值与ReadView中的creator_trx_id值相同，意味着当前事务在访问它自己修改过的记录，所以该版本可以被当前事务访问。</li><li>如果被访问版本的trx_id小于ReadView中的min_trx_id，表明生成该版本的事务在当前事务生成ReadView前已经提交了，所以该版本可以被当前事务访问。</li><li>如果被访问版本的trx_id大于或大于ReadView中的max_trx_id，表明生成该版本的事务在当前事务生成ReadView后才开启，所以该版本不可以被当前事务访问。</li><li>如果被访问版本的trx_id在ReadView的min_trx_id和max_trx_id之间，则需要判断trx_id是否在m_ids列表中。如果在，说明创建ReadView时生成该版本的事务还是活跃的，该版本不可以被访问。如果不在，说明创建ReadView时生成该版本的事务已经提交了，该版本可以被访问。</li></ul><p>如果某个版本的数据对当前事务是不可见，那就顺着版本版本链找到下一个版本的数据，并继续执行上面的步骤来判断记录的可见性；以此类推，直到版本链的最后一个版本。如果记录的最后一个版本也不可见，就意味着该条记录对当前事务完全不可见，查询结果就不包含该条记录。</p><p>在MySQL中，READ COMMITTED和REPEATABLE READ之间的一个非常大的区别就是它们生成ReadView的时机不同。</p><ul><li>READ COMMITTED：事务每次查询开始时都会生成一个独立的ReadView</li><li>REPEATABLE READ：事务只会在第一次执行查询语句时生成一个ReadView，之后的查询接着用这个ReadView</li></ul><h4 id="二级索引与MVCC"><a href="#二级索引与MVCC" class="headerlink" title="二级索引与MVCC"></a>二级索引与MVCC</h4><p>我们知道，只有在聚簇索引记录中才有trx_id和roll_pointer隐藏列。如果某个查询语句是使用二级索引来执行查询的，该如何判断可见性呢？比如下面这个事务：</p><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">BEGIN</span><span class="token punctuation">;</span><span class="token keyword">SELECT</span> name <span class="token keyword">FROM</span> hero <span class="token keyword">WHERE</span> name <span class="token operator">=</span> <span class="token string">'刘备'</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><p>假设查询优化器决定先到二级索引idx_name中定位name值为’刘备’的二级索引记录，那么怎么知道这条二级索引记录对这个查询事务是否可见呢？判断可见性的过程大致分为下面两步：</p><ol><li>二级索引页面的Page Header 部分有一个名为PAGE_MAX_TRX_ID的属性，每当对该页面中的记录执行增删改操作时，如果执行该操作的事务的事务id大于PAGE MAX_TRX_ID属性值，就会把PAGE_MAX_TRX_ID设置为执行该操作的事务的事务id。这也就意味着<strong>PAGE MAX_TRX_ID属性值代表着修改该二级索引页面的最大事务id是什么</strong>。当SELECT 语句访问某个二级索引记录时，首先会看一下对应的ReadView 的min_trx_id是否大于该页面的PAGE_MAX_TRX_ID属性值。如果是，说明该页面中的所有记录都对该ReadVicw可见；否则就得执行步骤2，在回表之后再判断可见性。</li><li>利用二级索引记录中的主键值进行回表操作，得到对应的聚簇索引记录后再按照前面讲过的方式找到对该ReadView可见的第一个版本，然后判断该版本中相应的二级索引列的值是否与利用该二级索引查询时的值相同。本例中就是判断找到的第一个可见版本的name 值是不是’刘备‘。如果是，就把这条记录发送给客户端（如果WHERE子句中还有其他搜索条件的话还需继续判断），否则就跳过该记录。</li></ol><h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>从前文可以看出，所谓的MVCC 指的就是在使用READ COMMITTED、REPEATABLE READ这两种隔离级别的事务执行普通的SELECT操作时，访问记录的版本链的过程。这样可以使不同事务的读-写、写-读操作并发执行，从而提升系统性能。READ COMMITTED、REPEATABLE READ这两个隔离级别有一个很大的不同，就是生成ReadView 的时机不同：READCOMMITTED在每一次进行普通SELECT 操作前都会生成一个ReadView；而REPEATABLE READ只在第一次进行普通SELECT操作前生成一个ReadView，之后的查询操作都重复使用这个ReadView。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据库 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MVCC </tag>
+            
+            <tag> MYSQL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>事务机制详解</title>
       <link href="/2024/01/14/shi-wu-ji-zhi-xiang-jie/"/>
       <url>/2024/01/14/shi-wu-ji-zhi-xiang-jie/</url>
