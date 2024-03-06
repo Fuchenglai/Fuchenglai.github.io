@@ -567,6 +567,44 @@
              <!-- 隐藏某个文章 -->
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
+                    <a href="/2024/03/05/shen-ru-li-jie-http-xie-yi/">
+                        <div class="card-image">
+                            
+                            
+                            <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
+                            
+                            <span class="card-title"></span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                
+title： 深入理解HTTP协议date： 2023-11-05 13：18：38tags： httpcategories： 计算机网络1.基本概念超文本传输协议，也就是HyperText Transfer Protocol。HTTP 
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-05
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-user fa-fw"></i>
+                                Fuchanglai
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+              <!-- 隐藏某个文章 -->
+            
+             <!-- 隐藏某个文章 -->
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
                     <a href="/2024/02/28/tu-you-hou-duan-shi-xi-sheng-yi-mian-mian-jing/">
                         <div class="card-image">
                             
@@ -758,12 +796,12 @@
                     
                     <div class="card-action article-tags">
                         
-                        <a href="/tags/MySQL/">
-                            <span class="chip bg-color">MySQL</span>
-                        </a>
-                        
                         <a href="/tags/%E4%BA%8B%E5%8A%A1/">
                             <span class="chip bg-color">事务</span>
+                        </a>
+                        
+                        <a href="/tags/MySQL/">
+                            <span class="chip bg-color">MySQL</span>
                         </a>
                         
                     </div>
@@ -1043,55 +1081,6 @@ ClassPathXmlApplicationContext 是一
              <!-- 隐藏某个文章 -->
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2023/11/05/shen-ru-li-jie-http-xie-yi/">
-                        <div class="card-image">
-                            
-                            
-                            <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="深入理解HTTP协议">
-                            
-                            <span class="card-title">深入理解HTTP协议</span>
-                        </div>
-                    </a>
-
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                1.基本概念超文本传输协议，也就是HyperText Transfer Protocol。HTTP 是为 Web 浏览器与 Web 服务器之间的通信而设计的，但也可以用于其他目的。HTTP 是一个基于 TCP&#x2F;IP 通信协议来传递
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-05
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="post-category">
-                                    计算机网络
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                    <div class="card-action article-tags">
-                        
-                        <a href="/tags/http/">
-                            <span class="chip bg-color">http</span>
-                        </a>
-                        
-                    </div>
-                    
-                </div>
-            </div>
-              <!-- 隐藏某个文章 -->
-            
-             <!-- 隐藏某个文章 -->
-            <div class="article col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
                     <a href="/2023/11/02/shen-ru-li-jie-tcp-xie-yi/">
                         <div class="card-image">
                             
@@ -1144,34 +1133,35 @@ TCP是面向连接的、可靠的、基于字节流的传输层通信协议
              <!-- 隐藏某个文章 -->
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2023/09/16/chang-yong-ji-he-ji-qi-di-ceng-yuan-li-pou-xi/">
+                    <a href="/2023/10/02/spring-shi-wu-ji-chu/">
                         <div class="card-image">
                             
                             
-                            <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="常用集合及其底层原理剖析">
+                            <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="Spring事务基础">
                             
-                            <span class="card-title">常用集合及其底层原理剖析</span>
+                            <span class="card-title">Spring事务基础</span>
                         </div>
                     </a>
 
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
-                                1. 框架体系先来看一张图，脑海里有一个知识体系的印象
+                                1.事务机制事务介绍事务：数据库中多个操作合并在一起形成的操作序列，事务特征（ACID）
+作用：
 
-集合主要有两类：Collection 和 Map。Collection 接口的实现子类都是单列集合（即操作元素时是一个一个的操作）。Map 接口的实现子类是双列集合（即操作元素时是键
+当数据库操作序列中个别操作失败时，提供一种方式使数据库状态恢复到正常状态（A），保障数据库即使在异常状态下仍能保持数据一致性（C）（要么操作
                             
                         </div>
                         <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-09-16
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-10-02
                             </span>
                             <span class="publish-author">
                                 
                                 <i class="fas fa-bookmark fa-fw icon-category"></i>
                                 
-                                <a href="/categories/Java/" class="post-category">
-                                    Java
+                                <a href="/categories/%E6%A1%86%E6%9E%B6/" class="post-category">
+                                    框架
                                 </a>
                                 
                                 
@@ -1182,8 +1172,12 @@ TCP是面向连接的、可靠的、基于字节流的传输层通信协议
                     
                     <div class="card-action article-tags">
                         
-                        <a href="/tags/JavaSE/">
-                            <span class="chip bg-color">JavaSE</span>
+                        <a href="/tags/Spring/">
+                            <span class="chip bg-color">Spring</span>
+                        </a>
+                        
+                        <a href="/tags/%E4%BA%8B%E5%8A%A1/">
+                            <span class="chip bg-color">事务</span>
                         </a>
                         
                     </div>

@@ -4,8 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="深入理解HTTP协议, 小ceng的后端游乐场">
-    <meta name="description" content="1.基本概念超文本传输协议，也就是HyperText Transfer Protocol。HTTP 是为 Web 浏览器与 Web 服务器之间的通信而设计的，但也可以用于其他目的。HTTP 是一个基于 TCP&amp;#x2F;IP 通信协议来传递">
+    <meta name="keywords" content="小ceng的后端游乐场">
+    <meta name="description" content="
+title： 深入理解HTTP协议date： 2023-11-05 13：18：38tags： httpcategories： 计算机网络1.基本概念超文本传输协议，也就是HyperText Transfer Protocol。HTTP ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>深入理解HTTP协议 | 小ceng的后端游乐场</title>
+    <title>小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -317,7 +318,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">深入理解HTTP协议</h1>
+                    <h1 class="description center-align post-title"></h1>
                 </div>
             </div>
         </div>
@@ -339,25 +340,12 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/http/">
-                                <span class="chip bg-color">http</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="post-category">
-                                计算机网络
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -366,7 +354,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-11-05
+                    2024-03-05
                 </div>
                 
 
@@ -400,7 +388,8 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1.基本概念"></a>1.基本概念</h3><p>超文本传输协议，也就是HyperText Transfer Protocol。HTTP 是为 Web 浏览器与 Web 服务器之间的通信而设计的，但也可以用于其他目的。HTTP 是一个基于 TCP&#x2F;IP 通信协议来传递数据。</p>
+                <hr>
+<h2 id="title：-深入理解HTTP协议date：-2023-11-05-13：18：38tags：-httpcategories：-计算机网络"><a href="#title：-深入理解HTTP协议date：-2023-11-05-13：18：38tags：-httpcategories：-计算机网络" class="headerlink" title="title： 深入理解HTTP协议date： 2023-11-05 13：18：38tags： httpcategories： 计算机网络"></a>title： 深入理解HTTP协议<br>date： 2023-11-05 13：18：38<br>tags： http<br>categories： 计算机网络</h2><h3 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1.基本概念"></a>1.基本概念</h3><p>超文本传输协议，也就是HyperText Transfer Protocol。HTTP 是为 Web 浏览器与 Web 服务器之间的通信而设计的，但也可以用于其他目的。HTTP 是一个基于 TCP&#x2F;IP 通信协议来传递数据。</p>
 <p><strong>特点：</strong></p>
 <ul>
 <li>无连接的：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。</li>
@@ -416,32 +405,32 @@
 <li>5xx：服务器错误状态码。500 Internal Server Error。表明服务器端在执行请求时发生了错误。504。Gateway Time-Out。指服务器作为网关或代理，但是没有及时从上游服务器收到请求。</li>
 </ul>
 <p><strong>请求报文</strong>由4部分组成：请求行，请求头部，空行，请求体。</p>
-<p><img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-40-48.png"></p>
+<p><img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-40-48.png"></p>
 <ul>
 <li><p>请求行包括：请求方法字段、URL字段、HTTP协议版本字段。它们用空格分隔。例如，GET &#x2F;index.html HTTP&#x2F;1.1。</p>
 </li>
-<li><p>请求头部:请求头部由键&#x2F;值对组成，每行一对，关键字和值用英文冒号“:”分隔</p>
+<li><p>请求头部：请求头部由键&#x2F;值对组成，每行一对，关键字和值用英文冒号“：”分隔</p>
 </li>
-<li><p>请求体: post put等请求携带的数据</p>
+<li><p>请求体： post put等请求携带的数据</p>
 </li>
 </ul>
 <p><strong>响应报文</strong>由4部分组成：响应行，响应头部，空行，响应体。</p>
-<p><img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-47-36.png"></p>
+<p><img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-47-36.png"></p>
 <p><strong>常见字段：</strong></p>
 <ul>
 <li>Host：服务器的域名，允许多个域名同处一个IP地址，即虚拟主机。</li>
 <li>Content-Length：服务器在返回数据时，会有该字段，表明本次回应的数据长度。例如，Content-Length：1000，就是告诉浏览器，本次服务器回应的数据长度是 1000 个字节，后面的字节就属于下一个回应了。HTTP 是基于 TCP 传输协议进行通信的，而使用了 TCP 传输协议，就会存在一个“粘包”的问题，<strong>HTTP 协议通过设置回车符、换行符作为 HTTP header 的边界，通过 Content-Length 字段作为 HTTP body 的边界，这两个方式都是为了解决“粘包”的问题。</strong></li>
 <li>Connection：最常用于客户端要求服务器使用<code>HTTP 长连接</code>机制，以便其他请求复用。</li>
 </ul>
-<img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-55-19.png" style="zoom:67%;">
+<img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-55-19.png" style="zoom：67%;">
 
 <p>HTTP 长连接的特点是，只要任意一端没有明确提出断开连接，则保持 TCP 连接状态。</p>
 <ul>
 <li><p>Content-Type：用于服务器回应时，告诉客户端，本次数据是什么格式。</p>
-<img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-57-47.png" style="zoom:67%;">
+<img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-57-47.png" style="zoom：67%;">
 </li>
 <li><p>Content-Encoding：说明数据的压缩方法。表示服务器返回的数据使用了什么压缩格式。</p>
-<img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-59-57.png" style="zoom:67%;"></li>
+<img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/Snipaste_2024-02-25_15-59-57.png" style="zoom：67%;"></li>
 </ul>
 <h4 id="通信数据转发程序：代理、网关、隧道"><a href="#通信数据转发程序：代理、网关、隧道" class="headerlink" title="通信数据转发程序：代理、网关、隧道"></a>通信数据转发程序：代理、网关、隧道</h4><p><strong>代理：</strong>代理是一种有转发功能的应用程序，它扮演了位于服务器和客户端“中间人”的角色，接收由客户端发送的请求并转发给服务器，同时也接收服务器返回的响应并转发给客户端。</p>
 <p><strong>网关：</strong>网关是转发其他服务器通信数据的服务器，接收从客户端发送来的请求时，它就像自己拥有资源的源服务器一样对请求进行处理。有时客户端可能都不会察觉，自己的通信目标是一个网关。</p>
@@ -449,40 +438,40 @@
 <p>隧道本身不会去解析HTTP请求。也就是说，请求保持原样中转给之后的服务器。隧道会在双方通信断开是结束。</p>
 <hr>
 <h3 id="2-GET和POST有什么区别？"><a href="#2-GET和POST有什么区别？" class="headerlink" title="2.GET和POST有什么区别？"></a>2.GET和POST有什么区别？</h3><p><strong>GET请求</strong></p>
-<p><code>GET</code>的语义是说从服务器获取指定的资源,这个资源可以是静态的文件,页面,图片,视频等。<code>GET</code>请求的参数位置一般是写在<code>URL</code>中的,<code>URL</code>规定只能支持<code>ASCII</code>,所以<code>GET</code>请求的参数只允许<code>ASCII</code>字符,而且浏览器对<code>URL</code>的长度是有限制的</p>
+<p><code>GET</code>的语义是说从服务器获取指定的资源，这个资源可以是静态的文件，页面，图片，视频等。<code>GET</code>请求的参数位置一般是写在<code>URL</code>中的，<code>URL</code>规定只能支持<code>ASCII</code>，所以<code>GET</code>请求的参数只允许<code>ASCII</code>字符，而且浏览器对<code>URL</code>的长度是有限制的</p>
 <p><strong>POST请求</strong></p>
-<p><code>POST</code>的语义是根据请求的负荷<code>(报文body)</code>对指定的资源做出处理,具体的处理方式视资源的类型而不同,<code>POST</code>请求携带的数据一般都是写在<code>body</code>中的,而且浏览器对<code>body</code>的大小不会做出限制</p>
+<p><code>POST</code>的语义是根据请求的负荷<code>(报文body)</code>对指定的资源做出处理，具体的处理方式视资源的类型而不同，<code>POST</code>请求携带的数据一般都是写在<code>body</code>中的，而且浏览器对<code>body</code>的大小不会做出限制</p>
 <blockquote>
-<p>实际上Get也能带Body,只是规范中不提倡,同时Post请求的url中也能提交参数。</p>
+<p>实际上Get也能带Body，只是规范中不提倡，同时Post请求的url中也能提交参数。</p>
 </blockquote>
 <hr>
-<h3 id="3-GET和POST都是幂等的吗"><a href="#3-GET和POST都是幂等的吗" class="headerlink" title="3.GET和POST都是幂等的吗?"></a>3.GET和POST都是幂等的吗?</h3><p><code>安全</code>:请求方法不会破坏浏览器上的资源</p>
-<p><code>幂等</code>:多次执行相同的操作,结果都是相同的</p>
+<h3 id="3-GET和POST都是幂等的吗"><a href="#3-GET和POST都是幂等的吗" class="headerlink" title="3.GET和POST都是幂等的吗?"></a>3.GET和POST都是幂等的吗?</h3><p><code>安全</code>：请求方法不会破坏浏览器上的资源</p>
+<p><code>幂等</code>：多次执行相同的操作，结果都是相同的</p>
 <ul>
-<li><code>Get</code>方法是安全而且幂等的,因为它是只读操作,无论操作多少次,都不会对服务器上的数据造成影响</li>
+<li><code>Get</code>方法是安全而且幂等的，因为它是只读操作，无论操作多少次，都不会对服务器上的数据造成影响</li>
 </ul>
 <blockquote>
-<p>基于<code>GET</code>请求的幂等性,因为它是只读的操作,无论操作多少次,服务器上的数据都是安全的,所以可以对<code>GET</code>请求做缓存,这个缓存既可以缓存到代理服务器上,也可以缓存到浏览器本身</p>
+<p>基于<code>GET</code>请求的幂等性，因为它是只读的操作，无论操作多少次，服务器上的数据都是安全的，所以可以对<code>GET</code>请求做缓存，这个缓存既可以缓存到代理服务器上，也可以缓存到浏览器本身</p>
 </blockquote>
 <ul>
-<li><code>POST</code>因为是新增或者提交数据,因此是不安全的,同时也不一定是幂等的,因为提交数据可能导致服务器资源的改变,而且多次提交就会多次创建资源</li>
+<li><code>POST</code>因为是新增或者提交数据，因此是不安全的，同时也不一定是幂等的，因为提交数据可能导致服务器资源的改变，而且多次提交就会多次创建资源</li>
 </ul>
 <blockquote>
-<p>为了避免数据被窃取,就要使用<code>HTTPS</code>协议</p>
+<p>为了避免数据被窃取，就要使用<code>HTTPS</code>协议</p>
 </blockquote>
 <hr>
 <h3 id="4-HTTP缓存的实现方式？"><a href="#4-HTTP缓存的实现方式？" class="headerlink" title="4.HTTP缓存的实现方式？"></a>4.HTTP缓存的实现方式？</h3><p><code>强制缓存</code>和<code>协商缓存</code></p>
 <p>这两种缓存的对象都是那些每次请求都能得到一样的请求数据</p>
-<h4 id="强制缓存"><a href="#强制缓存" class="headerlink" title="强制缓存"></a>强制缓存</h4><p>强制缓存指的是浏览器只要判断缓存没有过期,就可以继续使用,是否使用缓存的决定权在于浏览器</p>
+<h4 id="强制缓存"><a href="#强制缓存" class="headerlink" title="强制缓存"></a>强制缓存</h4><p>强制缓存指的是浏览器只要判断缓存没有过期，就可以继续使用，是否使用缓存的决定权在于浏览器</p>
 <blockquote>
-<p>比如说我在项目开发的时候,有一次偶然看到HTTP的状态码中标注<code>from disk cache</code></p>
+<p>比如说我在项目开发的时候，有一次偶然看到HTTP的状态码中标注<code>from disk cache</code></p>
 </blockquote>
-<img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/fromdiskcache.webp" style="zoom:30%;">
+<img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/fromdiskcache.webp" style="zoom：30%;">
 
 <p>强制缓存是利用下面这两个首部字段实现的，它们都用来表示资源在客户端缓存的有效期：</p>
 <ul>
-<li><code>Cache-Control</code>:表示的是相对过期时间</li>
-<li><code>Expires</code>:表示的是绝对过期时间</li>
+<li><code>Cache-Control</code>：表示的是相对过期时间</li>
+<li><code>Expires</code>：表示的是绝对过期时间</li>
 </ul>
 <p>如果 HTTP 响应头部同时有 Cache-Control 和 Expires 字段的话，<strong>Cache-Control 的优先级高于 Expires</strong> 。</p>
 <p>Cache-control 选项更多一些，设置更加精细，所以建议使用 Cache-Control 来实现强缓存。具体的实现流程如下：</p>
@@ -513,69 +502,69 @@
 </ol>
 <p>注意，<strong>协商缓存这两个字段都需要配合强制缓存中 Cache-Control 字段来使用，只有在未能命中强制缓存的时候，才能发起带有协商缓存字段的请求</strong>。</p>
 <hr>
-<h3 id="5-讲讲http缓存的实现原理"><a href="#5-讲讲http缓存的实现原理" class="headerlink" title="5.讲讲http缓存的实现原理"></a>5.讲讲http缓存的实现原理</h3><p>HTTP的缓存工作原理是基于<code>强缓存+协商缓存</code>的,这种实现能够尽可能的减少网络通信量。</p>
-<p>首先,当浏览器要发出一个请求时,他会先检查字段,分别是<code>Cache-Control</code>,这个字段在缓存工作时设置为<code>max-age=???</code>,然后在通过比较当前的时间和请求头中的<code>Date+max-age</code>值的大小,如果小于了,直接走缓存,否则的话视为缓存不命中。</p>
-<p>当缓存不命中的时候,开始请求服务器,首先它会发现响应头中有<code>eTag</code>,于是将<code>eTag</code>的值赋值给<code>If-None-Match</code>,如果这个<code>If-None-Match</code>在服务端找不到或者在服务端的资源能够对应上,这时候直接返回304,告诉浏览器走缓存,否则携带上这个<code>eTag</code>进行响应。</p>
-<p>如果没有<code>eTag</code>这个字段,它会在响应头中找一个叫做<code>Last-Modified</code>的字段,然后通过赋值<code>If-Modified-Since</code>,发起新新的请求,服务端就检查这个资源的<code>Last-Modified</code>,然后这时候会有两种情况</p>
+<h3 id="5-讲讲http缓存的实现原理"><a href="#5-讲讲http缓存的实现原理" class="headerlink" title="5.讲讲http缓存的实现原理"></a>5.讲讲http缓存的实现原理</h3><p>HTTP的缓存工作原理是基于<code>强缓存+协商缓存</code>的，这种实现能够尽可能的减少网络通信量。</p>
+<p>首先，当浏览器要发出一个请求时，他会先检查字段，分别是<code>Cache-Control</code>，这个字段在缓存工作时设置为<code>max-age=???</code>，然后在通过比较当前的时间和请求头中的<code>Date+max-age</code>值的大小，如果小于了，直接走缓存，否则的话视为缓存不命中。</p>
+<p>当缓存不命中的时候，开始请求服务器，首先它会发现响应头中有<code>eTag</code>，于是将<code>eTag</code>的值赋值给<code>If-None-Match</code>，如果这个<code>If-None-Match</code>在服务端找不到或者在服务端的资源能够对应上，这时候直接返回304，告诉浏览器走缓存，否则携带上这个<code>eTag</code>进行响应。</p>
+<p>如果没有<code>eTag</code>这个字段，它会在响应头中找一个叫做<code>Last-Modified</code>的字段，然后通过赋值<code>If-Modified-Since</code>，发起新新的请求，服务端就检查这个资源的<code>Last-Modified</code>，然后这时候会有两种情况</p>
 <ul>
-<li>客户端的修改时间比服务端的修改时间要晚,因此直接走缓存,304</li>
-<li>客户端的修改时间比服务端的修改时间要早,因此重新发送数据,200</li>
+<li>客户端的修改时间比服务端的修改时间要晚，因此直接走缓存，304</li>
+<li>客户端的修改时间比服务端的修改时间要早，因此重新发送数据，200</li>
 </ul>
-<p>然后在返回新响应的时候,带上这个<code>Last-Modified</code></p>
-<p>还有一种情况是强缓存仅基于<code>expire</code>实现,它记录的是绝对时间,但是通常由于服务端时钟和客户端时钟不一致,而不使用,精度较低</p>
-<p><img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/%E4%B8%8B%E8%BD%BD%20(3).png"></p>
+<p>然后在返回新响应的时候，带上这个<code>Last-Modified</code></p>
+<p>还有一种情况是强缓存仅基于<code>expire</code>实现，它记录的是绝对时间，但是通常由于服务端时钟和客户端时钟不一致，而不使用，精度较低</p>
+<p><img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/%E4%B8%8B%E8%BD%BD%20(3).png"></p>
 <hr>
 <h3 id="6-HTTP-1-1了解过吗-说说优点和缺点"><a href="#6-HTTP-1-1了解过吗-说说优点和缺点" class="headerlink" title="6.HTTP&#x2F;1.1了解过吗?说说优点和缺点?"></a>6.HTTP&#x2F;1.1了解过吗?说说优点和缺点?</h3><h4 id="HTTP的优点"><a href="#HTTP的优点" class="headerlink" title="HTTP的优点"></a>HTTP的优点</h4><ul>
 <li>简单</li>
 </ul>
-<p>HTTP报文段的格式就是<code>head+Body</code>,头部信息也是基于<code>key-value</code>实现的,因此简单</p>
+<p>HTTP报文段的格式就是<code>head+Body</code>，头部信息也是基于<code>key-value</code>实现的，因此简单</p>
 <ul>
-<li>灵活,容易扩展</li>
+<li>灵活，容易扩展</li>
 </ul>
-<p>HTTP协议中规定的<code>URI</code>和<code>URL</code>等组成部分并没有固定,允许开发人员自行定义和扩充,因此功能上比较容易扩充</p>
-<p>其底层的实现是可插拔式的,而且用户无感知,或者增加<code>TSL/SSL</code>等安全认证机制</p>
+<p>HTTP协议中规定的<code>URI</code>和<code>URL</code>等组成部分并没有固定，允许开发人员自行定义和扩充，因此功能上比较容易扩充</p>
+<p>其底层的实现是可插拔式的，而且用户无感知，或者增加<code>TSL/SSL</code>等安全认证机制</p>
 <ul>
-<li>跨平台:各种设备都能够使用HTTP协议进行网络的通信</li>
+<li>跨平台：各种设备都能够使用HTTP协议进行网络的通信</li>
 </ul>
-<h4 id="HTTP-1-1无状态的双刃剑问题"><a href="#HTTP-1-1无状态的双刃剑问题" class="headerlink" title="HTTP&#x2F;1.1无状态的双刃剑问题"></a>HTTP&#x2F;1.1无状态的双刃剑问题</h4><p><code>HTTP</code>协议是无状态的,无状态的好处是能够减少维护这次连接上的各种复杂的状态信息,减轻了CPU和内存的负担,使得这些资源更加专注于为用户提供服务</p>
-<p>坏处则是其因为无法存储当前的状态信息,当需要完成一系列有关联性的操作的时候,需要添加附加信息</p>
+<h4 id="HTTP-1-1无状态的双刃剑问题"><a href="#HTTP-1-1无状态的双刃剑问题" class="headerlink" title="HTTP&#x2F;1.1无状态的双刃剑问题"></a>HTTP&#x2F;1.1无状态的双刃剑问题</h4><p><code>HTTP</code>协议是无状态的，无状态的好处是能够减少维护这次连接上的各种复杂的状态信息，减轻了CPU和内存的负担，使得这些资源更加专注于为用户提供服务</p>
+<p>坏处则是其因为无法存储当前的状态信息，当需要完成一系列有关联性的操作的时候，需要添加附加信息</p>
 <p>HTTP&#x2F;1.1虽然是无状态协议，但是为了实现保持状态的功能引入了<code>Cookie</code>技术。响应报文中有一个Set-Cookie的首部字段，服务器在发送响应报文时往这个字段写入，通知客户端保存Cookie。当下次客户端再往该服务器发送请求时，客户端会自动在请求报文中加入Cookie值再发出去。服务端发现客户端发送过来的Cookie后，会和服务器上的记录做对比，最后得知之前的状态信息。</p>
-<h4 id="HTTP-1-1明文传输的双刃剑问题"><a href="#HTTP-1-1明文传输的双刃剑问题" class="headerlink" title="HTTP&#x2F;1.1明文传输的双刃剑问题"></a>HTTP&#x2F;1.1明文传输的双刃剑问题</h4><p>明文传输的好处是程序容易调试,仅仅使用浏览器就能够对请求的信息进行分析</p>
-<p>但是坏处是导致用户的信息泄漏,在复杂的网络中进行传输的时候,会经过错综复杂的网络结构,一旦被别有用心之人截获,就会导致非常严重的后果,问题的解决具有一定成本,比如引入复杂的加密算法,如<code>TSL/SSL</code>等机制,保护用户的信息,这增加了双方的通信量以及协议的复杂程度,因为还需要对加密的数据进行编码和解码</p>
+<h4 id="HTTP-1-1明文传输的双刃剑问题"><a href="#HTTP-1-1明文传输的双刃剑问题" class="headerlink" title="HTTP&#x2F;1.1明文传输的双刃剑问题"></a>HTTP&#x2F;1.1明文传输的双刃剑问题</h4><p>明文传输的好处是程序容易调试，仅仅使用浏览器就能够对请求的信息进行分析</p>
+<p>但是坏处是导致用户的信息泄漏，在复杂的网络中进行传输的时候，会经过错综复杂的网络结构，一旦被别有用心之人截获，就会导致非常严重的后果，问题的解决具有一定成本，比如引入复杂的加密算法，如<code>TSL/SSL</code>等机制，保护用户的信息，这增加了双方的通信量以及协议的复杂程度，因为还需要对加密的数据进行编码和解码</p>
 <blockquote>
-<p>HTTP&#x2F;1.1最严重的问题就是不安全,然而这个问题可以通过<code>SSL/TSL</code>的方式进行解决</p>
+<p>HTTP&#x2F;1.1最严重的问题就是不安全，然而这个问题可以通过<code>SSL/TSL</code>的方式进行解决</p>
 </blockquote>
-<h4 id="HTTP-1-1的长连接是什么原理"><a href="#HTTP-1-1的长连接是什么原理" class="headerlink" title="HTTP&#x2F;1.1的长连接是什么原理?"></a>HTTP&#x2F;1.1的长连接是什么原理?</h4><p>在<code>HTTP/1.1</code>之前使用的是<code>HTTP/1.0</code>,在早期的<code>1.0</code>版本中,有一个非常严重的性能问题,就是它使用的是<code>短连接</code>,所谓短连接就是<code>一次TCP的连接与释放对应一次HTTP的请求和响应</code>,在高并发的情况下,会导致大量的<code>TCP</code>的三报文握手和四报文挥手,十分浪费,因为光是TCP报文的首部就要占20个字节,更不用说底层的IP头的加装额外消耗。</p>
-<p>于是<code>HTTP/1.1</code>提出了长连接,这个机制使得<code>连接可复用</code>,只要任意一端没有明确提出提出断开连接,则保持TCP连接状态。在HTTP&#x2F;1.1中所有的连接默认都是长连接。</p>
-<h4 id="管道网络传输是什么？"><a href="#管道网络传输是什么？" class="headerlink" title="管道网络传输是什么？"></a>管道网络传输是什么？</h4><p><code>长连接</code>使得<code>管道网络传输</code>成为了可能,所谓管道网络传输是说,原本的<code>请求-响应</code>模型是阻塞式的,比如说第一个请求发出了,必须要等到第一个响应回来才能发第二个请求</p>
-<p>而管道网络传输规定:可以一次性发送多个请求出去,但是接收响应必须按照请求的顺序进行接收。</p>
+<h4 id="HTTP-1-1的长连接是什么原理"><a href="#HTTP-1-1的长连接是什么原理" class="headerlink" title="HTTP&#x2F;1.1的长连接是什么原理?"></a>HTTP&#x2F;1.1的长连接是什么原理?</h4><p>在<code>HTTP/1.1</code>之前使用的是<code>HTTP/1.0</code>，在早期的<code>1.0</code>版本中，有一个非常严重的性能问题，就是它使用的是<code>短连接</code>，所谓短连接就是<code>一次TCP的连接与释放对应一次HTTP的请求和响应</code>，在高并发的情况下，会导致大量的<code>TCP</code>的三报文握手和四报文挥手，十分浪费，因为光是TCP报文的首部就要占20个字节，更不用说底层的IP头的加装额外消耗。</p>
+<p>于是<code>HTTP/1.1</code>提出了长连接，这个机制使得<code>连接可复用</code>，只要任意一端没有明确提出提出断开连接，则保持TCP连接状态。在HTTP&#x2F;1.1中所有的连接默认都是长连接。</p>
+<h4 id="管道网络传输是什么？"><a href="#管道网络传输是什么？" class="headerlink" title="管道网络传输是什么？"></a>管道网络传输是什么？</h4><p><code>长连接</code>使得<code>管道网络传输</code>成为了可能，所谓管道网络传输是说，原本的<code>请求-响应</code>模型是阻塞式的，比如说第一个请求发出了，必须要等到第一个响应回来才能发第二个请求</p>
+<p>而管道网络传输规定：可以一次性发送多个请求出去，但是接收响应必须按照请求的顺序进行接收。</p>
 <p>然而<code>HTTP/1.1</code>是没有默认开启这个功能的</p>
-<h4 id="管道网络传输会带来什么问题"><a href="#管道网络传输会带来什么问题" class="headerlink" title="管道网络传输会带来什么问题?"></a>管道网络传输会带来什么问题?</h4><p>这个问题叫做<code>队头阻塞</code>问题,严重时可能导致请求大量丢失和服务宕机</p>
-<p>这个问题是这样发生,当第一个请求发送出去之后,由于I&#x2F;O或者其他原因很长时间都没有收到响应,但是这时候后面的请求又都在排队,从而导致后面的请求无法得到响应,客户端陷入阻塞状态</p>
-<p>这种会大大降低吞吐量,比如说请求2的完成只需要1ms,而请求1需要10s,等待的时间远远大于执行任务的时间。</p>
+<h4 id="管道网络传输会带来什么问题"><a href="#管道网络传输会带来什么问题" class="headerlink" title="管道网络传输会带来什么问题?"></a>管道网络传输会带来什么问题?</h4><p>这个问题叫做<code>队头阻塞</code>问题，严重时可能导致请求大量丢失和服务宕机</p>
+<p>这个问题是这样发生，当第一个请求发送出去之后，由于I&#x2F;O或者其他原因很长时间都没有收到响应，但是这时候后面的请求又都在排队，从而导致后面的请求无法得到响应，客户端陷入阻塞状态</p>
+<p>这种会大大降低吞吐量，比如说请求2的完成只需要1ms，而请求1需要10s，等待的时间远远大于执行任务的时间。</p>
 <hr>
 <h3 id="7-HTTPS与HTTP有什么区别"><a href="#7-HTTPS与HTTP有什么区别" class="headerlink" title="7.HTTPS与HTTP有什么区别?"></a>7.HTTPS与HTTP有什么区别?</h3><p>这个问题我认为可以从<code>连接的建立过程</code>、<code>传输的信息安全性</code>、<code>默认端口</code>、<code>通信基础</code>来回答</p>
 <ul>
-<li>HTTP的建立是依托于TCP连接的,因此在连接建立的过程只需要完成三次握手即可,而<code>HTTPS</code>因为在HTTP和TCP之间引入了<code>SSL/TSL</code>协议,因此在完成三次握手之后,还需要完成<code>SSL/TSL</code>握手</li>
-<li>HTTP的报文传输是明文传输的,而<code>HTTPS</code>的报文传输是经过加密之后的</li>
-<li>HTTP的默认端口是80,HTTPS的默认端口是443</li>
+<li>HTTP的建立是依托于TCP连接的，因此在连接建立的过程只需要完成三次握手即可，而<code>HTTPS</code>因为在HTTP和TCP之间引入了<code>SSL/TSL</code>协议，因此在完成三次握手之后，还需要完成<code>SSL/TSL</code>握手</li>
+<li>HTTP的报文传输是明文传输的，而<code>HTTPS</code>的报文传输是经过加密之后的</li>
+<li>HTTP的默认端口是80，HTTPS的默认端口是443</li>
 <li>HTTPS在通信的时候需要有对应的CA来证明服务器是可信的</li>
 </ul>
 <hr>
-<h3 id="8-HTTPS解决了HTTP的哪些问题？"><a href="#8-HTTPS解决了HTTP的哪些问题？" class="headerlink" title="8.HTTPS解决了HTTP的哪些问题？"></a>8.HTTPS解决了HTTP的哪些问题？</h3><p>首先我们来看看HTTP存在的安全问题:</p>
+<h3 id="8-HTTPS解决了HTTP的哪些问题？"><a href="#8-HTTPS解决了HTTP的哪些问题？" class="headerlink" title="8.HTTPS解决了HTTP的哪些问题？"></a>8.HTTPS解决了HTTP的哪些问题？</h3><p>首先我们来看看HTTP存在的安全问题：</p>
 <ul>
-<li>数据被窃听的风险:通信使用明文（不加密），内容有可能被窃听。</li>
-<li>数据被篡改的风险:无法证明报文的完整性，有可能已经被篡改</li>
-<li>冒充的风险:不验证通信方的身份，因此有可能遭遇伪装</li>
+<li>数据被窃听的风险：通信使用明文（不加密），内容有可能被窃听。</li>
+<li>数据被篡改的风险：无法证明报文的完整性，有可能已经被篡改</li>
+<li>冒充的风险：不验证通信方的身份，因此有可能遭遇伪装</li>
 </ul>
 <p>那么HTTPS引入了<code>TSL/SSL</code>就是为了解决这些问题</p>
 <ul>
-<li>信息加密手段:交互信息在没有密钥的情况下无法解密</li>
-<li>校验机制:通过杂凑函数等手段,校验数据是否被篡改过,篡改过则直接丢弃数据报</li>
-<li>身份机制:通过CA机构颁发的证书证明服务器是可信的</li>
+<li>信息加密手段：交互信息在没有密钥的情况下无法解密</li>
+<li>校验机制：通过杂凑函数等手段，校验数据是否被篡改过，篡改过则直接丢弃数据报</li>
+<li>身份机制：通过CA机构颁发的证书证明服务器是可信的</li>
 </ul>
 <hr>
-<h3 id="9-HTTPS是如何建立的"><a href="#9-HTTPS是如何建立的" class="headerlink" title="9.HTTPS是如何建立的?"></a>9.HTTPS是如何建立的?</h3><p>由于引入了<code>TLS/SSL</code>算法,因此在TCP的三报文握手之后,还要执行身份验证等操作</p>
+<h3 id="9-HTTPS是如何建立的"><a href="#9-HTTPS是如何建立的" class="headerlink" title="9.HTTPS是如何建立的?"></a>9.HTTPS是如何建立的?</h3><p>由于引入了<code>TLS/SSL</code>算法，因此在TCP的三报文握手之后，还要执行身份验证等操作</p>
 <ul>
 <li>客户端向服务器索要公钥并且验证公钥的身份</li>
 <li>双方协商生产共享密钥</li>
@@ -583,28 +572,28 @@
 </ul>
 <p><code>TLS</code>的握手过程包含了四次通信过程</p>
 <ul>
-<li>ClientHello:客户端向服务器发起加密通信请求</li>
+<li>ClientHello：客户端向服务器发起加密通信请求</li>
 </ul>
 <p>(1) 客户端支持的TLS版本号</p>
-<p>(2) 客户端支持生产的随机数,后面用于生成会话密钥的条件之一</p>
-<p>(3) 客户端支持的密码套件,如RSA加密算法</p>
+<p>(2) 客户端支持生产的随机数，后面用于生成会话密钥的条件之一</p>
+<p>(3) 客户端支持的密码套件，如RSA加密算法</p>
 <ul>
 <li>ServerHello</li>
 </ul>
 <p>(1) 确定TLS版本号</p>
-<p>(2) 服务器生产的随机数,生产会话密钥的条件</p>
+<p>(2) 服务器生产的随机数，生产会话密钥的条件</p>
 <p>(3) 确认的密码套件</p>
 <p>(4) 服务器的数字证书</p>
 <ul>
 <li>客户端回应</li>
 </ul>
-<p>客户端收到数字证书后,通过浏览器等软件提供的<code>CA</code>公钥,确认服务器的数字证书的真实性</p>
-<p>如果数字证书没有问题,就从中取出公钥,然后用其加密报文</p>
-<p>(1) 一个随机数,这个随机数通过公钥进行加密</p>
-<p>(2) 加密算法改变通知,之后都用共享密钥进行通信</p>
-<p>(3) 客户端握手结束通知,表示客户端的握手阶段已经结束了,同时将之前的所有内容的发生数据做个摘要,用来给服务端进行验证</p>
+<p>客户端收到数字证书后，通过浏览器等软件提供的<code>CA</code>公钥，确认服务器的数字证书的真实性</p>
+<p>如果数字证书没有问题，就从中取出公钥，然后用其加密报文</p>
+<p>(1) 一个随机数，这个随机数通过公钥进行加密</p>
+<p>(2) 加密算法改变通知，之后都用共享密钥进行通信</p>
+<p>(3) 客户端握手结束通知，表示客户端的握手阶段已经结束了，同时将之前的所有内容的发生数据做个摘要，用来给服务端进行验证</p>
 <blockquote>
-<p>此时,一共生产了三个随机数,然后通过这三个随机数,其中第三个随机数是通过公钥加密的,最终生产出了共享密钥</p>
+<p>此时，一共生产了三个随机数，然后通过这三个随机数，其中第三个随机数是通过公钥加密的，最终生产出了共享密钥</p>
 </blockquote>
 <ul>
 <li>服务器的最后响应</li>
@@ -614,12 +603,12 @@
 <p>至此，整个 TLS 的握手阶段全部结束。接下来，客户端与服务器进入加密通信，就完全是使用普通的 HTTP 协议，只不过用「会话秘钥」加密内容。</p>
 <hr>
 <h3 id="10-HTTPS一定安全可靠吗？"><a href="#10-HTTPS一定安全可靠吗？" class="headerlink" title="10.HTTPS一定安全可靠吗？"></a>10.HTTPS一定安全可靠吗？</h3><p>这个问题实际上考察的是<code>中间人攻击的问题</code></p>
-<p>首先我们在之前,已经讨论到了数字证书的问题了,但是这个数字证书只要具有一定的资质就可以申请。</p>
+<p>首先我们在之前，已经讨论到了数字证书的问题了，但是这个数字证书只要具有一定的资质就可以申请。</p>
 <blockquote>
-<p>于是,如果中间人具有一份合法的数字证书,或者说它窃取了别人的数字证书,那么它也可以发起攻击</p>
+<p>于是，如果中间人具有一份合法的数字证书，或者说它窃取了别人的数字证书，那么它也可以发起攻击</p>
 </blockquote>
-<p>攻击的具体原因,首先客户端会向服务器发起请求,但是被一个假基站转发到了一个中间人服务器,然而这个中间人服务器使用了一份别人的数字证书,而这份数字证书是有效的,于是客户端完成了4次TLS握手,然后建立起通信,在这个过程中,中间人服务器同时向真正的服务器发起通信。</p>
-<p>那么这样就很微妙了,中间人可以解开所有的数据,甚至能够篡改有关的数据,这样的话就会导致数据泄漏。</p>
+<p>攻击的具体原因，首先客户端会向服务器发起请求，但是被一个假基站转发到了一个中间人服务器，然而这个中间人服务器使用了一份别人的数字证书，而这份数字证书是有效的，于是客户端完成了4次TLS握手，然后建立起通信，在这个过程中，中间人服务器同时向真正的服务器发起通信。</p>
+<p>那么这样就很微妙了，中间人可以解开所有的数据，甚至能够篡改有关的数据，这样的话就会导致数据泄漏。</p>
 <blockquote>
 <p>中间人服务器与客户端在 TLS 握手过程中，实际上发送了自己伪造的证书给浏览器，而这个伪造的证书是能被浏览器（客户端）识别出是非法的，于是就会提醒用户该证书存在问题。</p>
 </blockquote>
@@ -635,83 +624,83 @@
 <p>客户端上的CA机构的公钥是怎么来的呢？为了确保安全的转交，多数浏览器开发商发布版本时，会事先在内部植入常用认证机构的公钥。</p>
 <hr>
 <h3 id="12-HTTP-1-1-相比-HTTP-1-0-提高了什么性能？"><a href="#12-HTTP-1-1-相比-HTTP-1-0-提高了什么性能？" class="headerlink" title="12.HTTP&#x2F;1.1 相比 HTTP&#x2F;1.0 提高了什么性能？"></a>12.HTTP&#x2F;1.1 相比 HTTP&#x2F;1.0 提高了什么性能？</h3><p>这个问题我打算从<code>HTTP/1.0</code>和<code>HTTP/1.1</code>的区别进行描述</p>
-<p>首先<code>HTTP/1.0</code>的最重要的特征就是<code>短连接</code>,也就是<code>一次请求与响应就对应一次TCP的连接与释放</code></p>
-<p>因此在大量请求到来的时候,性能就会严重下降。</p>
-<p>于是<code>HTTP/1.1</code>引入了长连接,这种机制就是说,只要请求的收发双方没有一方明确提出要断开连接,那么底层就会保留这条<code>TCP</code>连接,减少了<code>TCP</code>连接的三报文握手和四报文挥手的巨大开销</p>
-<p>同时,由于多个<code>请求-响应</code>复用同一条<code>TCP</code>连接,这使得<code>管道网络传输</code>成为可能,也就是说,这时候客户端发送请求时,不必等待前一个请求的响应到达即可发送请求。</p>
+<p>首先<code>HTTP/1.0</code>的最重要的特征就是<code>短连接</code>，也就是<code>一次请求与响应就对应一次TCP的连接与释放</code></p>
+<p>因此在大量请求到来的时候，性能就会严重下降。</p>
+<p>于是<code>HTTP/1.1</code>引入了长连接，这种机制就是说，只要请求的收发双方没有一方明确提出要断开连接，那么底层就会保留这条<code>TCP</code>连接，减少了<code>TCP</code>连接的三报文握手和四报文挥手的巨大开销</p>
+<p>同时，由于多个<code>请求-响应</code>复用同一条<code>TCP</code>连接，这使得<code>管道网络传输</code>成为可能，也就是说，这时候客户端发送请求时，不必等待前一个请求的响应到达即可发送请求。</p>
 <p>但是同时<code>HTTP/1.1</code>具有相当一部分缺点</p>
 <ul>
-<li><code>data</code>的<code>header</code>没有做压缩,而只能对<code>body</code>做压缩,因此当<code>header</code>的体积过大时,将导致网络<code>I/O</code>传输性能下降</li>
-<li>将导致队头阻塞问题,虽然使用管道网络传输能够异步发送请求,但是接收响应却是同步的,在这种情况下,如果前面的响应没有发回来,然后后面的请求将一直无法接收到响应</li>
+<li><code>data</code>的<code>header</code>没有做压缩，而只能对<code>body</code>做压缩，因此当<code>header</code>的体积过大时，将导致网络<code>I/O</code>传输性能下降</li>
+<li>将导致队头阻塞问题，虽然使用管道网络传输能够异步发送请求，但是接收响应却是同步的，在这种情况下，如果前面的响应没有发回来，然后后面的请求将一直无法接收到响应</li>
 <li>没有提供解决队头阻塞的优先级机制</li>
 <li>冗长的首部将导致传输浪费</li>
-<li>请求只能从客户端开始,服务器只能够被动响应,服务端无法主动推送服务</li>
+<li>请求只能从客户端开始，服务器只能够被动响应，服务端无法主动推送服务</li>
 </ul>
 <hr>
-<h3 id="13-HTTP-2-做了什么优化？"><a href="#13-HTTP-2-做了什么优化？" class="headerlink" title="13.HTTP&#x2F;2 做了什么优化？"></a>13.HTTP&#x2F;2 做了什么优化？</h3><p><img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/%E4%B8%8B%E8%BD%BD%20(4).png"></p>
-<p>关于这个问题,我想应该要从两个方面进行回答,第一个方面是安全方面</p>
-<p><code>HTTP/2</code>引入了<code>TLS1.2+</code>,也就是基于<code>HTTPS</code>的机制,使得<code>HTTP/2</code>的传输变得更加安全了</p>
-<p>第二个方面是性能方面,性能方面做了较大的改动:</p>
+<h3 id="13-HTTP-2-做了什么优化？"><a href="#13-HTTP-2-做了什么优化？" class="headerlink" title="13.HTTP&#x2F;2 做了什么优化？"></a>13.HTTP&#x2F;2 做了什么优化？</h3><p><img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/%E4%B8%8B%E8%BD%BD%20(4).png"></p>
+<p>关于这个问题，我想应该要从两个方面进行回答，第一个方面是安全方面</p>
+<p><code>HTTP/2</code>引入了<code>TLS1.2+</code>，也就是基于<code>HTTPS</code>的机制，使得<code>HTTP/2</code>的传输变得更加安全了</p>
+<p>第二个方面是性能方面，性能方面做了较大的改动：</p>
 <p>首先我们先来看看<code>HTTP/1.1</code>中各个痛点</p>
 <ul>
 <li><code>HTTP/1.1</code>的数据传输低效</li>
 </ul>
-<p>它的传输低效主要存在于两点,第一,它的头部没有经过压缩,如果发送的请求&#x2F;响应的头部冗长,而每次都发送这些请求的话,导致导致大量冗余信息在网络中传输</p>
+<p>它的传输低效主要存在于两点，第一，它的头部没有经过压缩，如果发送的请求&#x2F;响应的头部冗长，而每次都发送这些请求的话，导致导致大量冗余信息在网络中传输</p>
 <blockquote>
-<p>对于这个痛点,HTTP&#x2F;2提供的解决方案是,客户端和服务端双方维护一张<code>头信息表</code>,这张表在初始化就被静态写入一些常用的头部字段,当需要使用到这些头部字段<code>(以key-value的形式存储)</code>的时候,就在数据包的头部中封装一个字段<code>header:1 xxxx</code>,其中1代表着这个头部字段在头信息表存在,xxx代表的是索引号,当第一个字段为0的时候,代表不存在,然后后边的这些xxx就是实际上的头部字段,然后传输到对等端的时候,会将这个字段记录到动态表中,方便下次使用</p>
+<p>对于这个痛点，HTTP&#x2F;2提供的解决方案是，客户端和服务端双方维护一张<code>头信息表</code>，这张表在初始化就被静态写入一些常用的头部字段，当需要使用到这些头部字段<code>(以key-value的形式存储)</code>的时候，就在数据包的头部中封装一个字段<code>header：1 xxxx</code>，其中1代表着这个头部字段在头信息表存在，xxx代表的是索引号，当第一个字段为0的时候，代表不存在，然后后边的这些xxx就是实际上的头部字段，然后传输到对等端的时候，会将这个字段记录到动态表中，方便下次使用</p>
 </blockquote>
-<p>第二个低效的原因在于频繁的编码操作,<code>HTTP/1.1</code>的数据传输是基于<code>文本传输</code>的,而计算机硬件无法读取纯文本格式,只能够读取二进制的数据,在接收数据的时候,还需要将文本格式的数据解析为二进制的数据。</p>
-<p>这就带来了严重的空间浪费了,比如说要传输的是<code>200</code></p>
+<p>第二个低效的原因在于频繁的编码操作，<code>HTTP/1.1</code>的数据传输是基于<code>文本传输</code>的，而计算机硬件无法读取纯文本格式，只能够读取二进制的数据，在接收数据的时候，还需要将文本格式的数据解析为二进制的数据。</p>
+<p>这就带来了严重的空间浪费了，比如说要传输的是<code>200</code></p>
 <ul>
-<li>在<code>HTTP/1.1</code>中的形式是”2””0””0”,然后以二进制编码的方式就是三个字节</li>
-<li>然而在<code>HTTP/2</code>中由于全面采用了二进制编码格式,因此200就表示为<code>1000 1000</code>,节省了两个字节</li>
+<li>在<code>HTTP/1.1</code>中的形式是”2””0””0”，然后以二进制编码的方式就是三个字节</li>
+<li>然而在<code>HTTP/2</code>中由于全面采用了二进制编码格式，因此200就表示为<code>1000 1000</code>，节省了两个字节</li>
 </ul>
 <blockquote>
-<p>全面采用了二进制,节省了传输所需要的编码量</p>
+<p>全面采用了二进制，节省了传输所需要的编码量</p>
 </blockquote>
 <ul>
 <li>存在队头阻塞问题</li>
 </ul>
-<p>这个队头阻塞问题指的是当响应迟迟没有到来的时候,后续的请求就无法得到响应</p>
+<p>这个队头阻塞问题指的是当响应迟迟没有到来的时候，后续的请求就无法得到响应</p>
 <blockquote>
 <p>那么它是怎么解决的呢?</p>
 </blockquote>
-<p>它引入了<code>Stream</code>流的概念,我们首先来理解为什么存在队头阻塞现象,这是因为如果不按请求顺序进行响应,就有可能将A的响应给到B,将B的响应给A,造成错乱</p>
+<p>它引入了<code>Stream</code>流的概念，我们首先来理解为什么存在队头阻塞现象，这是因为如果不按请求顺序进行响应，就有可能将A的响应给到B，将B的响应给A，造成错乱</p>
 <blockquote>
-<p>那么我们为什么不给这响应包加上一个控制字段,让这些包能够标识出来谁是谁的响应呢?</p>
+<p>那么我们为什么不给这响应包加上一个控制字段，让这些包能够标识出来谁是谁的响应呢?</p>
 </blockquote>
-<p>这就是<code>Stream</code>机制提出的一个核心思路,它在同一个<code>TCP</code>连接中存在多个<code>Strteam</code>,这多个<code>Stream</code>就代表着同一个<code>请求-响应</code>,他们通过在标识<code>StreamId</code>对这些<code>Stream</code>进行标识,从而确保对应的请求能够收到对应的请求</p>
-<p>如果是这样的话,我们假设响应是乱序返回的,比如请求1、请求2发送,然后响应2、响应1返回,因为存在<code>StreamId</code>,接收方就能够通过不同<code>Id</code>标识拿到自己想要的数据包</p>
-<p>通过<code>Stream</code>流的并发传输,提高了性能</p>
+<p>这就是<code>Stream</code>机制提出的一个核心思路，它在同一个<code>TCP</code>连接中存在多个<code>Strteam</code>，这多个<code>Stream</code>就代表着同一个<code>请求-响应</code>，他们通过在标识<code>StreamId</code>对这些<code>Stream</code>进行标识，从而确保对应的请求能够收到对应的请求</p>
+<p>如果是这样的话，我们假设响应是乱序返回的，比如请求1、请求2发送，然后响应2、响应1返回，因为存在<code>StreamId</code>，接收方就能够通过不同<code>Id</code>标识拿到自己想要的数据包</p>
+<p>通过<code>Stream</code>流的并发传输，提高了性能</p>
 <ul>
-<li>只能是客户端主动请求响应,而无法服务器主动推送</li>
+<li>只能是客户端主动请求响应，而无法服务器主动推送</li>
 </ul>
-<p>假设客户端向服务器等待服务器的长IO操作,只要等待它的长IO操作完成后才能返回响应,那么在这期间只能干等着,如果服务端能够主动推送响应,那么可以这样操作:</p>
-<p>等服务器接收到客户端的请求,先临时告知客户端服务器正在操作,然后客户端就可以干自己的事情去了</p>
-<p>然后当服务器做完自己的事情了,再向客户端推送,这样的话就可以提供用户的使用体验</p>
+<p>假设客户端向服务器等待服务器的长IO操作，只要等待它的长IO操作完成后才能返回响应，那么在这期间只能干等着，如果服务端能够主动推送响应，那么可以这样操作：</p>
+<p>等服务器接收到客户端的请求，先临时告知客户端服务器正在操作，然后客户端就可以干自己的事情去了</p>
+<p>然后当服务器做完自己的事情了，再向客户端推送，这样的话就可以提供用户的使用体验</p>
 <blockquote>
 <p>HTTP&#x2F;2有什么缺陷</p>
 </blockquote>
-<p>它同样存在队头阻塞的问题,<code>只不过它的队头阻塞问题</code>是因为滑动窗口的限制而产生的,也就是队头阻塞产生在<code>TCP</code>层面,先来讲讲它是怎么产生的</p>
-<p>我们假设发送双方维护了一个窗口,然后A同时发送了<code>P1/P2/P3/p4/p5</code>然后等待ACK,然后B能够接收<code>P1/P2</code></p>
-<p><code>P1</code>,但是P2丢掉了,于是它只能够等待<code>P2</code>的超时重传,那么这期间,如果A再发送<code>P3/P4/P5</code>,都不能够再次接收</p>
+<p>它同样存在队头阻塞的问题，<code>只不过它的队头阻塞问题</code>是因为滑动窗口的限制而产生的，也就是队头阻塞产生在<code>TCP</code>层面，先来讲讲它是怎么产生的</p>
+<p>我们假设发送双方维护了一个窗口，然后A同时发送了<code>P1/P2/P3/p4/p5</code>然后等待ACK，然后B能够接收<code>P1/P2</code></p>
+<p><code>P1</code>，但是P2丢掉了，于是它只能够等待<code>P2</code>的超时重传，那么这期间，如果A再发送<code>P3/P4/P5</code>，都不能够再次接收</p>
 <blockquote>
-<p>当考虑每个包大小一样的话,此时B应该能接收到<code>P2/P3</code>,但是后续的<code>P4/P5</code>均会被阻塞发送,即使到了也会被丢弃,因此此时<code>P4/P5</code>的响应就被搁置了,变成了队头阻塞</p>
+<p>当考虑每个包大小一样的话，此时B应该能接收到<code>P2/P3</code>，但是后续的<code>P4/P5</code>均会被阻塞发送，即使到了也会被丢弃，因此此时<code>P4/P5</code>的响应就被搁置了，变成了队头阻塞</p>
 </blockquote>
 <hr>
-<h3 id="14-HTTP-3-做了哪些优化？"><a href="#14-HTTP-3-做了哪些优化？" class="headerlink" title="14.HTTP&#x2F;3 做了哪些优化？"></a>14.HTTP&#x2F;3 做了哪些优化？</h3><p>既然谈到了优化,那么肯定就是解决<code>HTTP/2</code>所没有解决的问题,<code>HTTP/2</code>没有解决<code>TCP</code>层面的队头阻塞问题</p>
+<h3 id="14-HTTP-3-做了哪些优化？"><a href="#14-HTTP-3-做了哪些优化？" class="headerlink" title="14.HTTP&#x2F;3 做了哪些优化？"></a>14.HTTP&#x2F;3 做了哪些优化？</h3><p>既然谈到了优化，那么肯定就是解决<code>HTTP/2</code>所没有解决的问题，<code>HTTP/2</code>没有解决<code>TCP</code>层面的队头阻塞问题</p>
 <blockquote>
-<p>但是这个问题是致命的,因为发送窗口和接收窗口不可能无限制大小,而且为了可靠传输,必须保证数据包的有序接收,因此一个思路就是,修改底层的实现,改为<code>UDP</code>实现</p>
+<p>但是这个问题是致命的，因为发送窗口和接收窗口不可能无限制大小，而且为了可靠传输，必须保证数据包的有序接收，因此一个思路就是，修改底层的实现，改为<code>UDP</code>实现</p>
 </blockquote>
-<p><img src="/2023/11/05/shen-ru-li-jie-http-xie-yi/%E4%B8%8B%E8%BD%BD%20(5).png"></p>
-<p>首先要解决的问题是:之前提供的<code>HTTP</code>协议都是<code>TCP</code>的可靠传输,那么我们必须基于<code>UDP</code>实现可靠传输</p>
+<p><img src="/2024/03/05/shen-ru-li-jie-http-xie-yi/%E4%B8%8B%E8%BD%BD%20(5).png"></p>
+<p>首先要解决的问题是：之前提供的<code>HTTP</code>协议都是<code>TCP</code>的可靠传输，那么我们必须基于<code>UDP</code>实现可靠传输</p>
 <blockquote>
 <p>核心就是上图中的<code>QUIC</code>协议</p>
 </blockquote>
-<p><code>QUIC</code>协议也有类似的<code>HTTP/2</code>中的<code>Stream</code>的机制,也就是说一条连接中有也有多个<code>Stream</code>,但是每一个<code>Stream</code>并不公用一个窗口,而是有各自的滑动窗口,因此如果流中的包丢失了,只会导致这个<code>请求-响应</code>被阻塞,其他的不被阻塞,这就解决了队头问题</p>
-<p>与此同时,<code>QUIC</code>协议还基于<code>UDP</code>协议提高了性能</p>
+<p><code>QUIC</code>协议也有类似的<code>HTTP/2</code>中的<code>Stream</code>的机制，也就是说一条连接中有也有多个<code>Stream</code>，但是每一个<code>Stream</code>并不公用一个窗口，而是有各自的滑动窗口，因此如果流中的包丢失了，只会导致这个<code>请求-响应</code>被阻塞，其他的不被阻塞，这就解决了队头问题</p>
+<p>与此同时，<code>QUIC</code>协议还基于<code>UDP</code>协议提高了性能</p>
 <p><strong>更快的连接建立</strong></p>
-<p>对比与<code>HTTP/1.0、HTTP/1.1</code>的实现,由于<code>TCP+TLS</code>的实现基于内核的<code>TCP</code>传输层和<code>openssl</code>库实现的,因此难以解耦,而<code>QUIC</code>的思路是:在完成连接握手的时候,在帧的首部携带上<code>TLS</code>认证信息,这个过程主要是为了确认双方的连接<code>ID</code></p>
+<p>对比与<code>HTTP/1.0、HTTP/1.1</code>的实现，由于<code>TCP+TLS</code>的实现基于内核的<code>TCP</code>传输层和<code>openssl</code>库实现的，因此难以解耦，而<code>QUIC</code>的思路是：在完成连接握手的时候，在帧的首部携带上<code>TLS</code>认证信息，这个过程主要是为了确认双方的连接<code>ID</code></p>
 <p>甚至，在第二次连接的时候，应用数据包可以和 QUIC 握手信息（连接信息 + TLS 信息）一起发送，达到 0-RTT 的效果。</p>
 <p><strong>连接的迁移</strong></p>
 <p>那么<strong>当移动设备的网络从 4G 切换到 WIFI 时，意味着 IP 地址变化了，那么就必须要断开连接，然后重新建立连接</strong>。而建立连接的过程包含 TCP 三次握手和 TLS 四次握手的时延，以及 TCP 慢启动的减速过程，给用户的感觉就是网络突然卡顿了一下，因此连接的迁移成本是很高的。</p>
@@ -750,7 +739,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2023/11/05/shen-ru-li-jie-http-xie-yi/">https://fuchenglai.github.io/2023/11/05/shen-ru-li-jie-http-xie-yi/</a>
+                    <a href="https://fuchenglai.github.io/2024/03/05/shen-ru-li-jie-http-xie-yi/">https://fuchenglai.github.io/2024/03/05/shen-ru-li-jie-http-xie-yi/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -787,11 +776,7 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/http/">
-                                    <span class="chip bg-color">http</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -868,66 +853,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2023/11/19/xu-ni-nei-cun-xiang-jie/">
+                <a href="/2024/03/05/shen-ru-li-jie-http-xie-yi/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="虚拟内存详解">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
                         
-                        <span class="card-title">虚拟内存详解</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-19
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/OS/" class="post-category">
-                                    OS
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
-                        <span class="chip bg-color">内存管理</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2023/11/02/shen-ru-li-jie-tcp-xie-yi/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="深入理解TCP协议">
-                        
-                        <span class="card-title">深入理解TCP协议</span>
+                        <span class="card-title"></span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -938,27 +875,57 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-02
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Fuchanglai
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/02/28/tu-you-hou-duan-shi-xi-sheng-yi-mian-mian-jing/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="途游-后端实习生一面面经">
+                        
+                        <span class="card-title">途游-后端实习生一面面经</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-28
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="post-category">
-                                    计算机网络
+                            <a href="/categories/%E9%9D%A2%E7%BB%8F/" class="post-category">
+                                    面经
                                 </a>
                             
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/TCP%E5%8D%8F%E8%AE%AE/">
-                        <span class="chip bg-color">TCP协议</span>
-                    </a>
-                    
                 </div>
                 
             </div>
