@@ -411,7 +411,7 @@ struct sdshdr &amp;#123;
     <span class="token keyword">int</span> free<span class="token punctuation">;</span>
     
     <span class="token comment">// 【字节】数组，用于保存字符串（不是字符数组）</span>
-    <span class="token keyword">char</span> buf<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    byte buf<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>SDS 遵循 C 字符串<strong>以空字符结尾</strong>的惯例，保存空字符的 1 字节不计算在 len 属性，SDS 会自动为空字符分配额外的 1 字节空间和添加空字符到字符串末尾，所以空字符对于 SDS 的使用者来说是完全透明的</p>

@@ -460,7 +460,7 @@
 <blockquote>
 <p>实际上undo日志只在事务回滚时发生作用。当事务提交后，该类型的undo日志就没用了，它占用的Undo Log Segment也会被系统回收。虽然真正的undo日志占用的存储空间被回收了，但是roll_pointer的值并不会被清除。</p>
 </blockquote>
-<p>每对记录进行一次改动，都会记录一条undo日志。每条undo日志也都有一个roll_pointer属性（INSERT操作对应的undo日志没有该属性，因为INSERT前没有更早的操作），通过这个属性可以将undo日志串成一个链表。这就链表就称为<strong>版本链</strong>。版本链的头节点就是当前记录的最新值。我们可以用这个版本链来控制并发事务访问相同记录时的行为。我们把这种机制称之为**多版本并发控制（Multi-Version Concurrency Control, MVCC）。</p>
+<p>每对记录进行一次改动，都会记录一条undo日志。每条undo日志也都有一个roll_pointer属性（INSERT操作对应的undo日志没有该属性，因为INSERT前没有更早的操作），通过这个属性可以将undo日志串成一个链表。这就链表就称为<strong>版本链</strong>。版本链的头节点就是当前记录的最新值。我们可以用这个版本链来控制并发事务访问相同记录时的行为。我们把这种机制称之为<strong>多版本并发控制（Multi-Version Concurrency Control, MVCC）</strong>。</p>
 <h4 id="ReadView"><a href="#ReadView" class="headerlink" title="ReadView"></a>ReadView</h4><p>对于使用READ UNCOMMITTED隔离级别的事务来说，由于可以读到未提交事务修改过的记录，所以直接读取记录的最新版本就好了；对于使用SERIALIZABLE隔离级别的事务来说，InnoDB规定使用加锁的方式来访问记录；对于使用READ COMMITTED和REPEATABLE READ隔离级别的事务来说，都必须保证读到已提交的事务修改过的记录。也就是说假如另一个事务已经修改了记录但是还未提交，则不能直接读取最新版本的记录。核心问题是：需要判断版本链中的哪一个版本是当前事务可见的。为此，InnoDB提出了ReadView（有点地方翻译成“一致性视图”）的概念。</p>
 <p>这个ReadView中主要包含4个比较重要的内容。</p>
 <ul>
