@@ -1,0 +1,1251 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="easyRPC项目总结, 小ceng的后端游乐场">
+    <meta name="description" content="1.为什么有了HTTP协议，还需要RPC要回答这个问题,我们首先要理解,HTTP协议和RPC既然都能完成功能,那么他们到底有什么区别?
+定义上的不同
+HTTP本质上一个网络通信协议,而RPC是远程过程调用,因此从本质上来看,他们就有巨大的不">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>easyRPC项目总结 | 小ceng的后端游乐场</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+        <link rel="stylesheet" type="text/css" href="/css/reward.css">
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">小ceng的后端游乐场</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">小ceng的后端游乐场</div>
+        <div class="logo-desc">
+            
+            记录生活与技术中的所学、所想、所悟
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">easyRPC项目总结</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E9%A1%B9%E7%9B%AE/" class="post-category">
+                                项目
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2024-02-16
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    4.3k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    15 分
+                </div>
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h3 id="1-为什么有了HTTP协议，还需要RPC"><a href="#1-为什么有了HTTP协议，还需要RPC" class="headerlink" title="1.为什么有了HTTP协议，还需要RPC"></a>1.为什么有了HTTP协议，还需要RPC</h3><p>要回答这个问题,我们首先要理解,<code>HTTP协议</code>和<code>RPC</code>既然都能完成功能,那么他们到底有什么区别?</p>
+<p><strong>定义上的不同</strong></p>
+<p><code>HTTP</code>本质上一个网络通信协议,而<code>RPC</code>是远程过程调用,因此从本质上来看,他们就有巨大的不同,一个是通信协议,而<code>RPC</code>是一种调用方式,调用可以分为本地调用和远程调用</p>
+<blockquote>
+<p>你可以使用HTTP,FTP,SFTP甚至是你自己写的一个协议,只要能够实现网络通信即可</p>
+</blockquote>
+<p><strong>服务发现的不同</strong></p>
+<p>使用<code>HTTP</code>的时候,我们必须要知道对方的<code>IP地址</code>和<code>端口</code>才能和对方建立连接,如果知道域名的话也能通过域名服务器的解析知道对方的IP地址</p>
+<p>使用<code>RPC</code>的时候,一般会有专门的<code>中间服务</code>去保存服务名和<code>IP</code>信息,比如说<code>ZooKeeper</code>,甚至是<code>Redis</code>,想要获得某个服务,就必须要去这些中间件去获得<code>IP</code>和端口信息,由于<code>DNS</code>也是服务发现的一种,所以也有基于<code>DNS</code></p>
+<blockquote>
+<p>这两个不同并不能看出什么,因为服务发现的前提都是知道对方的IP地址和端口,而使用<code>HTTP</code>的时候直接从本地存储上取或者使用存储都可以,而RPC是需要通过中间代理服务,转发请求和转发响应的</p>
+<p>本质上来说,采用HTTP的服务也同样可以引入代理服务器,比如说引入nginx服务器,实现反向代理,在这一点上,并没有本质上的不同</p>
+</blockquote>
+<p><strong>底层的连接形式</strong></p>
+<p>以主流的<code>HTTP1.1</code>协议为例,其默认会复用这条<code>TCP</code>连接,之后的请求和响应都是会复用这条连接的</p>
+<p>而<code>RPC</code>协议,为了应对请求量大的情况,在使用长连接的基础上还会再建一个连接池,在请求量大的时候,建立多条连接放在连接池中,要发数据的时候就抽取一条连接进行传输,在用完连接之后,还会放回去准备复用。</p>
+<blockquote>
+<p>这两个不同也看不出什么,因为在许多编程语言中对于<code>HTTP</code>的API设计中也会引入连接池,因此这也不是关键</p>
+</blockquote>
+<p><strong>传输的内容</strong></p>
+<p>基于TCP传输的内容,无非都是消息头<code>Header</code>和消息体<code>Body</code></p>
+<p><code>Header</code>是用来标记一些特殊信息的,其中最重要的是消息体的长度</p>
+<p><code>Body</code>是真正的数据内容,而这些内容只能够是二进制的<code>01串</code>,字符串通过编码和反编码可以很轻松的变成二进制,而数字本身在计算机的底层就是数字,因此这两者都能够很简单进行传输</p>
+<p>但是对于结构体而言,它并没有一种确切的数据结构,将其变为二进制串的方案有<code>Json</code>和<code>Protobuf</code></p>
+<p>将这个结构体变为二进制串的过程叫做序列化,而将这个二进制串变回结构体的过程就叫做反序列化</p>
+<p>采用<code>HTTP</code>协议去传输结构体的时候,由于请求头&#x2F;响应头的开销,以及各种状态码的规定,使得在使用<code>HTTP</code>协议做远程调用的方案性能较差,因为在服务内部的互相调用并不需要考虑那么多浏览器的复杂响应状态</p>
+<blockquote>
+<p>一句话形容就是,使用HTTP协议实现远程调用:杀鸡用牛刀</p>
+</blockquote>
+<p>最关键的是多了很多不需要的冗余信息,这些冗余可以根据调用设计者的需求,自行定义首部。</p>
+<p>而对于<code>RPC</code>而言,它更加小巧,可定制化,可以采用体积更小的 Protobuf 或其他序列化协议去保存结构体数据</p>
+<p><strong>因此性能也会更好一些，这也是在公司内部微服务中抛弃 HTTP，选择使用 RPC 的最主要原因。</strong></p>
+<blockquote>
+<p>然而,HTTP&#x2F;2做了相当多的改进,性能甚至能够优于RPC,甚至gRPC底层都是基于HTTP&#x2F;2进行实现的</p>
+</blockquote>
+<p><strong>总结</strong></p>
+<ul>
+<li>纯TCP不能实现远程调用,如果要实现远程调用,那么必须要解决粘包和分包的问题,在此基础上,发明了HTTP协议和各类RPC协议</li>
+<li>RPC本质上并不是协议,而是实现远程调用的一种思想</li>
+<li>所以对外一般用 HTTP 协议，而内部集群的微服务之间则采用 RPC 协议进行通讯。</li>
+<li>RPC 其实比 HTTP 出现的要早，且比目前主流的 HTTP&#x2F;1.1 <strong>性能</strong>要更好，所以大部分公司内部都还在使用 RPC</li>
+</ul>
+<h3 id="2-讲讲RPC的原理"><a href="#2-讲讲RPC的原理" class="headerlink" title="2.讲讲RPC的原理"></a>2.讲讲RPC的原理</h3><p>要了解RPC的原理,我们必须理清楚RPC调用的整个过程以及各个环节的实现</p>
+<p><img src="/2024/02/16/easyrpc-xiang-mu-zong-jie/Snipaste_2024-03-18_15-20-22.png"></p>
+<p>我们按照箭头的顺序开始分析</p>
+<ul>
+<li>首先客户端发起远程调用,然后程序的控制权交给<code>client stub</code>,这个类是代理类,负责把客户端的调用方的方法、类、方法参数等信息传递到服务器</li>
+<li>在传递到服务器的过程中,中间执行的是网络传输操作,实际的实现方式有<code>socket</code>和或者封装过的<code>socketI/O</code>服务,比如说<code>NIO</code>或者<code>BIO</code></li>
+<li>然后服务端监听到请求,建立连接,那么请求是由谁来处理的呢,就是由<code>server stub</code>进行处理的,你可以把它理解成一个<code>handler</code>,当请求发过来的时候,就是事件驱动了,然后触发执行,然后将方法执行后的结果返回到client</li>
+</ul>
+<ol>
+<li>服务消费端:以本地调用的方式调用远程的服务</li>
+<li>客户端Stub:接收到调用后负责将方法、参数等组装成网络传输的消息体<code>RpcRequest</code>,它在传输中将会被序列化</li>
+<li>客户端Stub:找到远程服务的地址,并且将信息发送到服务提供端</li>
+<li>服务端Stub:根据收到的消息将消息反序列化为一个<code>Java</code>对象,<code>RpcRequest</code></li>
+<li>服务端Stub:根据<code>RpcRequest</code>中的类、方法、参数等基本信息调用本地的方法</li>
+<li>服务端Stub:根据方法执行后的结果,封装一个响应对象,<code>RpcResponse</code></li>
+<li>客户端Stub:然后再通过<code>网络传输</code>,获取<code>RpcResponse</code></li>
+</ol>
+<h3 id="2-怎么解决粘包和半包问题的？"><a href="#2-怎么解决粘包和半包问题的？" class="headerlink" title="2.怎么解决粘包和半包问题的？"></a>2.怎么解决粘包和半包问题的？</h3><p>由于我们采用了长连接，而TCP协议又是基于字节流的，因此不可比不可避免的会出现这种问题。我解决这个问题的思路是<strong>预设长度</strong>，在发送消息前，先约定用定长字节表示接下来数据的长度。</p>
+<p>首先就是参考http协议这样的报文，我们有必要给我们的设计自己的通信协议报文，它有以下字段：</p>
+<ul>
+<li>4B magic code（魔法数）。用来在第一时间判定是否是无效数据包</li>
+<li>1B version（版本）。可以支持协议的后续升级</li>
+<li>1B codec（序列化类型）。序列化类型，消息正文到底采用哪种序列化反序列化方式</li>
+<li>1B messageType（消息类型）</li>
+<li>4B full length（消息长度）</li>
+<li>4B  requestId（请求的Id）</li>
+</ul>
+<p>我们自定义一个类<code>RpcMessageDecoder</code>，来做解码器，它继承了LengthFieldBasedFrameDecoder。我们需要重写<code>decode</code>方法。</p>
+<h3 id="3-讲一讲Java的NIO"><a href="#3-讲一讲Java的NIO" class="headerlink" title="3.讲一讲Java的NIO"></a>3.讲一讲Java的NIO</h3><p>在bio，也就是阻塞io中，用户发起调用read发起io读的操作，如果数据没有到达，那就会一直阻塞直到读取到数据。为了解决这种低效的方式jdk1.4引入的nio。Java的NIO主要由三个核心部分组成：<strong>Channel</strong>、<strong>Buffer</strong>、<strong>Selector</strong>。</p>
+<p>基本上，所有的IO在NIO中都从一个Channel开始，数据可以从Channel读到Buffer中，也可以从Buffer写到Channel中。Channel有好几种类型，其中比较常用的有FileChannel、DatagramChannel、SocketChannel、ServerSocketChannel等，这些通道涵盖了UDP和TCP网络IO以及文件IO。</p>
+<p>Buffer本质上是一块可以写入数据，然后可以从中读取数据的内存。这块内存被包装成NIO Buffer对象，并提供了一组方法，用来方便的访问该块内存。Java NIO里关键的Buffer实现有CharBuffer、ByteBuffer、ShortBuffer、IntBuffer、LongBuffer、FloatBuffer、DoubleBuffer。这些Buffer覆盖了你能通过IO发送的基本数据类型，即byte、short、int、long、float、double、char。</p>
+<p>Buffer对象包含三个重要的属性，分别是capacity、position、limit，其中position和limit的含义取决于Buffer处在读模式还是写模式。但不管Buffer处在什么模式，capacity的含义总是一样的。</p>
+<ul>
+<li>capacity：作为一个内存块，Buffer有个固定的最大值，就是capacity。Buffer只能写capacity个数据，一旦Buffer满了，需要将其清空才能继续写数据往里写数据。</li>
+<li>position：当写数据到Buffer中时，position表示当前的位置。初始的position值为0。当一个数据写到Buffer后， position会向前移动到下一个可插入数据的Buffer单元。position最大可为capacity–1。当读取数据时，也是从某个特定位置读。当将Buffer从写模式切换到读模式，position会被重置为0。当从Buffer的position处读取数据时，position向前移动到下一个可读的位置。</li>
+<li>limit：在写模式下，Buffer的limit表示最多能往Buffer里写多少数据，此时limit等于capacity。当切换Buffer到读模式时， limit表示你最多能读到多少数据，此时limit会被设置成写模式下的position值。</li>
+</ul>
+<p>三个属性之间的关系，如下图所示：</p>
+<p><img src="/2024/02/16/easyrpc-xiang-mu-zong-jie/Snipaste_2024-03-26_23-58-06.png"></p>
+<p>Selector允许单线程处理多个 Channel，如果你的应用打开了多个连接（通道），但每个连接的流量都很低，使用Selector就会很方便。要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件例如有新连接进来，数据接收等。</p>
+<p>这是在一个单线程中使用一个Selector处理3个Channel的图示：</p>
+<p><img src="/2024/02/16/easyrpc-xiang-mu-zong-jie/Snipaste_2024-03-26_23-59-27.png"></p>
+<h3 id="4-Netty的核心组件有哪些？怎么使用的？"><a href="#4-Netty的核心组件有哪些？怎么使用的？" class="headerlink" title="4.Netty的核心组件有哪些？怎么使用的？"></a>4.Netty的核心组件有哪些？怎么使用的？</h3><p><code>EventLoopGroup / EventLoop</code>:一个<code>EventGroup</code>当中会包含一个或者多个<code>EventLoop</code>,<code>EventLoop</code>提供了<code>next()</code>方法,通过此方法可以获取某一个可用的线程,它从表面上看是一个不断循环的线程</p>
+<p><code>EventLoop</code>最常见的实现类是<code>NioEventLoop</code>,一个<code>NioEventLoop</code>包含了一个<code>selector</code>对象,可以支持多个<code>Channel</code>注册在其上,该<code>NioEventLoop</code>可以同时服务多个<code>Channel</code>,这多个<code>Channel</code>同时被这一个<code>NioEventLoop</code>实现了多路复用,它不是一个纯粹的IO线程,除了负责IO的读写之外,还需要兼顾下面的任务</p>
+<p><code>EventLoop</code>最常见的实现类是<code>NioEventLoop</code>,一个<code>NioEventLoop</code>包含了一个<code>selector</code>对象,可以支持多个<code>Channel</code>注册在其上,该<code>NioEventLoop</code>可以同时服务多个<code>Channel</code>,这多个<code>Channel</code>同时被这一个<code>NioEventLoop</code>实现了多路复用,它不是一个纯粹的IO线程,除了负责IO的读写之外,还需要兼顾下面的任务</p>
+<ul>
+<li><strong>系统任务</strong>：通过调用 NioEventLoop 的 <code>execute(Runnable task)</code> 方法实现，Netty 有很多系统任务，当 I&#x2F;O 线程和用户线程同时操作网络资源时，为了防止并发操作导致的锁竞争，将用户线程的操作封装成任务放入消息队列中，由 I&#x2F;O 线程负责执行，这样就实现了局部无锁化。</li>
+<li><strong>定时任务</strong>：通过调用 NioEventLoop 的 <code>schedule(Runnable command, long delay, TimeUnit unit)</code> 方法实现。</li>
+</ul>
+<p><code>Channel</code>是对网络连接的抽象,其核心功能就是执行网络<code>I/O</code>操作,是服务端和客户端进行<code>I/O</code>数据交互的媒介</p>
+<ul>
+<li>当客户端连接成功后,将新建一个<code>Channel</code></li>
+<li><code>Channel</code>从<code>EventLoopGroup</code>获得一个<code>EventLoop</code>,并且注册上去</li>
+<li><code>Channel</code>与客户端进行网络连接,关闭和读写,生成相对应的<code>event</code>,改变了<code>selectinKey</code>信息,触发<code>EventLoop</code>调度线程进行执行</li>
+<li>如果是读事件,那么就执行线程调度<code>pieline</code>来处理逻辑</li>
+</ul>
+<p>事件是怎么触发的,在<code>Channel</code>注册到上面的时候,会产生一个<code>selectionKey</code>,当有事件到来的时候,这个<code>selectionKey</code>会被修改,当它被<code>selector</code>查询到的时候,就会触发响应的回调函数</p>
+<p><strong>什么是pipeline</strong></p>
+<p><img src="/2024/02/16/easyrpc-xiang-mu-zong-jie/%E4%B8%8B%E8%BD%BD%20(7).png"></p>
+<p><code>pipeline</code>是一组事件处理的逻辑链表,一个<code>PipeLine</code>由多个<code>Handler</code>串成一个有序的链表,一个<code>Handler</code>处理完了之后,调用<code>next()</code>即可进行下一步的处理</p>
+<p>它的调用链既可以是正向的,也可以是反向的,处理入站的事件,<code>Handler</code>按照正向的顺序执行,处理出站事件的时候,<code>Handler</code>就可以按照<code>反向</code>的顺序执行</p>
+<p><strong>什么是ByteBuf</strong></p>
+<p>当需要以字节的形式发送和接收数据的时候,发送端和消费端都需要一个高效的数据容器来存储字节数据</p>
+<p>ByteBuf简单来说就是一个字节数组,它维护了一个读索引和写索引,分别用来控制对ByteBuf中数据的读写操作,还有一个capacity用来记录缓冲区的总长度,当写数据超过capacity的时候,ByteBuf会自动扩容,直到达到maxCapacity</p>
+<p><strong>关于ByteBuf的分类</strong></p>
+<ul>
+<li>什么是堆缓冲区?</li>
+</ul>
+<p>堆缓冲区其实就是在JVM的堆空间中分配一个字节数组,堆缓冲可以实现快速分配,由GC收集器管理</p>
+<ul>
+<li>什么是直接缓冲区?</li>
+</ul>
+<p>直接缓冲区使用的是直接内存,不会占用<code>JVM</code>的空间,在完成<code>Socket</code>数据传输的时候有较好的读写性能,因为不需要从内核缓冲区拷贝到用户进程缓冲区,但是在分配内存空间和释放内存的时候,会比较复杂,可能造成内存泄漏等问题</p>
+<ul>
+<li>什么是复合缓冲区?</li>
+</ul>
+<p>我们可以创建多个不同的 ByteBuf，然后提供一个这些 ByteBuf 组合的视图，也就是 CompositeByteBuf。它就像一个列表，可以动态添加和删除其中的 ByteBuf。<br>例如：一条消息由 header 和 body 两部分组成，将 header 和 body 组装成一条消息发送出去，可能 body 相同，只是 header 不同，使用CompositeByteBuf 就不用每次都重新分配一个新的缓冲区</p>
+<h3 id="5-什么是心跳机制？"><a href="#5-什么是心跳机制？" class="headerlink" title="5.什么是心跳机制？"></a>5.什么是心跳机制？</h3><p>IdleStateHandler可以监测连接的空闲状态，并在连接空闲一定时间后发送心跳包</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token class-name">NettyRpcClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 初始化构造方法，例如 EventLoopGroup, Bootstrap</span>
+    eventLoopGroup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">NioEventLoopGroup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    bootstrap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Bootstrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    bootstrap<span class="token punctuation">.</span><span class="token function">group</span><span class="token punctuation">(</span>eventLoopGroup<span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">channel</span><span class="token punctuation">(</span><span class="token class-name">NioSocketChannel</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">handler</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">LoggingHandler</span><span class="token punctuation">(</span><span class="token class-name">LogLevel</span><span class="token punctuation">.</span><span class="token constant">INFO</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token comment">//  连接的超时时间。</span>
+        <span class="token comment">//  如果超过此时间或无法建立连接，则连接将失败。</span>
+        <span class="token punctuation">.</span><span class="token function">option</span><span class="token punctuation">(</span><span class="token class-name">ChannelOption</span><span class="token punctuation">.</span><span class="token constant">CONNECT_TIMEOUT_MILLIS</span><span class="token punctuation">,</span> <span class="token number">5000</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">handler</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ChannelInitializer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">SocketChannel</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token annotation punctuation">@Override</span>
+            <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">initChannel</span><span class="token punctuation">(</span><span class="token class-name">SocketChannel</span> ch<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                <span class="token class-name">ChannelPipeline</span> p <span class="token operator">=</span> ch<span class="token punctuation">.</span><span class="token function">pipeline</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token comment">// 如果在15秒内没有向服务器发送数据，则会发送心跳请求</span>
+                p<span class="token punctuation">.</span><span class="token function">addLast</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">IdleStateHandler</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span><span class="token constant">SECONDS</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                p<span class="token punctuation">.</span><span class="token function">addLast</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">RpcMessageEncoder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                p<span class="token punctuation">.</span><span class="token function">addLast</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">RpcMessageDecoder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                p<span class="token punctuation">.</span><span class="token function">addLast</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">NettyRpcClientHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>serviceDiscovery <span class="token operator">=</span> <span class="token class-name">ExtensionLoader</span><span class="token punctuation">.</span><span class="token function">getExtensionLoader</span><span class="token punctuation">(</span><span class="token class-name">ServiceDiscovery</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getExtension</span><span class="token punctuation">(</span><span class="token class-name">ServiceDiscoveryEnum</span><span class="token punctuation">.</span><span class="token constant">ZK</span><span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>unprocessedRequests <span class="token operator">=</span> <span class="token class-name">SingletonFactory</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token class-name">UnprocessedRequests</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>channelProvider <span class="token operator">=</span> <span class="token class-name">SingletonFactory</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token class-name">ChannelProvider</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="6-怎么提高网络传输的性能？"><a href="#6-怎么提高网络传输的性能？" class="headerlink" title="6.怎么提高网络传输的性能？"></a>6.怎么提高网络传输的性能？</h3><p>长连接+池化技术</p>
+<h3 id="7-自定义注解是怎么设置的？"><a href="#7-自定义注解是怎么设置的？" class="headerlink" title="7.自定义注解是怎么设置的？"></a>7.自定义注解是怎么设置的？</h3><pre class="line-numbers language-none"><code class="language-none">RpcService   String version() default &quot;&quot;;    String group() default &quot;&quot;;
+
+RpcReference  同上
+
+RpcScan   String[] basePackage();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CustomScanner</span> <span class="token keyword">extends</span> <span class="token class-name">ClassPathBeanDefinitionScanner</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">CustomScanner</span><span class="token punctuation">(</span><span class="token class-name">BeanDefinitionRegistry</span> registry<span class="token punctuation">,</span> <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Annotation</span><span class="token punctuation">></span></span> annoType<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">super</span><span class="token punctuation">(</span>registry<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">addIncludeFilter</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">AnnotationTypeFilter</span><span class="token punctuation">(</span>annoType<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">int</span> <span class="token function">scan</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> basePackages<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">scan</span><span class="token punctuation">(</span>basePackages<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// Scan the RpcService annotation</span>
+        <span class="token class-name">CustomScanner</span> rpcServiceScanner <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CustomScanner</span><span class="token punctuation">(</span>beanDefinitionRegistry<span class="token punctuation">,</span> <span class="token class-name">RpcService</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// Scan the Component annotation</span>
+        <span class="token class-name">CustomScanner</span> springBeanScanner <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CustomScanner</span><span class="token punctuation">(</span>beanDefinitionRegistry<span class="token punctuation">,</span> <span class="token class-name">Component</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>resourceLoader <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            rpcServiceScanner<span class="token punctuation">.</span><span class="token function">setResourceLoader</span><span class="token punctuation">(</span>resourceLoader<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            springBeanScanner<span class="token punctuation">.</span><span class="token function">setResourceLoader</span><span class="token punctuation">(</span>resourceLoader<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+        <span class="token keyword">int</span> springBeanAmount <span class="token operator">=</span> springBeanScanner<span class="token punctuation">.</span><span class="token function">scan</span><span class="token punctuation">(</span><span class="token constant">SPRING_BEAN_BASE_PACKAGE</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"springBeanScanner扫描的数量 [&#123;&#125;]"</span><span class="token punctuation">,</span> springBeanAmount<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> rpcServiceCount <span class="token operator">=</span> rpcServiceScanner<span class="token punctuation">.</span><span class="token function">scan</span><span class="token punctuation">(</span>rpcScanBasePackages<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"rpcServiceScanner扫描的数量 [&#123;&#125;]"</span><span class="token punctuation">,</span> rpcServiceCount<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SpringBeanPostProcessor</span> <span class="token keyword">implements</span> <span class="token class-name">BeanPostProcessor</span>
+    
+    <span class="token comment">//bean初始化之前，检查其类上面是否有@RpcService注解，如果有，表明这是一个服务，需要在初始化之前发布注册服务</span>
+    <span class="token function">postProcessBeforeInitialization</span><span class="token punctuation">(</span><span class="token class-name">Object</span> bean<span class="token punctuation">,</span> <span class="token class-name">String</span> beanName<span class="token punctuation">)</span>
+    
+    <span class="token class-name">RpcServiceConfig</span> rpcServiceConfig <span class="token operator">=</span> <span class="token class-name">RpcServiceConfig</span><span class="token punctuation">.</span><span class="token function">builder</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">group</span><span class="token punctuation">(</span>rpcService<span class="token punctuation">.</span><span class="token function">group</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">version</span><span class="token punctuation">(</span>rpcService<span class="token punctuation">.</span><span class="token function">version</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">service</span><span class="token punctuation">(</span>bean<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"> <span class="token comment">//在bean初始化之后，获取其所有字段，查看某些字段上是否有@RpcReference字段，如果有，表明其是一个远程服务，我们要对其进行代理</span>
+    <span class="token comment">//为什么不能在bean初始化之前进行代理？本质这还是一个代理模式，那么代理模式需要有真实主题，也就是实现了接口的对象，如果我们在bean初始化之前下面的操作，</span>
+    <span class="token comment">//那么这个Field可能为null，也就是我们拿不到真实主题，自然就没办法进行代理。</span>
+
+<span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">postProcessAfterInitialization</span><span class="token punctuation">(</span><span class="token class-name">Object</span> bean<span class="token punctuation">,</span> <span class="token class-name">String</span> beanName<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="8-注册中心是怎么做的？"><a href="#8-注册中心是怎么做的？" class="headerlink" title="8.注册中心是怎么做的？"></a>8.注册中心是怎么做的？</h3><p>定义了两个接口，一个是用来做服务注册的，还有一个是用来做服务发现的，将这两个功能解耦到不同的实体上。同时还封装了一个本地缓存，ConcurrentHashMap&lt;&gt;()， </p>
+<p>查找服务，</p>
+<p>result &#x3D; zkClient.getChildren().forPath(servicePath);</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">LocalRegistry</span><span class="token punctuation">.</span><span class="token function">putOrReset</span><span class="token punctuation">(</span>rpcServiceName<span class="token punctuation">,</span> result<span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">//查找完之后本地缓存也更新一下</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<h3 id="9-怎么实现扩展的？"><a href="#9-怎么实现扩展的？" class="headerlink" title="9.怎么实现扩展的？"></a>9.怎么实现扩展的？</h3>
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">Fuchanglai</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://fuchenglai.github.io/2024/02/16/easyrpc-xiang-mu-zong-jie/">https://fuchenglai.github.io/2024/02/16/easyrpc-xiang-mu-zong-jie/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">Fuchanglai</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2024/02/17/shen-ru-li-jie-mysql-zhong-de-suo/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="深入理解MySQL中的锁">
+                        
+                        <span class="card-title">深入理解MySQL中的锁</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            锁机制是数据库为了保证数据的一致性，在共享的资源被并发访问时变得安全有序所设计的一种规则。利用 MVCC 性质进行读取的操作叫一致性读，读取数据前加锁的操作叫锁定读。
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-17
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
+                                    数据库
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/MySQL%EF%BC%8C%E9%94%81/">
+                        <span class="chip bg-color">MySQL，锁</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/02/14/qing-ren-jie-xiao-shi-yi-shou/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="情人节小诗一首">
+                        
+                        <span class="card-title">情人节小诗一首</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-14
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E7%94%9F%E6%B4%BB/" class="post-category">
+                                    生活
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%9D%82%E6%84%9F/">
+                        <span class="chip bg-color">杂感</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2024</span>
+            
+            <a href="/about" target="_blank">Fuchanglai</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            
+            <br>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/Fuchenglai" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:fucheng_lai@163.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1042788028" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 1042788028" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+    
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
