@@ -4,19 +4,6 @@
   
     
     <entry>
-      <title>RocketMQ常见面试题</title>
-      <link href="/2024/03/27/rocketmq-chang-jian-mian-shi-ti/"/>
-      <url>/2024/03/27/rocketmq-chang-jian-mian-shi-ti/</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>常用设计模式</title>
       <link href="/2024/03/15/chang-yong-she-ji-mo-shi-shang/"/>
       <url>/2024/03/15/chang-yong-she-ji-mo-shi-shang/</url>
@@ -266,6 +253,25 @@
             <tag> 进程管理 </tag>
             
         </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>RocketMQ常见面试题</title>
+      <link href="/2023/12/22/rocketmq-chang-jian-mian-shi-ti/"/>
+      <url>/2023/12/22/rocketmq-chang-jian-mian-shi-ti/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> 消息队列 </category>
+          
+      </categories>
+      
       
     </entry>
     
