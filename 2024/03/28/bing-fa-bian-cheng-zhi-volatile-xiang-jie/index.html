@@ -4,8 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="深入理解MySQL中的锁, 小ceng的后端游乐场">
-    <meta name="description" content="锁机制是数据库为了保证数据的一致性，在共享的资源被并发访问时变得安全有序所设计的一种规则。利用 MVCC 性质进行读取的操作叫一致性读，读取数据前加锁的操作叫锁定读。">
+    <meta name="keywords" content="并发编程之volatile详解, 小ceng的后端游乐场">
+    <meta name="description" content="概述保证被 volatile 修饰的共享变量的 可见性 和 有序性，但不保证原子性
+1.内存模型概述每条指令都是在CPU中执行的，而执行指令过程中，势必涉及到数据的读取和写入。由于程序运行过程中的临时数据是存放在主存（物理内存）当中的，这时">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>深入理解MySQL中的锁 | 小ceng的后端游乐场</title>
+    <title>并发编程之volatile详解 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -312,12 +313,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">深入理解MySQL中的锁</h1>
+                    <h1 class="description center-align post-title">并发编程之volatile详解</h1>
                 </div>
             </div>
         </div>
@@ -341,8 +342,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/MySQL%EF%BC%8C%E9%94%81/">
-                                <span class="chip bg-color">MySQL，锁</span>
+                            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                                <span class="chip bg-color">并发编程</span>
                             </a>
                         
                     </div>
@@ -353,8 +354,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
-                                数据库
+                            <a href="/categories/Java/" class="post-category">
+                                Java
                             </a>
                         
                     </div>
@@ -366,7 +367,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-02-17
+                    2024-03-28
                 </div>
                 
 
@@ -375,14 +376,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.3k
+                    923
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    15 分
+                    3 分
                 </div>
                 
 
@@ -400,223 +401,19 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="1-在MySQL中有哪些锁？"><a href="#1-在MySQL中有哪些锁？" class="headerlink" title="1.在MySQL中有哪些锁？"></a>1.在MySQL中有哪些锁？</h3><p>按粒度分：</p>
+                <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>保证被 volatile 修饰的共享变量的 可见性 和 有序性，但不保证原子性</p>
+<h3 id="1-内存模型概述"><a href="#1-内存模型概述" class="headerlink" title="1.内存模型概述"></a>1.内存模型概述</h3><p>每条指令都是在CPU中执行的，而执行指令过程中，势必涉及到数据的读取和写入。由于程序运行过程中的临时数据是存放在主存（物理内存）当中的，这时就存在一个问题，由于CPU执行速度很快，而从内存读取数据和向内存写入数据的过程跟CPU执行指令的速度比起来要慢的多，因此如果任何时候对数据的操作都要通过和内存的交互来进行，会大大降低指令执行的速度。因此在CPU里面就有了<strong>高速缓存</strong>。</p>
+<p>当程序在运行过程中，会将运算需要的数据从主存复制一份到CPU的高速缓存当中，那么CPU进行计算时就可以直接从它的高速缓存读取数据和向其中写入数据，当运算结束之后，再将高速缓存中的数据刷新到主存当中。</p>
+<p>以 <code>i = i + 1 ;</code>为例，当线程执行这个语句时，会先从主存当中读取i的值，然后复制一份到高速缓存当中，然后CPU执行指令对i进行加1操作，然后将数据写入高速缓存，最后将高速缓存中i最新的值刷新到主存当中。</p>
+<p>可能存在下面一种情况：初始时，两个线程分别读取 i 的值存入各自所在的CPU的高速缓存当中，然后线程A进行加1操作，然后把i的最新值 1 写入到内存。此时线程 B 的高速缓存当中i的值还是0，进行加1操作之后，i的值为1，然后线程2把i的值写入内存。</p>
+<p>最终结果i的值是1，而不是2。这就是著名的<strong>缓存一致性问题</strong>。通常称这种被多个线程访问的变量为<strong>共享变量</strong>。也就是说，如果一个变量在多个CPU中都存在缓存（一般在多线程编程时才会出现），那么就可能存在缓存不一致的问题。</p>
+<p>为了解决这个问题</p>
 <ul>
-<li>表级锁</li>
-<li>全局锁</li>
-<li>行级锁</li>
+<li>通过在总线加LOCK#锁的方式</li>
+<li>通过缓存一致性协议</li>
 </ul>
-<p>按操作分：</p>
-<ul>
-<li>共享锁</li>
-<li>排他锁</li>
-</ul>
-<p>按使用方式分类：</p>
-<ul>
-<li>乐观锁</li>
-<li>悲观锁</li>
-</ul>
-<p>InnoDB中常用的行级锁有（下文默认的存储引擎为InnoDB）：</p>
-<ul>
-<li>Record Lock：又细分为<strong>共享锁</strong>（Shared Lock，简称S锁），在事务要读取一条记录时，首先需要获取该记录的S锁。<strong>独占锁</strong>（Exclusive Lock，简称X锁），在事务要改动一条记录时，首先需要获取该记录的X锁。总之，它的作用仅仅是把一条记录锁上。</li>
-<li>Gap Lock：在RR的隔离级别下可能会出现幻读的现象。解决的方案有两种：使用MVCC方案解决；使用加锁方案解决。当对一条记录加锁后，不允许向该记录及其前一条记录的间隙之间加锁。</li>
-<li>Next-Key Lock：Record Lock + Gap Lock &#x3D; Next-Key Lock</li>
-</ul>
-<p>常用的表级锁有：</p>
-<ul>
-<li>意向共享锁（Intention Shared Lock)：简称IS锁，当事务准备在某条记录上加S锁时，需要先在表级别加IS锁</li>
-<li>意向独占锁（Intention Exclusive Lock）：简称IX锁，当事务准备在某条记录上加X锁时，需要先在表级别加IX锁</li>
-<li>AUTO-INC锁：为某个列添加AUTO_INCREMENT属性后，在插入记录时，就会添加一个AUTO-INC锁，其他事务的插入语句就会被阻塞。</li>
-<li>元数据锁（Metadata Lock，MDL）</li>
-</ul>
-<p>IS锁，IX锁的提出仅仅是为了在之后加表级别的X锁和S锁时可以快速判断表中的记录是否被上锁，避免用遍历的方式来查看表中有没有上锁的记录。</p>
-<blockquote>
-<p>其实表级别的X锁和S锁相当的“鸡肋”，它们并不会提供什么额外保护，只是会降低并发能力而已，只会在一些特殊的情况用到（比如系统崩溃恢复时）。</p>
-</blockquote>
-<p>X锁与任何锁不兼容，IX锁与S&#x2F;X锁不兼容。</p>
-<h3 id="2-什么时候要用全局锁，怎么用？"><a href="#2-什么时候要用全局锁，怎么用？" class="headerlink" title="2.什么时候要用全局锁，怎么用？"></a>2.什么时候要用全局锁，怎么用？</h3><p>锁的基本应用场景是在<code>多线程并发操作</code>下使用的，全局锁也是如此</p>
-<p><code>Mysql</code>需要定期做一个数据库的备份，由于备份的过程涉及到大量的<code>I/O</code>，因此在这种情况下，如果不对用户的访问加以限制，那么就很有可能产生并发的错误</p>
-<p>我们假设一个网购的例子，A从商店中购买了C商品，消耗了D元，那么这个过程可以分为对两张表的操作</p>
-<ul>
-<li>1.用户表中A的余额要减D</li>
-<li>2.商店中C商品的库存要减去1</li>
-</ul>
-<p>假设现在数据库备份线程正在执行，假设没有加锁，允许用户线程并发执行。1在备份线程备份数据库之前执行了，2在备份线程数据库之后执行了。这样的话就产生了数据的不一致的问题，最终导致错误。当1和2的顺序调换的时候，会导致更加严重的问题，用户相当于买了一件商品而且余额没减!这是严重的生产事故。</p>
-<p>要使用全局锁，那么可以使用内置的悲观锁，使用的指令如下：</p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">flush <span class="token keyword">tables</span> <span class="token keyword">with</span> <span class="token keyword">read</span> <span class="token keyword">lock</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>执行完了之后，整个数据库的状态就处于只读的状态了，当执行以下几种指令的时候，就会导致阻塞</p>
-<ul>
-<li>对数据库表的结构的DDL语句:比如说<code>alter table</code>、<code>drop table</code>等语句</li>
-<li>对数据库数据的CRUD的DML语句，比如说<code>insert</code>、<code>update</code>、<code>delete</code>等语句</li>
-</ul>
-<p>在加锁完成业务后，就可以执行解锁：</p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">unlock</span> <span class="token keyword">tables</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<blockquote>
-<p>当会话断开了，全局锁就会被自动释放</p>
-</blockquote>
-<h3 id="3-什么是锁定读，怎么使用锁定读？"><a href="#3-什么是锁定读，怎么使用锁定读？" class="headerlink" title="3.什么是锁定读，怎么使用锁定读？"></a>3.什么是锁定读，怎么使用锁定读？</h3><p>在<code>InnoDB</code>下，普通的<code>select</code>语句根据事务的隔离级别可能会读取到历史版本数据，读-写操作并不冲突，性能更高；如果采用加锁方式，读-写操作彼此需要并发执行，从而影响性能。一般情况下我们更愿意采用MVCC来解决读-写并发问题，但是在某些特殊业务场景中，我们必须采用加锁的方式读取最新数据，那也是没办法的事。</p>
-<p>读取记录时加S锁：</p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token keyword">lock</span> <span class="token operator">in</span> <span class="token keyword">share</span> <span class="token keyword">mode</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>读取记录时加X锁：</p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token keyword">for</span> <span class="token keyword">update</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-
-
-<h3 id="4-锁的内存结构"><a href="#4-锁的内存结构" class="headerlink" title="4.锁的内存结构"></a>4.锁的内存结构</h3><p>对一条记录加锁的本质就是在内存中创建一个锁结构与之关联，隐式锁除外。</p>
-<p>为了节约内存空间，在对不同记录加锁时，如果符合下面这些条件，这些记录的锁就可以放到一个锁结构中：</p>
-<ul>
-<li>在同一个事务事务中进行加锁操作；</li>
-<li>被加锁的记录在同一个页面中；</li>
-<li>加锁的类型是一样的</li>
-<li>等待状态是一样的</li>
-</ul>
-<p>具体的锁结构为：</p>
-<ul>
-<li>事务信息：锁对应的事务信息，一个锁属于一个事务</li>
-<li>索引信息：对于行级锁，需要记录加锁的记录属于哪个索引</li>
-<li>表锁和行锁信息：表锁记录着锁定的表，行锁记录了 Space ID 所在表空间、Page Number 所在的页号、n_bits 使用了多少比特</li>
-<li>type_mode：一个 32 比特的数，被分成 lock_mode、lock_type、rec_lock_type 三个部分<ul>
-<li>lock_mode：锁模式，记录是共享锁、排他锁、意向锁之类</li>
-<li>lock_type：代表表级锁还是行级锁</li>
-<li>rec_lock_type：代表行锁的具体类型和 is_waiting 属性，is_waiting &#x3D; true 时表示当前事务尚未获取到锁，处于等待状态。事务获取锁后的锁结构是 is_waiting 为 false，释放锁时会检查是否与当前记录关联的锁结构，如果有就唤醒对应事务的线程</li>
-</ul>
-</li>
-</ul>
-<h3 id="5-什么是隐式锁"><a href="#5-什么是隐式锁" class="headerlink" title="5.什么是隐式锁"></a>5.什么是隐式锁</h3><p>在内存总生成锁结构并维护它们并不是一件零成本的事，因此提出了隐式锁。比如一般情况执行INSERT语句是不需要在内存中生成锁结构的（当然，如果即将插入的间隙已经被其他事务加上了gap锁，那么本次INSERT操作会阻塞，并且当前事务会在该间隙上加上一个插入意向锁），单纯依靠隐式锁（其实就是记录的trx_id属性）保护插入的记录。</p>
-<ul>
-<li>聚簇索引：索引记录有 trx_id 隐藏列，表示最后改动该记录的事务 id，插入数据后事务 id 就是当前事务。其他事务想获取该记录的锁时会判断当前记录的事务 id 是否是活跃的，如果不是就可以正常加锁；如果是就创建一个 X 的锁结构，该锁的 is_waiting 是 false，为自己的事务创建一个锁结构，is_waiting 是 true（类似 Java 中的锁升级）</li>
-<li>二级索引：获取数据页 Page Header 中的 PAGE_MAX_TRX_ID 属性，代表修改当前页面的最大的事务 ID，如果小于当前活跃的最小事务 id，就证明插入该数据的事务已经提交，否则就需要获取到主键值进行回表操作</li>
-</ul>
-<p>隐式锁起到了延迟生成锁的效果，如果其他事务与隐式锁没有冲突，就可以避免锁结构的生成，节省了内存资源</p>
-<p>INSERT 在两种情况下会生成锁结构：</p>
-<ul>
-<li><p>重复键：在插入主键或唯一二级索引时遇到重复的键值会报错，在报错前需要对对应的聚簇索引进行加锁</p>
-<ul>
-<li>隔离级别 &lt;&#x3D; Read Uncommitted，加 S 型 Record Lock</li>
-<li>隔离级别 &gt;&#x3D; Repeatable Read，加 S 型 next_key 锁</li>
-</ul>
-</li>
-<li><p>外键检查：如果待插入的记录在父表中可以找到，会对父表的记录加 S 型 Record Lock。如果待插入的记录在父表中找不到</p>
-<ul>
-<li>隔离级别 &lt;&#x3D; Read Committed，不加锁</li>
-<li>隔离级别 &gt;&#x3D; Repeatable Read，加间隙锁</li>
-</ul>
-<h3 id="6-怎么优化锁？"><a href="#6-怎么优化锁？" class="headerlink" title="6.怎么优化锁？"></a>6.怎么优化锁？</h3><p>InnoDB 存储引擎实现了行级锁定，虽然在锁定机制的实现方面带来了性能损耗可能比表锁会更高，但是在整体并发处理能力方面要远远优于 MyISAM 的表锁，当系统并发量较高的时候，InnoDB 的整体性能远远好于 MyISAM</p>
-<p>但是使用不当可能会让 InnoDB 的整体性能表现不仅不能比 MyISAM 高，甚至可能会更差</p>
-<p>优化建议：</p>
-<ul>
-<li>尽可能让所有数据检索都能通过索引来完成，避免无索引行锁升级为表锁</li>
-<li>合理设计索引，尽量缩小锁的范围</li>
-<li>尽可能减少索引条件及索引范围，避免间隙锁</li>
-<li>尽量控制事务大小，减少锁定资源量和时间长度</li>
-<li>尽可使用低级别事务隔离（需要业务层面满足需求）</li>
-</ul>
-<h3 id="7-什么是锁升级？"><a href="#7-什么是锁升级？" class="headerlink" title="7.什么是锁升级？"></a>7.什么是锁升级？</h3><p>索引失效造成<strong>行锁升级为表锁</strong>，不通过索引检索数据，全局扫描的过程中 InnoDB 会将对表中的所有记录加锁，实际效果和<strong>表锁</strong>一样，实际开发过程应避免出现索引失效的状况</p>
-<ul>
-<li><p>查看当前表的索引：</p>
-<pre class="line-numbers language-mysql" data-language="mysql"><code class="language-mysql">SHOW INDEX FROM test_innodb_lock;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-</li>
-<li><p>关闭自动提交功能：</p>
-<pre class="line-numbers language-mysql" data-language="mysql"><code class="language-mysql">SET AUTOCOMMIT&#x3D;0;	-- C1、C2<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-</li>
-<li><p>执行更新语句：</p>
-<pre class="line-numbers language-mysql" data-language="mysql"><code class="language-mysql">UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE name&#x3D;10;	-- C1
-UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p><img src="/2024/02/17/shen-ru-li-jie-mysql-zhong-de-suo/MySQL-InnoDB%20%E9%94%81%E5%8D%87%E7%BA%A7.png"></p>
-<p>索引失效：执行更新时 name 字段为 varchar 类型，造成索引失效，最终行锁变为表锁 </p>
-<h3 id="8-什么是死锁，如何避免？"><a href="#8-什么是死锁，如何避免？" class="headerlink" title="8.什么是死锁，如何避免？"></a>8.什么是死锁，如何避免？</h3><p>不同事务由于互相持有对方需要的锁而导致事务都无法继续执行的情况称为死锁。</p>
-<p>例如：事务T1需要对记录A和B进行修改，事务T2也需要对记录A和B进行修改，当T1获取了记录A的X锁时，需要获取B的X锁，此时T2获取了B的X锁，准备去获取A的X锁。这个时候就发生了死锁。</p>
-<p>解决策略：</p>
-<ul>
-<li><p>超时回滚。当一个事务等待时间超过设置的阈值时，就会进行回滚，另一个事务就能正常执行。，超时时间可以通过参数 innodb_lock_wait_timeout 来设置，默认 50 秒，但是时间的设置不好控制。如果一个事务没有死锁，就是因为业务执行比较慢，但是还没有执行就超时然后回滚了，所以一般不采取该方式。</p>
-</li>
-<li><p>死锁检测。采用等待图的方式来进行死锁检测，发现死锁后<strong>主动回滚死锁链条中较小的一个事务</strong>，让其他事务得以继续执行。这是一种更为主动的方式。将参数 <code>innodb_deadlock_detect</code> 设置为 on，表示开启该功能（事务较小的意思就是事务执行过程中插入、删除、更新的记录条数）</p>
-<p>死锁检测并不是每个语句都要检测，只有在加锁访问的行上已经有锁时，当前事务被阻塞了才会检测，也是从当前事务开始进行检测</p>
-</li>
-</ul>
-<p>通过执行 <code>SHOW ENGINE INNODB STATUS</code> 可以查看最近发生的一次死循环，全局系统变量 <code>innodb_print_all_deadlocks</code> 设置为 on，就可以将每个死锁信息都记录在 MySQL 错误日志中</p>
-<p>死锁一般是行级锁，当表锁发生死锁时，会在事务中访问其他表时<strong>直接报错</strong>，破坏了持有并等待的死锁条件</p>
-<blockquote>
-<p>等待图：图中出现回路，说明出现了死锁的情况。</p>
-</blockquote>
-<p><img src="/2024/02/17/shen-ru-li-jie-mysql-zhong-de-suo/20200215132718969.png"></p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="6-什么是乐观锁？"><a href="#6-什么是乐观锁？" class="headerlink" title="6.什么是乐观锁？"></a>6.什么是乐观锁？</h3><p>悲观锁：在整个数据处理过程中，将数据处于锁定状态，为了保证事务的隔离性，就需要一致性锁定读。读取数据时给加锁，其它事务无法修改这些数据，修改删除数据时也加锁，其它事务同样无法读取这些数据</p>
-<p>悲观锁和乐观锁使用前提：</p>
-<ul>
-<li>对于读的操作远多于写的操作的时候，一个更新操作加锁会阻塞所有的读取操作，降低了吞吐量，最后需要释放锁，锁是需要一些开销的，这时候可以选择乐观锁</li>
-<li>如果是读写比例差距不是非常大或者系统没有响应不及时，吞吐量瓶颈的问题，那就不要去使用乐观锁，它增加了复杂度，也带来了业务额外的风险，这时候可以选择悲观锁</li>
-</ul>
-<p>乐观锁的实现方式：就是 CAS，比较并交换</p>
-<ul>
-<li><p>版本号</p>
-<ol>
-<li><p>给数据表中添加一个 version 列，每次更新后都将这个列的值加 1</p>
-</li>
-<li><p>读取数据时，将版本号读取出来，在执行更新的时候，比较版本号</p>
-</li>
-<li><p>如果相同则执行更新，如果不相同，说明此条数据已经发生了变化</p>
-</li>
-<li><p>用户自行根据这个通知来决定怎么处理，比如重新开始一遍，或者放弃本次更新</p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">-- 创建city表</span>
-<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> city<span class="token punctuation">(</span>
-	id <span class="token keyword">INT</span> <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token keyword">AUTO_INCREMENT</span>，  <span class="token comment">-- 城市id</span>
-	NAME <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span>，                   <span class="token comment">-- 城市名称</span>
-	VERSION <span class="token keyword">INT</span>                         <span class="token comment">-- 版本号</span>
-<span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-<span class="token comment">-- 添加数据</span>
-<span class="token keyword">INSERT</span> <span class="token keyword">INTO</span> city <span class="token keyword">VALUES</span> <span class="token punctuation">(</span><span class="token boolean">NULL</span>，<span class="token string">'北京'</span>，<span class="token number">1</span><span class="token punctuation">)</span>，<span class="token punctuation">(</span><span class="token boolean">NULL</span>，<span class="token string">'上海'</span>，<span class="token number">1</span><span class="token punctuation">)</span>，<span class="token punctuation">(</span><span class="token boolean">NULL</span>，<span class="token string">'广州'</span>，<span class="token number">1</span><span class="token punctuation">)</span>，<span class="token punctuation">(</span><span class="token boolean">NULL</span>，<span class="token string">'深圳'</span>，<span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-<span class="token comment">-- 修改北京为北京市</span>
-<span class="token comment">-- 1.查询北京的version</span>
-<span class="token keyword">SELECT</span> VERSION <span class="token keyword">FROM</span> city <span class="token keyword">WHERE</span> NAME<span class="token operator">=</span><span class="token string">'北京'</span><span class="token punctuation">;</span>
-<span class="token comment">-- 2.修改北京为北京市，版本号+1。并对比版本号</span>
-<span class="token keyword">UPDATE</span> city <span class="token keyword">SET</span> NAME<span class="token operator">=</span><span class="token string">'北京市'</span>，VERSION<span class="token operator">=</span>VERSION<span class="token operator">+</span><span class="token number">1</span> <span class="token keyword">WHERE</span> NAME<span class="token operator">=</span><span class="token string">'北京'</span> <span class="token operator">AND</span> VERSION<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><p>时间戳</p>
-<ul>
-<li>和版本号方式基本一样，给数据表中添加一个列，名称无所谓，数据类型需要是 <strong>timestamp</strong></li>
-<li>每次更新后都将最新时间插入到此列</li>
-<li>读取数据时，将时间读取出来，在执行更新的时候，比较时间</li>
-<li>如果相同则执行更新，如果不相同，说明此条数据已经发生了变化</li>
-</ul>
-</li>
-</ul>
-<p>乐观锁的异常情况：如果 version 被其他事务抢先更新，则在当前事务中更新失败，trx_id 没有变成当前事务的 ID，当前事务再次查询还是旧值，就会出现<strong>值没变但是更新不了</strong>的现象（anomaly）</p>
-<p>解决方案：每次 CAS 更新不管成功失败，就结束当前事务；如果失败则重新起一个事务进行查询更新</p>
-</li>
-</ol>
-</li>
-</ul>
-<h3 id="7-AUTO-INC锁是什么？有什么用？"><a href="#7-AUTO-INC锁是什么？有什么用？" class="headerlink" title="7.AUTO-INC锁是什么？有什么用？"></a>7.AUTO-INC锁是什么？有什么用？</h3><p>通常来说，我们会将表的主键设置为自增的，而自增主键的id分配的这个过程并不是原子性的，因此可能会导致多个线程同时插入数据的时候，导致自增主键相同的问题。</p>
-<p>那么在这样的情况下，就需要给分配自增主键的过程的加一个锁，让每个线程都能分配到唯一的ID</p>
-<p>目前来说，自增主键分配过程的上锁策略有三种，可以通过调整<code>innodb_autoinc_lock_mode</code>这个变量进行实现</p>
-<p>第一种，在<code>innodb_autoinc_lock_mode = 0 </code>的时候，采取的是最安全的方式，也就是只有当语句执行完毕的时候，才会释放这个锁，然后其他想要<code>insert</code>的线程才能够获取到自增的id，会造成线程的阻塞</p>
-<p>第二种，在<code>innodb_autoinc_lock_mode = 1</code>的时候，采取了一种折中的方案，当能够提前知道需要多少个ID的时候，就会使用一种轻量级锁的机制，这种机制的工作原理就是对字段进行上锁，当有人在申请ID的时候，其他事务不能够插队，但是当不知道当前需要多少个ID的时候，就需要加这个表级锁了</p>
-<p>第三种，在<code>innodb_autoinc_lock_mode = 2</code>的时候，一律采取轻量级锁的机制，也就是只对字段加锁，而不对整个表进行加锁，在这种情况会产生并发问题，这也就是为什么<code>=1</code>时在是不知道插入语句条数的时候要采用表锁的原因</p>
-<p>考虑一个主从复制的场景</p>
-<p><img src="/2024/02/17/shen-ru-li-jie-mysql-zhong-de-suo/%E4%B8%8B%E8%BD%BD%20(6).png"></p>
-<p>在这个情况下，有两个线程并发执行，具体的操作可以描述如下:</p>
-<ul>
-<li>sessionB先插入了两条记录，内容是<code>(1，1，1)、(2，2，2)</code></li>
-<li>并发执行，A插入了<code>(3，5，5)</code></li>
-<li>然后sessionB插入了<code>(4，3，3)，(5，4，4)</code></li>
-</ul>
-<p>于是在这种情况下，<code>sessionB</code>的插入的id是不连续的，然而在<code>lock_mode = 1</code>的时候是会是连续的。</p>
-<p>讨论主从复制的情况:当主库发生了这种情况，<code>bin log</code>面对<code>t2</code>表的更新只会记录这两个<code>session</code>的<code>insert</code>的语句的原始逻辑，也就是主键全部为null，而在这样的情况下，我们首先要明白，记录日志的时候实际上是按照<code>session</code>的整体进行记录的，要么先记录 <code>sessionA</code>要么就先记录<code>sessionB</code>，于是并发执行的情况就被抹除掉了，最终导致了从库数据和主库的数据不一致</p>
-<blockquote>
-<p>怎么解决呢?</p>
-</blockquote>
-<p>要解决这个问题，<code>binlog</code>的日志格式应该要设置为<code>binlog_foramt = row</code>，这样设置能够使得<code>bin log</code>里面记录的是主库分配的自增值，到备库执行的时候，主库的自增值是啥，从库的就会是啥</p>
+<h3 id="2-Java内存模型"><a href="#2-Java内存模型" class="headerlink" title="2.Java内存模型"></a>2.Java内存模型</h3><p>在Java虚拟机规范中试图定义一种Java内存模型（Java Memory Model，JMM）来屏蔽各个硬件平台和操作系统的内存访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果。那么Java内存模型规定了哪些东西呢，它定义了程序中变量的访问规则，往大一点说是定义了程序执行的次序。注意，为了获得较好的执行性能，Java内存模型并没有限制执行引擎使用处理器的寄存器或者高速缓存来提升指令执行速度，也没有限制编译器对指令进行重排序。也就是说，在java内存模型中，也会存在缓存一致性问题和指令重排序的问题。</p>
+<p>Java内存模型规定所有的变量都是存在主存当中（类似于前面说的物理内存），每个线程都有自己的<strong>工作内存（类似于前面的高速缓存）</strong>。线程对变量的所有操作都必须在工作内存中进行，而不能直接对主存进行操作。并且每个线程不能访问其他线程的工作内存。</p>
 
                 
             </div>
@@ -643,7 +440,7 @@ UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span ar
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2024/02/17/shen-ru-li-jie-mysql-zhong-de-suo/">https://fuchenglai.github.io/2024/02/17/shen-ru-li-jie-mysql-zhong-de-suo/</a>
+                    <a href="https://fuchenglai.github.io/2024/03/28/bing-fa-bian-cheng-zhi-volatile-xiang-jie/">https://fuchenglai.github.io/2024/03/28/bing-fa-bian-cheng-zhi-volatile-xiang-jie/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -681,8 +478,8 @@ UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span ar
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/MySQL%EF%BC%8C%E9%94%81/">
-                                    <span class="chip bg-color">MySQL，锁</span>
+                                <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                                    <span class="chip bg-color">并发编程</span>
                                 </a>
                             
                         </div>
@@ -761,17 +558,18 @@ UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span ar
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2024/02/19/sql-yu-ju-you-hua-de-chang-yong-ji-qiao/">
+                <a href="/2024/03/28/bing-fa-bian-cheng-zhi-volatile-xiang-jie/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="SQL语句优化的常用技巧">
+                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="并发编程之volatile详解">
                         
-                        <span class="card-title">SQL语句优化的常用技巧</span>
+                        <span class="card-title">并发编程之volatile详解</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -781,26 +579,27 @@ UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span ar
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-19
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-28
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
-                                    数据库
+                            <a href="/categories/Java/" class="post-category">
+                                    Java
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/SQL%E8%B0%83%E4%BC%98/">
-                        <span class="chip bg-color">SQL调优</span>
+                    <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                        <span class="chip bg-color">并发编程</span>
                     </a>
                     
                 </div>
@@ -814,13 +613,13 @@ UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span ar
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/02/14/qing-ren-jie-xiao-shi-yi-shou/">
+                <a href="/2024/03/15/chang-yong-she-ji-mo-shi-shang/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="情人节小诗一首">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="常用设计模式">
                         
-                        <span class="card-title">情人节小诗一首</span>
+                        <span class="card-title">常用设计模式</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -831,27 +630,19 @@ UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span ar
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-14
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-15
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E7%94%9F%E6%B4%BB/" class="post-category">
-                                    生活
+                            <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="post-category">
+                                    设计模式
                                 </a>
                             
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E6%9D%82%E6%84%9F/">
-                        <span class="chip bg-color">杂感</span>
-                    </a>
-                    
                 </div>
                 
             </div>
