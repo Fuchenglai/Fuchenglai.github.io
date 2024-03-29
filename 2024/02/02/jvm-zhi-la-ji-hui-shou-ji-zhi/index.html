@@ -4,9 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="并发编程之volatile详解, 小ceng的后端游乐场">
-    <meta name="description" content="概述保证被 volatile 修饰的共享变量的 可见性 和 有序性，但不保证原子性
-1.内存模型概述每条指令都是在CPU中执行的，而执行指令过程中，势必涉及到数据的读取和写入。由于程序运行过程中的临时数据是存放在主存（物理内存）当中的，这时">
+    <meta name="keywords" content="JVM之垃圾回收机制, 小ceng的后端游乐场">
+    <meta name="description" content="1.到底谁是垃圾？引用计数法日常生活中，如果一个东西经常没被使用，那么这个对象可以说就是垃圾。在 Java 中也是如此，如果一个对象不可能再被引用，那么这个对象就是垃圾，应该被回收。
+根据这个思想，我们很容易想到使用引用计数的方法来判断垃圾">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>并发编程之volatile详解 | 小ceng的后端游乐场</title>
+    <title>JVM之垃圾回收机制 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -313,12 +313,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">并发编程之volatile详解</h1>
+                    <h1 class="description center-align post-title">JVM之垃圾回收机制</h1>
                 </div>
             </div>
         </div>
@@ -342,8 +342,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
-                                <span class="chip bg-color">并发编程</span>
+                            <a href="/tags/JVM/">
+                                <span class="chip bg-color">JVM</span>
                             </a>
                         
                     </div>
@@ -367,7 +367,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-01-24
+                    2024-02-02
                 </div>
                 
 
@@ -376,7 +376,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.9k
+                    2k
                 </div>
                 
 
@@ -401,68 +401,38 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>保证被 volatile 修饰的共享变量的 可见性 和 有序性，但不保证原子性</p>
-<h3 id="1-内存模型概述"><a href="#1-内存模型概述" class="headerlink" title="1.内存模型概述"></a>1.内存模型概述</h3><p>每条指令都是在CPU中执行的，而执行指令过程中，势必涉及到数据的读取和写入。由于程序运行过程中的临时数据是存放在主存（物理内存）当中的，这时就存在一个问题，由于CPU执行速度很快，而从内存读取数据和向内存写入数据的过程跟CPU执行指令的速度比起来要慢的多，因此如果任何时候对数据的操作都要通过和内存的交互来进行，会大大降低指令执行的速度。因此在CPU里面就有了<strong>高速缓存</strong>。</p>
-<p>当程序在运行过程中，会将运算需要的数据从主存复制一份到CPU的高速缓存当中，那么CPU进行计算时就可以直接从它的高速缓存读取数据和向其中写入数据，当运算结束之后，再将高速缓存中的数据刷新到主存当中。</p>
-<p>以 <code>i = i + 1 ;</code>为例，当线程执行这个语句时，会先从主存当中读取i的值，然后复制一份到高速缓存当中，然后CPU执行指令对i进行加1操作，然后将数据写入高速缓存，最后将高速缓存中i最新的值刷新到主存当中。</p>
-<p>可能存在下面一种情况：初始时，两个线程分别读取 i 的值存入各自所在的CPU的高速缓存当中，然后线程A进行加1操作，然后把i的最新值 1 写入到内存。此时线程 B 的高速缓存当中i的值还是0，进行加1操作之后，i的值为1，然后线程2把i的值写入内存。</p>
-<p>最终结果i的值是1，而不是2。这就是著名的<strong>缓存一致性问题</strong>。通常称这种被多个线程访问的变量为<strong>共享变量</strong>。也就是说，如果一个变量在多个CPU中都存在缓存（一般在多线程编程时才会出现），那么就可能存在缓存不一致的问题。</p>
-<p>为了解决这个问题</p>
+                <h3 id="1-到底谁是垃圾？"><a href="#1-到底谁是垃圾？" class="headerlink" title="1.到底谁是垃圾？"></a>1.到底谁是垃圾？</h3><h4 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h4><p>日常生活中，如果一个东西经常没被使用，那么这个对象可以说就是垃圾。在 Java 中也是如此，如果一个对象不可能再被引用，那么这个对象就是垃圾，应该被回收。</p>
+<p>根据这个思想，我们很容易想到使用引用计数的方法来判断垃圾。在一个对象被引用时加一，被去除引用时减一，这样我们就可以通过判断引用计数是否为零来判断一个对象是否为垃圾。</p>
+<p>上面的这种方法虽然简单，但是其存在一个致命的问题，那就是<strong>循环引用</strong>。</p>
+<p>A 引用了 B，B 引用了 C，C 引用了 A，它们各自的引用计数都为 1。但是它们三个对象却从未被其他对象引用，只有它们自身互相引用。从垃圾的判断思想来看，它们三个确实是不被其他对象引用的，但是此时它们的引用计数却不为零。这就是引用计数法存在的循环引用问题。</p>
+<h4 id="GC-Root-Tracing-算法"><a href="#GC-Root-Tracing-算法" class="headerlink" title="GC Root Tracing 算法"></a>GC Root Tracing 算法</h4><p>其大概的过程是这样：从 GC Root 出发，所有可达的对象都是存活的对象，而所有不可达的对象都是垃圾。</p>
+<p>可以看到这里最重要的就是 GC Root 这个集合了，其实 GC Root 就是一组活跃引用的集合。但是这个集合又与一般的对象集合不太一样，这些集合是经过特意筛选出来的，通常包括：</p>
 <ul>
-<li>通过在总线加LOCK#锁的方式</li>
-<li>通过缓存一致性协议</li>
+<li>所有当前被加载的 Java 类</li>
+<li>Java 类的引用类型静态变量</li>
+<li>Java类的运行时常量池里的引用类型常量</li>
+<li>VM的一些静态数据结构里指向GC堆里的对象的引用</li>
+<li>等等</li>
 </ul>
-<h3 id="2-Java内存模型"><a href="#2-Java内存模型" class="headerlink" title="2.Java内存模型"></a>2.Java内存模型</h3><p>在Java虚拟机规范中试图定义一种Java内存模型（Java Memory Model，JMM）来屏蔽各个硬件平台和操作系统的内存访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果。那么Java内存模型规定了哪些东西呢，它定义了程序中变量的访问规则，往大一点说是定义了程序执行的次序。注意，为了获得较好的执行性能，Java内存模型并没有限制执行引擎使用处理器的寄存器或者高速缓存来提升指令执行速度，也没有限制编译器对指令进行重排序。也就是说，在java内存模型中，也会存在缓存一致性问题和指令重排序的问题。</p>
-<p>Java内存模型规定所有的变量都是存在主存当中（类似于前面说的物理内存），每个线程都有自己的<strong>工作内存（类似于前面的高速缓存）</strong>。线程对变量的所有操作都必须在工作内存中进行，而不能直接对主存进行操作。并且每个线程不能访问其他线程的工作内存。</p>
-<table>
-<thead>
-<tr>
-<th>概念</th>
-<th>定义</th>
-<th align="center">备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>原子性</td>
-<td>一个操作&#x2F;一系列操作</td>
-<td align="center">要么全部执行&#x2F;全部不执行</td>
-</tr>
-<tr>
-<td>可见性</td>
-<td>当一个线程修改了共享变量的值后，其他线程能够立刻看到共享变量值的修改</td>
-<td align="center">JMM的内存空间分为：主存和工作内存（变量存于主存中；线程使用的是自身工作内存，更新后再同步到主存）。共享属性的修改过程：从主存中读取&amp;复制到工作内存中，在工作内存中修改完成后，再同步到主存、从而刷新主存中的值。若线程A在工作内存中修改完成但还未刷新主存中的值，线程B看到的值还是旧值。此时，可见性就无法保证</td>
-</tr>
-<tr>
-<td>有序性</td>
-<td>程序的运行顺序看起来 和 我们编写的逻辑的顺序一致，但计算机在实际执行中却不一定</td>
-<td align="center">为了提高性能，编译器&amp;处理器都会对代码进行重新排序。但有个前提：重新排序的结果要和单线程执行程序顺序一致</td>
-</tr>
-</tbody></table>
-<h3 id="3-保证可见性"><a href="#3-保证可见性" class="headerlink" title="3.保证可见性"></a>3.保证可见性</h3><p>volatile修饰的属性保证每次读取都能读到最新的值，<strong>但不会 并且 无法更新已经读了的值</strong></p>
-<p>线程A在工作内存中修改的共享属性值会立即刷新到主存，<strong>线程B&#x2F;C&#x2F;D每次通过读写屏障</strong>来达到<strong>类似</strong>于直接从主存中读取属性值</p>
+<p>简单地说，GC Root 就是经过精心挑选的一组活跃引用，这些引用是肯定存活的。那么通过这些引用延伸到的对象，自然也是存活的。</p>
+<h3 id="2-如何进行垃圾回收？"><a href="#2-如何进行垃圾回收？" class="headerlink" title="2.如何进行垃圾回收？"></a>2.如何进行垃圾回收？</h3><p>到这里，我们了解了什么是垃圾以及 JVM 是如何判断垃圾对象的。那么识别出垃圾对象之后，JVM 是如何进行垃圾回收的呢？这就是我们下面要讲的内容：如何进行垃圾回收？</p>
+<p>垃圾回收算法简单地说有三种算法：标记清除算法、复制算法、标记压缩算法。</p>
 <ul>
-<li>只是类似，网上有些说volatile修饰的变量读写直接在主存中操作，这种说法是不对的，只是表现出这种效果</li>
-<li>读写屏障是一条CPU指令；插入一个读写屏障 &#x3D; 告诉CPU &amp; 编译器先于这个命令的必须先执行，后于这个命令的必须后执行（有序性）</li>
-<li>读写屏障另一个作用是强制更新一次不同CPU的缓存。例如，一个写屏障会 把这个屏障前写入的数据刷新到缓存，以此保证可见性</li>
+<li><strong>标记清除算法</strong>：从名字可以看到其分为两个阶段：标记阶段和清除阶段。一种可行的实现方式是，在标记阶段，标记所有由 GC Root 触发的可达对象。此时，所有未被标记的对象就是垃圾对象。之后在清除阶段，清除所有未被标记的对象。标记清除算法最大的问题就是空间碎片问题。如果空间碎片过多，则会导致内存空间的不连续。虽说大对象也可以分配在不连续的空间中，但是效率要低于连续的内存空间。</li>
+<li><strong>复制算法</strong>：复制算法的核心思想是将原有的内存空间分为两块，每次只使用一块，在垃圾回收时，将正在使用的内存中的存活对象复制到未使用的内存块中。之后清除正在使用的内存块中的所有对象，之后交换两个内存块的角色，完成垃圾回收。该算法的缺点是要将内存空间折半，极大地浪费了内存空间。</li>
+<li><strong>标记压缩算法</strong>：标记压缩算法可以说是标记清除算法的优化版，其同样需要经历两个阶段，分别是：标记结算、压缩阶段。在标记阶段，从 GC Root 引用集合触发去标记所有对象。在压缩阶段，其则是将所有存活的对象压缩在内存的一边，之后清理边界外的所有空间。</li>
 </ul>
-<h3 id="4-保证有序性"><a href="#4-保证有序性" class="headerlink" title="4.保证有序性"></a>4.保证有序性</h3><p>当对volatile修饰的变量进行读&#x2F;写操作时，其前面的代码必须已执行完成 &amp; 结果对后续的操作可见</p>
-<p>原理：重排序时，以volatile修饰变量的读&#x2F;写操作代码行为分界线，读&#x2F;写操作前面的代码不许排序到后面，后面同理不许排序到前面。由此保证有序性</p>
-<h3 id="5-不保证原子性"><a href="#5-不保证原子性" class="headerlink" title="5.不保证原子性"></a>5.不保证原子性</h3><p>volatile修饰的属性若在修改前已读取了值，那么修改后，无法改变已经复制到工作内存的值，即无法阻止并发的情况</p>
-<h3 id="6-volatile关键字的两层语义"><a href="#6-volatile关键字的两层语义" class="headerlink" title="6.volatile关键字的两层语义"></a>6.volatile关键字的两层语义</h3><p>一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile修饰之后，那么就具备了两层语义：</p>
-<ul>
-<li>保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。</li>
-<li>禁止进行指令重排序。</li>
-</ul>
-<h3 id="7-volatile的原理和实现机制"><a href="#7-volatile的原理和实现机制" class="headerlink" title="7.volatile的原理和实现机制"></a>7.volatile的原理和实现机制</h3><p>下面这段话摘自《深入理解Java虚拟机》：</p>
-<blockquote>
-<p>观察加入volatile关键字和没有加入volatile关键字时所生成的汇编代码发现，加入volatile关键字时，会多出一个lock前缀指令</p>
-</blockquote>
-<p>lock前缀指令实际上相当于一个内存屏障，内存屏障会提供3个功能：</p>
-<ol>
-<li>它确保指令重排序时不会把其后面的指令排到内存屏障之前的位置，也不会把前面的指令排到内存屏障的后面；即在执行到内存屏障这句指令时，在它前面的操作已经全部完成</li>
-<li>它会强制将对缓存的修改操作立即写入主存</li>
-<li>如果是写操作，它会导致其他CPU中对应的缓存行无效</li>
-</ol>
+<p>对比一下这三种算法，可以发现他们都有各自的优点和缺点。</p>
+<p>标记清除算法虽然会产生内存碎片，但是不需要移动太多对象，比较适合在存活对象比较多的情况。而复制算法虽然需要将内存空间折半，并且需要移动存活对象，但是其清理后不会有空间碎片，比较适合存活对象比较少的情况。而标记压缩算法，则是标记清除算法的优化版，减少了空间碎片。</p>
+<h3 id="3-分代思想"><a href="#3-分代思想" class="headerlink" title="3.分代思想"></a>3.分代思想</h3><p>试想一下，如果我们单独采用任何一种算法，那么最终的垃圾回收效率都不会很好。其实 JVM 虚拟机的建造者们也是这么想的，因此在实际的垃圾回收算法中采用了<strong>分代算法</strong>。</p>
+<p>所谓分代算法，就是根据 JVM 内存的不同内存区域，采用不同的垃圾回收算法。例如对于存活对象少的新生代区域，比较适合采用复制算法。这样只需要复制少量对象，便可完成垃圾回收，并且还不会有内存碎片。而对于老年代这种存活对象多的区域，比较适合采用标记压缩算法或标记清除算法，这样不需要移动太多的内存对象。</p>
+<p>试想一下，如果没有采用分代算法，而在老年代中使用复制算法。在极端情况下，老年代对象的存活率可以达到100%，那么我们就需要复制这么多个对象到另外一个内存区域，这个工作量是非常庞大的。</p>
+<p>在这里我们再深入地聊一聊新生代里采取的垃圾回收算法。如我们上面所说，新生代的特点是存活对象少，适合采用复制算法。而复制算法的一种最简单实现便是折半内存使用，另一半备用。但实际上我们知道，在实际的 JVM 新生代划分中，却不是采用等分为两块内存的形式。而是分为：Eden 区域、from 区域、to 区域 这三个区域。<strong>那么为什么 JVM 最终要采用这种形式，而不用 50% 等分为两个内存块的方式？</strong></p>
+<p>要解答这个问题，我们就需要先深入了解新生代对象的特点。根据IBM公司的研究表明，在新生代中的对象 98% 是朝生夕死的，所以并不需要按照1:1的比例来划分内存空间。所以在HotSpot虚拟机中，JVM 将内存划分为一块较大的Eden空间和两块较小的Survivor空间，其大小占比是8:1:1。当回收时，将Eden和Survivor中还存活的对象一次性复制到另外一块Survivor空间上，最后清理掉Eden和刚才用过的Eden空间。</p>
+<p>通过这种方式，内存的空间利用率达到了90%，只有10%的空间是浪费掉了。而如果通过均分为两块内存，则其内存利用率只有 50%，两者利用率相差了将近一倍。</p>
+<h3 id="4-分区思想"><a href="#4-分区思想" class="headerlink" title="4.分区思想"></a>4.分区思想</h3><p>分代思想按照对象的生命周期长短将其分为了两个部分（新生代、老年代），但 JVM 中其实还有一个分区思想，即将整个堆空间划分成连续的不同小区间。</p>
+<p>每一个小区间都独立使用，独立回收，这种算法的好处是可以控制一次回收多少个区间，可以较好地控制 GC 时间。</p>
+<h3 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h3><p><img src="/2024/02/02/jvm-zhi-la-ji-hui-shou-ji-zhi/p_20240329095625.jpg"></p>
 
                 
             </div>
@@ -489,7 +459,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2024/01/24/bing-fa-bian-cheng-zhi-volatile-xiang-jie/">https://fuchenglai.github.io/2024/01/24/bing-fa-bian-cheng-zhi-volatile-xiang-jie/</a>
+                    <a href="https://fuchenglai.github.io/2024/02/02/jvm-zhi-la-ji-hui-shou-ji-zhi/">https://fuchenglai.github.io/2024/02/02/jvm-zhi-la-ji-hui-shou-ji-zhi/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -527,8 +497,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
-                                    <span class="chip bg-color">并发编程</span>
+                                <a href="/tags/JVM/">
+                                    <span class="chip bg-color">JVM</span>
                                 </a>
                             
                         </div>
@@ -611,6 +581,55 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
+                <a href="/2024/02/14/qing-ren-jie-xiao-shi-yi-shou/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="情人节小诗一首">
+                        
+                        <span class="card-title">情人节小诗一首</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-14
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E7%94%9F%E6%B4%BB/" class="post-category">
+                                    生活
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%9D%82%E6%84%9F/">
+                        <span class="chip bg-color">杂感</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
                 <a href="/2024/01/29/jvm-zhi-java-xu-ni-ji-nei-cun-jie-gou/">
                     <div class="card-image">
                         
@@ -627,9 +646,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-01-29
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-01-29
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -647,59 +666,6 @@
                     
                     <a href="/tags/JVM/">
                         <span class="chip bg-color">JVM</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2024/01/20/shen-ru-li-jie-mvcc-ji-zhi/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="深入理解MVCC机制">
-                        
-                        <span class="card-title">深入理解MVCC机制</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-01-20
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
-                                    数据库
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/MVCC/">
-                        <span class="chip bg-color">MVCC</span>
-                    </a>
-                    
-                    <a href="/tags/MYSQL/">
-                        <span class="chip bg-color">MYSQL</span>
                     </a>
                     
                 </div>
