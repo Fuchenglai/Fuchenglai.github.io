@@ -4,9 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="并发编程之volatile详解, 小ceng的后端游乐场">
-    <meta name="description" content="概述保证被 volatile 修饰的共享变量的 可见性 和 有序性，但不保证原子性
-1.内存模型概述每条指令都是在CPU中执行的，而执行指令过程中，势必涉及到数据的读取和写入。由于程序运行过程中的临时数据是存放在主存（物理内存）当中的，这时">
+    <meta name="keywords" content="并发编程基础, 小ceng的后端游乐场">
+    <meta name="description" content="1.什么是进程？什么是线程？进程是操作系统资源分配的基本单位。在 Java 中，当我们启动 main 函数时其实就是启动了⼀个 JVM 的进程，⽽ main函数所在的线程就是这个进程中的⼀个线程，也称主线程。
+">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>并发编程之volatile详解 | 小ceng的后端游乐场</title>
+    <title>并发编程基础 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -313,12 +313,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/22.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">并发编程之volatile详解</h1>
+                    <h1 class="description center-align post-title">并发编程基础</h1>
                 </div>
             </div>
         </div>
@@ -342,8 +342,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
-                                <span class="chip bg-color">并发编程</span>
+                            <a href="/tags/JUC/">
+                                <span class="chip bg-color">JUC</span>
                             </a>
                         
                     </div>
@@ -367,7 +367,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-01-24
+                    2023-10-18
                 </div>
                 
 
@@ -376,14 +376,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.9k
+                    75
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    6 分
+                    1 分
                 </div>
                 
 
@@ -401,68 +401,7 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>保证被 volatile 修饰的共享变量的 可见性 和 有序性，但不保证原子性</p>
-<h3 id="1-内存模型概述"><a href="#1-内存模型概述" class="headerlink" title="1.内存模型概述"></a>1.内存模型概述</h3><p>每条指令都是在CPU中执行的，而执行指令过程中，势必涉及到数据的读取和写入。由于程序运行过程中的临时数据是存放在主存（物理内存）当中的，这时就存在一个问题，由于CPU执行速度很快，而从内存读取数据和向内存写入数据的过程跟CPU执行指令的速度比起来要慢的多，因此如果任何时候对数据的操作都要通过和内存的交互来进行，会大大降低指令执行的速度。因此在CPU里面就有了<strong>高速缓存</strong>。</p>
-<p>当程序在运行过程中，会将运算需要的数据从主存复制一份到CPU的高速缓存当中，那么CPU进行计算时就可以直接从它的高速缓存读取数据和向其中写入数据，当运算结束之后，再将高速缓存中的数据刷新到主存当中。</p>
-<p>以 <code>i = i + 1 ;</code>为例，当线程执行这个语句时，会先从主存当中读取i的值，然后复制一份到高速缓存当中，然后CPU执行指令对i进行加1操作，然后将数据写入高速缓存，最后将高速缓存中i最新的值刷新到主存当中。</p>
-<p>可能存在下面一种情况：初始时，两个线程分别读取 i 的值存入各自所在的CPU的高速缓存当中，然后线程A进行加1操作，然后把i的最新值 1 写入到内存。此时线程 B 的高速缓存当中i的值还是0，进行加1操作之后，i的值为1，然后线程2把i的值写入内存。</p>
-<p>最终结果i的值是1，而不是2。这就是著名的<strong>缓存一致性问题</strong>。通常称这种被多个线程访问的变量为<strong>共享变量</strong>。也就是说，如果一个变量在多个CPU中都存在缓存（一般在多线程编程时才会出现），那么就可能存在缓存不一致的问题。</p>
-<p>为了解决这个问题</p>
-<ul>
-<li>通过在总线加LOCK#锁的方式</li>
-<li>通过缓存一致性协议</li>
-</ul>
-<h3 id="2-Java内存模型"><a href="#2-Java内存模型" class="headerlink" title="2.Java内存模型"></a>2.Java内存模型</h3><p>在Java虚拟机规范中试图定义一种Java内存模型（Java Memory Model，JMM）来屏蔽各个硬件平台和操作系统的内存访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果。那么Java内存模型规定了哪些东西呢，它定义了程序中变量的访问规则，往大一点说是定义了程序执行的次序。注意，为了获得较好的执行性能，Java内存模型并没有限制执行引擎使用处理器的寄存器或者高速缓存来提升指令执行速度，也没有限制编译器对指令进行重排序。也就是说，在java内存模型中，也会存在缓存一致性问题和指令重排序的问题。</p>
-<p>Java内存模型规定所有的变量都是存在主存当中（类似于前面说的物理内存），每个线程都有自己的<strong>工作内存（类似于前面的高速缓存）</strong>。线程对变量的所有操作都必须在工作内存中进行，而不能直接对主存进行操作。并且每个线程不能访问其他线程的工作内存。</p>
-<table>
-<thead>
-<tr>
-<th>概念</th>
-<th>定义</th>
-<th align="center">备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>原子性</td>
-<td>一个操作&#x2F;一系列操作</td>
-<td align="center">要么全部执行&#x2F;全部不执行</td>
-</tr>
-<tr>
-<td>可见性</td>
-<td>当一个线程修改了共享变量的值后，其他线程能够立刻看到共享变量值的修改</td>
-<td align="center">JMM的内存空间分为：主存和工作内存（变量存于主存中；线程使用的是自身工作内存，更新后再同步到主存）。共享属性的修改过程：从主存中读取&amp;复制到工作内存中，在工作内存中修改完成后，再同步到主存、从而刷新主存中的值。若线程A在工作内存中修改完成但还未刷新主存中的值，线程B看到的值还是旧值。此时，可见性就无法保证</td>
-</tr>
-<tr>
-<td>有序性</td>
-<td>程序的运行顺序看起来 和 我们编写的逻辑的顺序一致，但计算机在实际执行中却不一定</td>
-<td align="center">为了提高性能，编译器&amp;处理器都会对代码进行重新排序。但有个前提：重新排序的结果要和单线程执行程序顺序一致</td>
-</tr>
-</tbody></table>
-<h3 id="3-保证可见性"><a href="#3-保证可见性" class="headerlink" title="3.保证可见性"></a>3.保证可见性</h3><p>volatile修饰的属性保证每次读取都能读到最新的值，<strong>但不会 并且 无法更新已经读了的值</strong></p>
-<p>线程A在工作内存中修改的共享属性值会立即刷新到主存，<strong>线程B&#x2F;C&#x2F;D每次通过读写屏障</strong>来达到<strong>类似</strong>于直接从主存中读取属性值</p>
-<ul>
-<li>只是类似，网上有些说volatile修饰的变量读写直接在主存中操作，这种说法是不对的，只是表现出这种效果</li>
-<li>读写屏障是一条CPU指令；插入一个读写屏障 &#x3D; 告诉CPU &amp; 编译器先于这个命令的必须先执行，后于这个命令的必须后执行（有序性）</li>
-<li>读写屏障另一个作用是强制更新一次不同CPU的缓存。例如，一个写屏障会 把这个屏障前写入的数据刷新到缓存，以此保证可见性</li>
-</ul>
-<h3 id="4-保证有序性"><a href="#4-保证有序性" class="headerlink" title="4.保证有序性"></a>4.保证有序性</h3><p>当对volatile修饰的变量进行读&#x2F;写操作时，其前面的代码必须已执行完成 &amp; 结果对后续的操作可见</p>
-<p>原理：重排序时，以volatile修饰变量的读&#x2F;写操作代码行为分界线，读&#x2F;写操作前面的代码不许排序到后面，后面同理不许排序到前面。由此保证有序性</p>
-<h3 id="5-不保证原子性"><a href="#5-不保证原子性" class="headerlink" title="5.不保证原子性"></a>5.不保证原子性</h3><p>volatile修饰的属性若在修改前已读取了值，那么修改后，无法改变已经复制到工作内存的值，即无法阻止并发的情况</p>
-<h3 id="6-volatile关键字的两层语义"><a href="#6-volatile关键字的两层语义" class="headerlink" title="6.volatile关键字的两层语义"></a>6.volatile关键字的两层语义</h3><p>一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile修饰之后，那么就具备了两层语义：</p>
-<ul>
-<li>保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。</li>
-<li>禁止进行指令重排序。</li>
-</ul>
-<h3 id="7-volatile的原理和实现机制"><a href="#7-volatile的原理和实现机制" class="headerlink" title="7.volatile的原理和实现机制"></a>7.volatile的原理和实现机制</h3><p>下面这段话摘自《深入理解Java虚拟机》：</p>
-<blockquote>
-<p>观察加入volatile关键字和没有加入volatile关键字时所生成的汇编代码发现，加入volatile关键字时，会多出一个lock前缀指令</p>
-</blockquote>
-<p>lock前缀指令实际上相当于一个内存屏障，内存屏障会提供3个功能：</p>
-<ol>
-<li>它确保指令重排序时不会把其后面的指令排到内存屏障之前的位置，也不会把前面的指令排到内存屏障的后面；即在执行到内存屏障这句指令时，在它前面的操作已经全部完成</li>
-<li>它会强制将对缓存的修改操作立即写入主存</li>
-<li>如果是写操作，它会导致其他CPU中对应的缓存行无效</li>
-</ol>
+                <h3 id="1-什么是进程？什么是线程？"><a href="#1-什么是进程？什么是线程？" class="headerlink" title="1.什么是进程？什么是线程？"></a>1.什么是进程？什么是线程？</h3><p>进程是操作系统资源分配的基本单位。在 Java 中，当我们启动 main 函数时其实就是启动了⼀个 JVM 的进程，⽽ main函数所在的线程就是这个进程中的⼀个线程，也称主线程。</p>
 
                 
             </div>
@@ -489,7 +428,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2024/01/24/bing-fa-bian-cheng-zhi-volatile-xiang-jie/">https://fuchenglai.github.io/2024/01/24/bing-fa-bian-cheng-zhi-volatile-xiang-jie/</a>
+                    <a href="https://fuchenglai.github.io/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/">https://fuchenglai.github.io/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -527,8 +466,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
-                                    <span class="chip bg-color">并发编程</span>
+                                <a href="/tags/JUC/">
+                                    <span class="chip bg-color">JUC</span>
                                 </a>
                             
                         </div>
@@ -611,13 +550,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/01/29/jvm-zhi-java-xu-ni-ji-nei-cun-jie-gou/">
+                <a href="/2023/10/27/quan-mian-jie-xi-java-zhu-jie/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="JVM之Java虚拟机内存结构">
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="全面解析java注解">
                         
-                        <span class="card-title">JVM之Java虚拟机内存结构</span>
+                        <span class="card-title">全面解析java注解</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -628,7 +567,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-01-29
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-10-27
                         </span>
                         <span class="publish-author">
                             
@@ -645,8 +584,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/JVM/">
-                        <span class="chip bg-color">JVM</span>
+                    <a href="/tags/%E6%B3%A8%E8%A7%A3/">
+                        <span class="chip bg-color">注解</span>
                     </a>
                     
                 </div>
@@ -660,13 +599,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/01/20/shen-ru-li-jie-mvcc-ji-zhi/">
+                <a href="/2023/10/04/concurrenthashmap-shi-ru-he-bao-zheng-xian-cheng-an-quan-de/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="深入理解MVCC机制">
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="ConcurrentHashMap是如何保证线程安全的">
                         
-                        <span class="card-title">深入理解MVCC机制</span>
+                        <span class="card-title">ConcurrentHashMap是如何保证线程安全的</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -677,14 +616,14 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-01-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-10-04
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
-                                    数据库
+                            <a href="/categories/Java/" class="post-category">
+                                    Java
                                 </a>
                             
                             
@@ -694,12 +633,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/MVCC/">
-                        <span class="chip bg-color">MVCC</span>
-                    </a>
-                    
-                    <a href="/tags/MYSQL/">
-                        <span class="chip bg-color">MYSQL</span>
+                    <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+                        <span class="chip bg-color">多线程</span>
                     </a>
                     
                 </div>

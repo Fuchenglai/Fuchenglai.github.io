@@ -375,14 +375,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.3k
+                    5.1k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    15 分
+                    18 分
                 </div>
                 
 
@@ -419,8 +419,8 @@
 <p>InnoDB中常用的行级锁有（下文默认的存储引擎为InnoDB）：</p>
 <ul>
 <li>Record Lock：又细分为<strong>共享锁</strong>（Shared Lock，简称S锁），在事务要读取一条记录时，首先需要获取该记录的S锁。<strong>独占锁</strong>（Exclusive Lock，简称X锁），在事务要改动一条记录时，首先需要获取该记录的X锁。总之，它的作用仅仅是把一条记录锁上。</li>
-<li>Gap Lock：在RR的隔离级别下可能会出现幻读的现象。解决的方案有两种：使用MVCC方案解决；使用加锁方案解决。当对一条记录加锁后，不允许向该记录及其前一条记录的间隙之间加锁。</li>
-<li>Next-Key Lock：Record Lock + Gap Lock &#x3D; Next-Key Lock</li>
+<li>Gap Lock：又称为<strong>间隙锁</strong>，锁定一个范围, 但是不包含记录本身。在RR的隔离级别下可能会出现幻读的现象。解决的方案有两种：使用MVCC方案解决；使用加锁方案解决。</li>
+<li>Next-Key Lock：锁定一个范围包括记录本身。Record Lock + Gap Lock &#x3D; Next-Key Lock</li>
 </ul>
 <p>常用的表级锁有：</p>
 <ul>
@@ -617,6 +617,21 @@ UPDATE test_innodb_lock SET sex&#x3D;&#39;2&#39; WHERE id&#x3D;3;		-- C2<span ar
 <p>怎么解决呢?</p>
 </blockquote>
 <p>要解决这个问题，<code>binlog</code>的日志格式应该要设置为<code>binlog_foramt = row</code>，这样设置能够使得<code>bin log</code>里面记录的是主库分配的自增值，到备库执行的时候，主库的自增值是啥，从库的就会是啥</p>
+<h3 id="8-行锁的使用注意事项"><a href="#8-行锁的使用注意事项" class="headerlink" title="8.行锁的使用注意事项"></a>8.行锁的使用注意事项</h3><p><strong>间隙锁唯一目的是防止其他事务向间隙中插入数据。</strong></p>
+<blockquote>
+<p>重点：间隙锁可以共存。一个事务获取的间隙锁并不会阻止另一个事务在同一个间隙上获取间隙锁。共享间隙锁和排他间隙锁之间没有区别。它们彼此之间不冲突，执行相同的功能。允许冲突的间隙锁的原因是，如果一个记录从索引中删除，不同事务持有的该记录上的间隙锁必须被合并。</p>
+</blockquote>
+<p>临键锁是一种将记录锁和间隙锁结合在一起的锁定方式。当在数据库中搜索或扫描索引时，临键锁会在遇到的索引记录上设置锁定，并且还会对该索引记录之前的间隙进行锁定。这样可以防止其他会话在已被锁定的索引记录之前的间隙中插入新的记录。</p>
+<p><strong>临键锁的作用是确保数据的一致性和避免幻读现象。</strong></p>
+<p><code>next-key lock</code> 是前开后闭区间<code>(a, b]</code></p>
+<p>如果上<code>X锁</code>的<code>row</code>是唯一索引的话, 就不会加上<code>Next-Key Lock</code>, 而是会退化为<code>Record Lock</code>，其他情况默认上的是<code>Next-Key Lock</code></p>
+<p><strong>插入意向锁</strong>是用于管理并发插入操作。<strong>当多个事务尝试在同一个索引间隙（两个索引记录之间的空白区域）进行插入时，插入意向锁可以确保它们不会互相冲突。</strong></p>
+<p><strong>但是，临键锁和间隙锁会排斥插入意向锁。</strong></p>
+<p><strong>插入意向锁仅仅是一种指示，它并不阻止其他事务对同一个间隙进行插入操作</strong>。实际上，事务B也可以在插入意向锁存在的情况下执行插入操作。然而，如果两个事务试图在同一个位置插入数据（即发生冲突），则它们必须等待对方完成操作。</p>
+<p><strong>意向锁的作用</strong>：在没有意向锁之前, 我们执行DDL操作时(修改表的字段或者表名之类), 需要事先判断表中是否有其他锁的存在,这个判断的过程是一行一行的扫描过去, 效率极慢。现在出现意向锁之后, 在执行DDL操作前, 可以直接判断表中是否有意向锁的存在, 而不再需要去扫描整个表的行。所以意向锁通常被设计为表锁, 而非行锁, 而且意向锁通常都是相互兼容的, 这就是设计的原因。</p>
+<p>在使用update操作时，如果根据where条件子句的查到到的索引不存在，那么就会加上间隙锁，如果存在那么就会加上record lock只锁这一行记录。</p>
+<p>总结：<strong>修改时添加间隙锁或record lock，插入时获取插入意向锁</strong></p>
+<p>另外要注意：<strong>InnoDB</strong> 中的<code>行锁</code>的实现依赖于<code>索引</code>，一旦某个加锁操作没有使用到索引，那么该锁就会退化为<code>表锁</code>。</p>
 
                 
             </div>
