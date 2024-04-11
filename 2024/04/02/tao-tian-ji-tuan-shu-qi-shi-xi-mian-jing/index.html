@@ -4,8 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="JVM之类加载机制, 小ceng的后端游乐场">
-    <meta name="description" content="概述当 Java 虚拟机将 Java 源码编译为字节码之后，虚拟机便可以将字节码读取进内存，从而进行解析、运行等整个过程，这个过程我们叫：Java 虚拟机的类加载机制。JVM 虚拟机执行 class 字节码的过程可以分为七个阶段：加载、验证">
+    <meta name="keywords" content="淘天集团暑期实习-面经, 小ceng的后端游乐场">
+    <meta name="description" content="1.讲一下http协议的历史各版本以及主要特点HTTP&amp;#x2F;0.91991年提出了HTTP&amp;#x2F;0.9，它最主要的特点就是简单，只有一个GET命令，它虽然简单，但是充分验证了WEB服务的可行性。
+HTTP&amp;#x2F;1.0HTT">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>JVM之类加载机制 | 小ceng的后端游乐场</title>
+    <title>淘天集团暑期实习-面经 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -312,12 +313,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/10.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">JVM之类加载机制</h1>
+                    <h1 class="description center-align post-title">淘天集团暑期实习-面经</h1>
                 </div>
             </div>
         </div>
@@ -339,13 +340,9 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/JVM/">
-                                <span class="chip bg-color">JVM</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -353,8 +350,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Java/" class="post-category">
-                                Java
+                            <a href="/categories/%E9%9D%A2%E7%BB%8F/" class="post-category">
+                                面经
                             </a>
                         
                     </div>
@@ -375,14 +372,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    5 分
+                    10 分
                 </div>
                 
 
@@ -400,46 +397,81 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>当 Java 虚拟机将 Java 源码编译为字节码之后，虚拟机便可以将字节码读取进内存，从而进行解析、运行等整个过程，这个过程我们叫：Java 虚拟机的类加载机制。JVM 虚拟机执行 class 字节码的过程可以分为七个阶段：<strong>加载、验证、准备、解析、初始化、使用、卸载。</strong></p>
-<h3 id="1-你简单说说类加载的七个阶段干了什么？"><a href="#1-你简单说说类加载的七个阶段干了什么？" class="headerlink" title="1.你简单说说类加载的七个阶段干了什么？"></a>1.你简单说说类加载的七个阶段干了什么？</h3><h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><p>将字节码文件从磁盘加载到内存，接着会为这个类在 JVM 的方法区创建一个对应的 <strong>Class 对象</strong>，这个 Class 对象就是这个类各种数据的访问入口。</p>
-<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>当 JVM 加载完 Class 字节码文件并在方法区创建对应的 Class 对象之后，JVM 便会启动对该字节码流的校验，只有符合 JVM 字节码规范的文件才能被 JVM 正确执行。这个校验过程大致可以分为下面几个类型：</p>
+                <h3 id="1-讲一下http协议的历史各版本以及主要特点"><a href="#1-讲一下http协议的历史各版本以及主要特点" class="headerlink" title="1.讲一下http协议的历史各版本以及主要特点"></a>1.讲一下http协议的历史各版本以及主要特点</h3><h4 id="HTTP-0-9"><a href="#HTTP-0-9" class="headerlink" title="HTTP&#x2F;0.9"></a>HTTP&#x2F;0.9</h4><p>1991年提出了HTTP&#x2F;0.9，它最主要的特点就是简单，只有一个GET命令，它虽然简单，但是充分验证了WEB服务的可行性。</p>
+<h4 id="HTTP-1-0"><a href="#HTTP-1-0" class="headerlink" title="HTTP&#x2F;1.0"></a>HTTP&#x2F;1.0</h4><p><code>HTTP/1.0</code>的最重要的特征就是<code>短连接</code>，也就是每次发送请求的时候都会建立TCP连接，等收到响应就会断开连接。因此在大量请求到来的时候，会反复的创建和销毁连接，性能就会严重下降。</p>
+<h4 id="HTTP-1-1"><a href="#HTTP-1-1" class="headerlink" title="HTTP&#x2F;1.1"></a>HTTP&#x2F;1.1</h4><p>于是<code>HTTP/1.1</code>引入了长连接，这种机制就是说，只要请求的收发双方没有一方明确提出要断开连接，那么就会保留这条<code>TCP</code>连接，减少了<code>TCP</code>连接的三报文握手和四报文挥手的开销。</p>
+<p>同时，由于多个<code>请求-响应</code>复用同一条<code>TCP</code>连接，这使得<code>管道网络传输</code>成为可能，也就是说，这时候客户端发送请求时，不必等待前一个请求的响应到达即可发送请求。</p>
+<h4 id="问：管道网络传输中，客户端发来的请求1，2，3，服务端返回一定要按顺序1-2-3吗？"><a href="#问：管道网络传输中，客户端发来的请求1，2，3，服务端返回一定要按顺序1-2-3吗？" class="headerlink" title="问：管道网络传输中，客户端发来的请求1，2，3，服务端返回一定要按顺序1,2,3吗？"></a>问：管道网络传输中，客户端发来的请求1，2，3，服务端返回一定要按顺序1,2,3吗？</h4><p>是的，这是因为如果不按请求顺序进行响应，就有可能将A的响应给到B，将B的响应给A，造成错乱</p>
+<hr>
+<p>但是<code>HTTP/1.1</code>还是有一部分缺点</p>
 <ul>
-<li><strong>JVM规范校验。</strong>JVM 会对字节流进行文件格式校验，判断其是否符合 JVM 规范，是否能被当前版本的虚拟机处理。例如：文件是否是以 <code>0x cafe bene</code>开头，主次版本号是否在当前虚拟机处理范围之内等。</li>
-<li><strong>代码逻辑校验。</strong>JVM 会对代码组成的数据流和控制流进行校验，确保 JVM 运行该字节码文件后不会出现致命错误。例如一个方法要求传入 int 类型的参数，但是使用它的时候却传入了一个 String 类型的参数。一个方法要求返回 String 类型的结果，但是最后却没有返回结果。代码中引用了一个名为 Apple 的类，但是你实际上却没有定义 Apple 类。</li>
+<li>报文的头部没有做压缩，而只能对<code>body</code>做压缩，因此当头部的体积过大时，将导致网络<code>I/O</code>传输性能下降</li>
+<li>将导致队头阻塞问题，虽然使用管道网络传输能够异步发送请求，但是接收响应却是同步的，在这种情况下，如果前面的响应没有发回来，然后后面的请求将一直无法接收到响应</li>
+<li>没有提供解决队头阻塞的优先级机制</li>
+<li>请求只能从客户端开始，服务器只能够被动响应，服务端无法主动推送服务</li>
 </ul>
-<h4 id="准备（重点）"><a href="#准备（重点）" class="headerlink" title="准备（重点）"></a>准备（重点）</h4><p>当完成字节码文件的校验之后，JVM 便会开始为类变量<strong>分配内存并初始化</strong>。这里需要注意两个关键点，即内存分配的对象以及初始化的类型。</p>
+<h4 id="HTTP-2-0做了哪些优化？这个问题应该要从两个方面进行回答，第一个方面是安全方面。"><a href="#HTTP-2-0做了哪些优化？这个问题应该要从两个方面进行回答，第一个方面是安全方面。" class="headerlink" title="HTTP&#x2F;2.0做了哪些优化？这个问题应该要从两个方面进行回答，第一个方面是安全方面。"></a>HTTP&#x2F;2.0做了哪些优化？这个问题应该要从两个方面进行回答，第一个方面是<strong>安全方面</strong>。</h4><p><code>HTTP/2</code>引入了<code>TLS1.2+</code>，也就是基于<code>HTTPS</code>的机制，使得<code>HTTP/2</code>的传输变得更加安全了。</p>
+<p><img src="/2024/04/02/tao-tian-ji-tuan-shu-qi-shi-xi-mian-jing/%E4%B8%8B%E8%BD%BD%20(4).png"></p>
+<p>第二个是<strong>性能方面</strong>做了比较大的改动。</p>
+<p><strong>1.压缩首部，减少冗余传输</strong></p>
+<p>我们刚刚提到HTTP&#x2F;1.1的报文的头部没有压缩，如果头部比较冗长，就会导致大量冗余的信息在网络中传输。</p>
+<blockquote>
+<p>对于这个痛点，HTTP&#x2F;2提供的解决方案是，客户端和服务端双方维护一张<code>头信息表</code>，这张表在初始化就被静态写入一些常用的头部字段，当需要使用到这些头部字段<code>(以key-value的形式存储)</code>的时候，就在数据包的头部中封装一个字段<code>header：1 xxxx</code>，其中1代表着这个头部字段在头信息表存在，xxx代表的是索引号，当第一个字段为0的时候，代表不存在，然后后边的这些xxx就是实际上的头部字段，然后传输到对等端的时候，会将这个字段记录到动态表中，方便下次使用</p>
+</blockquote>
+<p><strong>2.全面二进制，节省了传输所需的数据量</strong></p>
+<p><code>HTTP/1.1</code>的数据传输是基于<code>文本传输</code>的，而计算机只能读取二进制数据，因此在发送时需要将文本转换成二进制，在接收时需要将二进制转换成文本。我们采用全面二进制编码之后，比如状态码’2’ ‘0’ ‘0’ ，在http&#x2F;1.1中需要占用三个字节，然而在<code>HTTP/2</code>中它表示为表示为<code>1100 1000</code>，节省了两个字节。</p>
+<p><strong>3.引入Stream机制，解决队头阻塞问题</strong></p>
+<p>我们上面提到，客户端发送了请求1,2,3后，服务端响应也要按照1,2,3的顺序来，这就会产生<strong>队头阻塞现象</strong>，</p>
+<blockquote>
+<p>当第一个请求发送出去之后，由于I&#x2F;O或者其他原因很长时间都没有收到响应，但是这时候后面的请求又都在排队，从而导致后面的请求无法得到响应，客户端陷入阻塞状态</p>
+</blockquote>
+<p>HTTP&#x2F;2.0引入了Stream流，它的核心思想就是给响应包加上一个控制字段，让这些包能够标识出来是属于谁的响应。在同一个<code>TCP</code>连接中存在多个<code>Strteam</code>，这多个<code>Stream</code>就代表着同一对<code>请求-响应</code>，他们通过标识<code>StreamId</code>对这些<code>Stream</code>进行标识，从而确保请求能够收到对应的响应。</p>
+<p>这样的话，我们假设响应是乱序返回的，比如请求1，2发送，然后响应2，1返回，因为存在<code>StreamId</code>，接收方就能够通过不同<code>Id</code>标识拿到自己想要的数据包。<strong>本质上就是IO多路复用，提高了传输性能</strong></p>
+<p><strong>4.允许服务端主动推送</strong></p>
+<p>主动推送是通过服务器在接收到客户端请求后，主动向客户端推送额外的资源，而不需要客户端单独请求这些资源。 例如，可以提前向客户端发送一些与请求相关的资源，以提高页面加载速度。</p>
+<p>服务器向客户端发送一个带有 PUSH_PROMISE 帧的响应，告诉客户端将要推送的资源。  4. 客户端收到 PUSH_PROMISE 帧后，可以决定是否接受推送的资源。</p>
+<p><strong>HTTP&#x2F;2.0的缺陷</strong></p>
+<p>它同样存在队头阻塞的问题，<code>只不过它的队头阻塞问题</code>是因为滑动窗口的限制而产生的，也就是队头阻塞产生在<code>TCP</code>层面，先来讲讲它是怎么产生的。</p>
+<p>我们假设发送双方维护了一个窗口，然后A同时发送了<code>P1/P2/P3/p4/p5</code>然后等待ACK，然后B能够接收<code>P1/P2</code></p>
+<p>接收完P1之后，但是P2丢掉了，于是它只能够等待<code>P2</code>的超时重传，那么这期间，如果A再发送<code>P3/P4/P5</code>，都不能够再次接收。</p>
+<h4 id="HTTP-3-0"><a href="#HTTP-3-0" class="headerlink" title="HTTP&#x2F;3.0"></a>HTTP&#x2F;3.0</h4><p>既然谈到了优化，那么肯定就是解决<code>HTTP/2</code>所没有解决的问题，<code>HTTP/2</code>没有解决<code>TCP</code>层面的队头阻塞问题</p>
+<blockquote>
+<p>但是这个问题是致命的，因为发送窗口和接收窗口不可能无限制大小，而且为了可靠传输，必须保证数据包的有序接收，因此一个思路就是，修改底层的实现，改为<code>UDP</code>实现</p>
+</blockquote>
+<p>首先要解决的问题是：之前提供的<code>HTTP</code>协议都是<code>TCP</code>的可靠传输，那么我们必须基于<code>UDP</code>实现可靠传输</p>
+<blockquote>
+<p>核心就是上图中的<code>QUIC</code>协议</p>
+</blockquote>
+<p><code>QUIC</code>协议也有类似的<code>HTTP/2</code>中的<code>Stream</code>的机制，也就是说一条连接中有也有多个<code>Stream</code>，但是每一个<code>Stream</code>并不公用一个窗口，而是有各自的滑动窗口，因此如果流中的包丢失了，只会导致这个<code>请求-响应</code>被阻塞，其他的不被阻塞，这就解决了队头问题</p>
+<p>与此同时，<code>QUIC</code>协议还基于<code>UDP</code>协议提高了性能</p>
+<p><strong>更快的连接建立</strong></p>
+<p>对比与<code>HTTP/1.0、HTTP/1.1</code>的实现，由于<code>TCP+TLS</code>的实现基于内核的<code>TCP</code>传输层和<code>openssl</code>库实现的，因此难以解耦，而<code>QUIC</code>的思路是：在完成连接握手的时候，在帧的首部携带上<code>TLS</code>认证信息，这个过程主要是为了确认双方的连接<code>ID</code></p>
+<p>甚至，在第二次连接的时候，应用数据包可以和 QUIC 握手信息（连接信息 + TLS 信息）一起发送，达到 0-RTT 的效果。</p>
+<p><strong>连接的迁移</strong></p>
+<p>那么<strong>当移动设备的网络从 4G 切换到 WIFI 时，意味着 IP 地址变化了，那么就必须要断开连接，然后重新建立连接</strong>。而建立连接的过程包含 TCP 三次握手和 TLS 四次握手的时延，以及 TCP 慢启动的减速过程，给用户的感觉就是网络突然卡顿了一下，因此连接的迁移成本是很高的。</p>
+<p>而 QUIC 协议没有用四元组的方式来“绑定”连接，而是通过<strong>连接 ID</strong> 来标记通信的两个端点，客户端和服务器可以各自选择一组 ID 来标记自己，因此即使移动设备的网络变化后，导致 IP 地址变化了，只要仍保有上下文信息（比如连接 ID、TLS 密钥等），就可以“无缝”地复用原连接，消除重连的成本，没有丝毫卡顿感，达到了<strong>连接迁移</strong>的功能。</p>
+<p>所以， QUIC 是一个在 UDP 之上的<strong>伪</strong> TCP + TLS + HTTP&#x2F;2 的多路复用的协议。</p>
+<p>QUIC 是新协议，对于很多网络设备，根本不知道什么是 QUIC，只会当做 UDP，这样会出现新的问题，因为有的网络设备是会丢掉 UDP 包的，而 QUIC 是基于 UDP 实现的，那么如果网络设备无法识别这个是 QUIC 包，那么就会当作 UDP包，然后被丢弃。</p>
+<hr>
+<h3 id="2-讲一下进程和线程的区别？"><a href="#2-讲一下进程和线程的区别？" class="headerlink" title="2.讲一下进程和线程的区别？"></a>2.讲一下进程和线程的区别？</h3><p>本质区别：进程是操作系统资源分配的基本单位，线程是任务调度和执行的基本单位。</p>
 <ul>
-<li><p><strong>内存分配的对象。</strong>Java 中的变量有<code>类变量</code>和<code>类成员变量</code>两种类型，<code>类变量</code>指的是被 static 修饰的变量，而其他所有类型的变量都属于<code>类成员变量</code>。在准备阶段，JVM 只会为「类变量」分配内存，而不会为「类成员变量」分配内存。「类成员变量」的内存分配需要等到初始化阶段才开始。</p>
-</li>
-<li><p>在准备阶段，JVM 会为类变量分配内存，并为其初始化。但是这里的初始化指的是为变量赋予 Java 语言中该<strong>数据类型的零值</strong>，而不是用户代码里初始化的值。</p>
-<p>例如下面的代码在准备阶段之后，sector 的值将是 0，而不是 3。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">int</span> sector <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>但如果一个变量是常量（被 static final 修饰）的话，那么在准备阶段，属性便会被赋予用户希望的值。例如下面的代码在准备阶段之后，number 的值将是 3，而不是 0。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">int</span> number <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>之所以 static final 会直接被复制，而 static 变量会被赋予零值。其实我们稍微思考一下就能想明白了。</p>
-<p>两个语句的区别是一个有 final 关键字修饰，另外一个没有。而 final  关键字在 Java 中代表不可改变的意思，意思就是说 number 的值一旦赋值就不会在改变了。既然一旦赋值就不会再改变，那么就必须一开始就给其赋予用户想要的值，因此被 final 修饰的类变量在准备阶段就会被赋予想要的值。而没有被 final 修饰的类变量，其可能在初始化阶段或者运行阶段发生变化，所以就没有必要在准备阶段对它赋予用户想要的值。</p>
-</li>
+<li>在开销方面：每个进程都有独立的代码和数据空间，程序之间的切换会有较大的开销；线程可以看作轻量级的进程，同一类线程共享代码和数据空间，每个线程都有自己独立的运行栈和程序计数器</li>
+<li>稳定性方面：进程中每个线程如果崩溃了，可能导致整个进程崩溃。而一个进程的崩溃不会影响其他进程。</li>
+<li>包含关系来看：没有线程的进程可以看作单线程的，一个线程可以有多个线程。</li>
 </ul>
-<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>  当通过准备阶段之后，JVM 针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符 7 类引用进行解析。这个阶段的主要任务是将其在常量池中的<strong>符号引用替换成直接其在内存中的直接引用</strong>。</p>
-<h4 id="初始化（重点）"><a href="#初始化（重点）" class="headerlink" title="初始化（重点）"></a>初始化（重点）</h4><p>  到了初始化阶段，用户定义的 Java 程序代码才真正开始执行。在这个阶段，JVM 会根据语句执行顺序对类对象进行初始化，一般来说当 JVM 遇到下面 5 种情况的时候会触发初始化：</p>
-<ul>
-<li><p>遇到 new、getstatic、putstatic、invokestatic 这四条字节码指令时，如果类没有进行过初始化，则需要先触发其初始化。生成这4条指令的最常见的Java代码场景是：使用new关键字实例化对象的时候、读取或设置一个类的静态字段（被final修饰、已在编译器把结果放入常量池的静态字段除外）的时候，以及调用一个类的静态方法的时候。</p>
-</li>
-<li><p>使用 java.lang.reflect 包的方法对类进行反射调用的时候，如果类没有进行过初始化，则需要先触发其初始化。</p>
-</li>
-<li><p>当初始化一个类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化。</p>
-</li>
-<li><p>当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类。</p>
-</li>
-<li><p>当使用 JDK1.7 动态语言支持时，如果一个 java.lang.invoke.MethodHandle实例最后的解析结果 REF_getstatic,REF_putstatic,REF_invokeStatic 的方法句柄，并且这个方法句柄所对应的类没有进行初始化，则需要先出触发其初始化。</p>
-</li>
-</ul>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>当 JVM 完成初始化阶段之后，JVM 便开始从入口方法开始执行用户的程序代码。这个阶段也只是了解一下就可以。    </p>
-<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><p>当用户程序代码执行完毕后，JVM 便开始销毁创建的 Class 对象，最后负责运行的 JVM 也退出内存。这个阶段也只是了解一下就可以。</p>
-<p>​    </p>
-
+<p>具体到Java里面，使用main方法的时候其实就是启动了一个JVM进程，而main函数所在的线程就是这个进程中的一个线程，也称为主线程。多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>、<strong>本地方法栈</strong>。</p>
+<h3 id="3-讲一下虚拟内存"><a href="#3-讲一下虚拟内存" class="headerlink" title="3.讲一下虚拟内存"></a>3.讲一下虚拟内存</h3><h4 id="虚拟内存是怎么换页的，怎么寻址的？"><a href="#虚拟内存是怎么换页的，怎么寻址的？" class="headerlink" title="虚拟内存是怎么换页的，怎么寻址的？"></a>虚拟内存是怎么换页的，怎么寻址的？</h4><h4 id="虚拟内存除了解决内存不够的问题，还有哪些好处？"><a href="#虚拟内存除了解决内存不够的问题，还有哪些好处？" class="headerlink" title="虚拟内存除了解决内存不够的问题，还有哪些好处？"></a>虚拟内存除了解决内存不够的问题，还有哪些好处？</h4><h4 id="虚拟内存有哪些坏处？"><a href="#虚拟内存有哪些坏处？" class="headerlink" title="虚拟内存有哪些坏处？"></a>虚拟内存有哪些坏处？</h4><hr>
+<h3 id="4-Java中的String，StringBuilder，StringBuffer有哪些区别？"><a href="#4-Java中的String，StringBuilder，StringBuffer有哪些区别？" class="headerlink" title="4.Java中的String，StringBuilder，StringBuffer有哪些区别？"></a>4.Java中的String，StringBuilder，StringBuffer有哪些区别？</h3><h4 id="StringBuffer是怎么保证线程安全的？"><a href="#StringBuffer是怎么保证线程安全的？" class="headerlink" title="StringBuffer是怎么保证线程安全的？"></a>StringBuffer是怎么保证线程安全的？</h4><hr>
+<h3 id="5-讲一下Java虚拟机的垃圾回收算法"><a href="#5-讲一下Java虚拟机的垃圾回收算法" class="headerlink" title="5.讲一下Java虚拟机的垃圾回收算法"></a>5.讲一下Java虚拟机的垃圾回收算法</h3><h4 id="CMS垃圾回收器"><a href="#CMS垃圾回收器" class="headerlink" title="CMS垃圾回收器"></a>CMS垃圾回收器</h4><hr>
+<h3 id="6-MySQL的隔离级别，各个级别有什么问题？"><a href="#6-MySQL的隔离级别，各个级别有什么问题？" class="headerlink" title="6.MySQL的隔离级别，各个级别有什么问题？"></a>6.MySQL的隔离级别，各个级别有什么问题？</h3><h4 id="为什么InnoDB的默认隔离级别不是串行化？"><a href="#为什么InnoDB的默认隔离级别不是串行化？" class="headerlink" title="为什么InnoDB的默认隔离级别不是串行化？"></a>为什么InnoDB的默认隔离级别不是串行化？</h4><p>我答串行化的并发能力很低，在一些业务下可以牺牲数据的准确性来换取性能。在他提示下我才反应过来是MVCC机制解决了RR级别下的幻读问题。</p>
+<hr>
+<h3 id="7-讲一下MVCC"><a href="#7-讲一下MVCC" class="headerlink" title="7.讲一下MVCC"></a>7.讲一下MVCC</h3><p>mvcc我的回答中提到了undo-log</p>
+<hr>
+<h3 id="8-对于MySQL中的日志有哪些了解？"><a href="#8-对于MySQL中的日志有哪些了解？" class="headerlink" title="8.对于MySQL中的日志有哪些了解？"></a>8.对于MySQL中的日志有哪些了解？</h3><h4 id="bin-log是什么？"><a href="#bin-log是什么？" class="headerlink" title="bin-log是什么？"></a>bin-log是什么？</h4><h4 id="redo-log是怎么保证持久化的？"><a href="#redo-log是怎么保证持久化的？" class="headerlink" title="redo-log是怎么保证持久化的？"></a>redo-log是怎么保证持久化的？</h4><hr>
+<h3 id="9-问了项目中的分布式锁"><a href="#9-问了项目中的分布式锁" class="headerlink" title="9.问了项目中的分布式锁"></a>9.问了项目中的分布式锁</h3><hr>
+<h3 id="10-你的项目中用到了Netty是吧，讲一下你对bio和nio的了解"><a href="#10-你的项目中用到了Netty是吧，讲一下你对bio和nio的了解" class="headerlink" title="10.你的项目中用到了Netty是吧，讲一下你对bio和nio的了解"></a>10.你的项目中用到了Netty是吧，讲一下你对bio和nio的了解</h3><h4 id="nio的底层实现，如epoll这些有没有了解"><a href="#nio的底层实现，如epoll这些有没有了解" class="headerlink" title="nio的底层实现，如epoll这些有没有了解"></a>nio的底层实现，如epoll这些有没有了解</h4><hr>
+<h3 id="11-怎样解决缓存穿透问题？"><a href="#11-怎样解决缓存穿透问题？" class="headerlink" title="11.怎样解决缓存穿透问题？"></a>11.怎样解决缓存穿透问题？</h3><h4 id="布隆过滤器的底层数据结构"><a href="#布隆过滤器的底层数据结构" class="headerlink" title="布隆过滤器的底层数据结构"></a>布隆过滤器的底层数据结构</h4><hr>
+<h3 id="12-反问"><a href="#12-反问" class="headerlink" title="12.反问"></a>12.反问</h3><h4 id="Java的竞争太激烈，如果我去转岗到测试开发怎么样？"><a href="#Java的竞争太激烈，如果我去转岗到测试开发怎么样？" class="headerlink" title="Java的竞争太激烈，如果我去转岗到测试开发怎么样？"></a>Java的竞争太激烈，如果我去转岗到测试开发怎么样？</h4><h4 id="网有非常多的人渴望到互联网大厂工作，同时也有小部分人在劝退，你是怎么看待这样一份工作的？"><a href="#网有非常多的人渴望到互联网大厂工作，同时也有小部分人在劝退，你是怎么看待这样一份工作的？" class="headerlink" title="网有非常多的人渴望到互联网大厂工作，同时也有小部分人在劝退，你是怎么看待这样一份工作的？"></a>网有非常多的人渴望到互联网大厂工作，同时也有小部分人在劝退，你是怎么看待这样一份工作的？</h4>
                 
             </div>
             <hr/>
@@ -465,7 +497,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2024/04/02/jvm-zhi-lei-jia-zai-ji-zhi/">https://fuchenglai.github.io/2024/04/02/jvm-zhi-lei-jia-zai-ji-zhi/</a>
+                    <a href="https://fuchenglai.github.io/2024/04/02/tao-tian-ji-tuan-shu-qi-shi-xi-mian-jing/">https://fuchenglai.github.io/2024/04/02/tao-tian-ji-tuan-shu-qi-shi-xi-mian-jing/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -502,11 +534,7 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/JVM/">
-                                    <span class="chip bg-color">JVM</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -583,9 +611,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2024/04/02/tao-tian-ji-tuan-shu-qi-shi-xi-mian-jing/">
                     <div class="card-image">
@@ -603,9 +632,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-04-02
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-04-02
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -618,6 +647,7 @@
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -628,13 +658,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/03/30/jvm-zhi-la-ji-hui-shou-qi/">
+                <a href="/2024/04/02/jvm-zhi-lei-jia-zai-ji-zhi/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="JVM之垃圾回收器">
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="JVM之类加载机制">
                         
-                        <span class="card-title">JVM之垃圾回收器</span>
+                        <span class="card-title">JVM之类加载机制</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -645,7 +675,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-04-02
                             </span>
                         <span class="publish-author">
                             
