@@ -414,7 +414,7 @@
 </blockquote>
 <hr>
 <h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>消息队列是经典的消息传递的方式,其本质上是<code>生产者-消费者</code>的模型</p>
-<p>在Linux中,消息队列是保存在内核中的消息链表,在发送数据的时候,会分成一个个的数据单元,消息的发送方和接收方要固定好消息体的格式,所以每个消息都是固定大小的数据块,而不像是无序的字节。所以消息队列不适合传输比较大的数据，比如在<code>Linux</code>中定义了<code>MSGMAX</code>和<code>MAGMNB</code>，他们分别定义了消息最大长度和消息队列的最大长度。</p>
+<p>在Linux中，消息队列是保存在内核中的消息链表，在发送数据的时候，会分成一个个的数据单元，消息的发送方和接收方要固定好消息体的格式,所以每个消息都是固定大小的数据块,而不像是无序的字节。所以消息队列不适合传输比较大的数据，比如在<code>Linux</code>中定义了<code>MSGMAX</code>和<code>MAGMNB</code>，他们分别定义了消息最大长度和消息队列的最大长度。</p>
 <p>如果消息队列中的数据被读取了,那么内核就会把这个消息体给删除</p>
 <p><strong>消息队列的生命周期是随内核的</strong>,当内核不释放消息队列时,那么直到系统关闭或者宕机的时候消息队列才会被释放。</p>
 <p><strong>消息队列通信过程中，存在用户态与内核态之间的数据拷贝开销</strong>，因为进程写入数据到内核中的消息队列时，会发生从用户态拷贝数据到内核态的过程，同理另一进程读取内核中的消息数据时，会发生从内核态拷贝数据到用户态的过程。</p>
@@ -592,13 +592,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/01/14/shi-wu-ji-zhi-xiang-jie/">
+                <a href="/2023/12/26/shen-ru-li-jie-https-xie-yi/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="事务机制详解">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="深入理解HTTPS协议">
                         
-                        <span class="card-title">事务机制详解</span>
+                        <span class="card-title">深入理解HTTPS协议</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -609,14 +609,14 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-01-14
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-12-26
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
-                                    数据库
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="post-category">
+                                    计算机网络
                                 </a>
                             
                             
@@ -626,12 +626,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E4%BA%8B%E5%8A%A1/">
-                        <span class="chip bg-color">事务</span>
-                    </a>
-                    
-                    <a href="/tags/MySQL/">
-                        <span class="chip bg-color">MySQL</span>
+                    <a href="/tags/HTTPS/">
+                        <span class="chip bg-color">HTTPS</span>
                     </a>
                     
                 </div>

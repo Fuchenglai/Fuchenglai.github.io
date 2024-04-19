@@ -377,14 +377,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.7k
+                    3.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    13 分
+                    14 分
                 </div>
                 
 
@@ -603,6 +603,8 @@
 <h4 id="24-将大的DELETE，UPDATE、INSERT-查询变成多个小查询"><a href="#24-将大的DELETE，UPDATE、INSERT-查询变成多个小查询" class="headerlink" title="24.将大的DELETE，UPDATE、INSERT 查询变成多个小查询"></a>24.将大的DELETE，UPDATE、INSERT 查询变成多个小查询</h4><p>能写一个几十行、几百行的SQL语句是不是显得逼格很高？然而，为了达到更好的性能以及更好的数据控制，你可以将他们变成多个小查询。</p>
 <h4 id="25-合理分表，尽量控制单表数据量的大小，建议控制在500万以内"><a href="#25-合理分表，尽量控制单表数据量的大小，建议控制在500万以内" class="headerlink" title="25.合理分表，尽量控制单表数据量的大小，建议控制在500万以内"></a>25.合理分表，尽量控制单表数据量的大小，建议控制在500万以内</h4><p>500万并不是MySQL数据库的限制，过大会造成修改表结构，备份，恢复都会有很大的问题。</p>
 <p>可以用历史数据归档（应用于日志数据），分库分表（应用于业务数据）等手段来控制数据量大小。</p>
+<h4 id="26-无条件删除表中数据时，用truncate代替delete"><a href="#26-无条件删除表中数据时，用truncate代替delete" class="headerlink" title="26.无条件删除表中数据时，用truncate代替delete"></a>26.无条件删除表中数据时，用truncate代替delete</h4><p>delete操作是将表中所有记录<strong>一条一条删除</strong>直到删除完；truncate操作则是保留了表的结构，<strong>重新创建</strong>了这个表。因此<strong>truncate操作的效率更高</strong></p>
+<p>delete操作删除表中记录后，再次向表中添加新记录时，对于设置有自增约束字段的值会从删除前表中该字段的最大值加1开始自增；truncate操作则会重新从1开始自增。</p>
 
                 
             </div>

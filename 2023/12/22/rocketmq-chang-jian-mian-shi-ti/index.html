@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="RocketMQ常见面试题, 小ceng的后端游乐场">
-    <meta name="description" content="">
+    <meta name="description" content="1.如何保证顺序消费？在生产中经常会有一些类似报表系统这样的系统，需要做 MySQL 的 binlog 同步。比如订单系统要同步订单表的数据到大数据部门的 MySQL 库中用于报表统计分析，通常的做法是基于 Canal 这样的中间件去监听订">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -371,14 +371,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    0
+                    984
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    3 分
                 </div>
                 
 
@@ -396,7 +396,19 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h3 id="1-如何保证顺序消费？"><a href="#1-如何保证顺序消费？" class="headerlink" title="1.如何保证顺序消费？"></a>1.如何保证顺序消费？</h3><p>在生产中经常会有一些类似报表系统这样的系统，需要做 MySQL 的 binlog 同步。比如订单系统要同步订单表的数据到大数据部门的 MySQL 库中用于报表统计分析，通常的做法是基于 Canal 这样的中间件去监听订单数据库的 binlog，然后把这些 binlog 发送到 MQ 中，再由消费者从 MQ 中获取 binlog 落地到大数据部门的 MySQL 中。</p>
+<p>在这个过程中，可能会有对某个订单的增删改操作，比如有三条 binlog 执行顺序是增加、修改、删除。消费者愣是换了顺序给执行成删除、修改、增加，这样能行吗？肯定是不行的。</p>
+<p>顺序消息分为<strong>全局顺序消息</strong>和<strong>部分顺序消息</strong>，全局顺序消息指某个Topic下的所有消息都要保证顺序；部分顺序消息只要保证每一组消息被顺序消费即可，比如上面订单消息的例子，只要保证同一个订单ID的三个消息能按顺序消费即可。</p>
+<h4 id="1-1全局顺序消息"><a href="#1-1全局顺序消息" class="headerlink" title="1.1全局顺序消息"></a>1.1全局顺序消息</h4><p>RocketMQ在默认情况下不保证顺序，比如创建一个Topic，默认八个写队列，八个读队列。这时候一条消息可能被写入任意一个队列里；在数据的读取过程中，可能有多个Consumer，每个Consumer也可能启动多个线程并行处理，所以消息被哪个Consumer消费，被消费的顺序和写入的顺序是否一致是不确定的。</p>
+<p>要保证全局顺序消息，需要先把Topic的读写队列数设置为一，然后Producer和Consumer的并发设置也要是一。简单来说，为了保证整个Topic的全局消息有序，只能消除所有的并发处理，各部分都设置成单线程处理。这时高并发、高吞吐量的功能完全用不上了。</p>
+<p>在实际应用中，更多的是像订单类消息那样，只需要部分有序即可。在这种情况下，我们经过合适的配置，依然可以利用RocketMQ高并发、高吞吐量的能力。</p>
+<h4 id="1-2部分顺序消息"><a href="#1-2部分顺序消息" class="headerlink" title="1.2部分顺序消息"></a>1.2部分顺序消息</h4><p>要保证部分消息有序，需要发送端和消费端配合处理。在发送端，要做到把同一业务ID的消息发送到同一个Message Queue；在消费过程中，要做到从同一个Message Queue读取的消息不被并发处理，这样才能达到部分有序。</p>
+<p>发送端使用MessageQueueSelector类来控制把消息发往哪个Message Queue。消费端通过使用MessageListenerOrderly类来解决单Message Queue的消息被并发处理的问题。</p>
+<hr>
+<h3 id="2-消息重复问题"><a href="#2-消息重复问题" class="headerlink" title="2.消息重复问题"></a>2.消息重复问题</h3><p>对分布式消息队列来说，同时做到确保一定投递和不重复投递是很难的，也就是所谓的“有且仅有一次”。在鱼和熊掌不可兼得的情况下，RocketMQ选择了确保一定投递，保证消息不丢失，但有可能造成消息重复。</p>
+<p>消息重复一般情况下不会发生，但是如果消息量大，网络有波动，消息重复就是个大概率事件。比如Producer有个函数setRetryTimesWhenSendFailed，设置在同步方式下自动重试的次数，默认值是2，这样当第一次发送消息时，Broker端接收到了消息但是没有正确返回发送成功的状态，就造成了消息重复。</p>
+<p>解决消息重复有两种方法：第一种方法是保证消费逻辑的幂等性（多次调用和一次调用效果相同）；另一种方法是维护一个已消费消息的记录，消费前查询这个消息是否被消费过。这两种方法都需要使用者自己实现。</p>
+
                 
             </div>
             <hr/>
