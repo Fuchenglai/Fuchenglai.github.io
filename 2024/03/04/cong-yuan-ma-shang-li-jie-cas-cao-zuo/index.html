@@ -4,9 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="并发编程基础, 小ceng的后端游乐场">
-    <meta name="description" content="1.什么是进程？什么是线程？进程是操作系统资源分配的基本单位。在 Java 中，当我们启动 main 函数时其实就是启动了⼀个 JVM 的进程，⽽ main函数所在的线程就是这个进程中的⼀个线程，也称主线程。
-线程是进程中的⼀个执⾏单元。⼀">
+    <meta name="keywords" content="从源码上理解CAS操作, 小ceng的后端游乐场">
+    <meta name="description" content="1背景在高并发的业务场景下，线程安全问题是必须考虑的，在JDK5之前，可以通过synchronized或Lock来保证同步，从而达到线程安全的目的。但synchronized或Lock方案属于互斥锁的方案，比较重量级，加锁、释放锁都会引起性">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>并发编程基础 | 小ceng的后端游乐场</title>
+    <title>从源码上理解CAS操作 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -313,12 +312,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/22.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">并发编程基础</h1>
+                    <h1 class="description center-align post-title">从源码上理解CAS操作</h1>
                 </div>
             </div>
         </div>
@@ -367,7 +366,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-10-18
+                    2024-03-04
                 </div>
                 
 
@@ -376,14 +375,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.8k
+                    3.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    6 分
+                    12 分
                 </div>
                 
 
@@ -401,84 +400,137 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="1-什么是进程？什么是线程？"><a href="#1-什么是进程？什么是线程？" class="headerlink" title="1.什么是进程？什么是线程？"></a>1.什么是进程？什么是线程？</h3><p>进程是操作系统资源分配的基本单位。在 Java 中，当我们启动 main 函数时其实就是启动了⼀个 JVM 的进程，⽽ main函数所在的线程就是这个进程中的⼀个线程，也称主线程。</p>
-<p>线程是进程中的⼀个执⾏单元。⼀个进程可以包含多个线程，这些线程共享进程的内存空间和系统资源。线程是操作系统调度的最⼩单位，它负责执⾏进程中的任务，但是线程的并发执⾏也可能导致⼀些问题，如竞态条件、死锁等。</p>
-<p>通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
-<img src="/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/java-runtime-data-areas-jdk1.8.png" style="zoom: 80%;">
+                <h3 id="1背景"><a href="#1背景" class="headerlink" title="1背景"></a>1背景</h3><p>在高并发的业务场景下，线程安全问题是必须考虑的，在JDK5之前，可以通过synchronized或Lock来保证同步，从而达到线程安全的目的。但synchronized或Lock方案属于互斥锁的方案，比较重量级，加锁、释放锁都会引起性能损耗问题。</p>
+<p>而在某些场景下，我们是可以通过JUC提供的CAS机制实现无锁的解决方案，或者说是它基于类似于乐观锁的方案，来达到非阻塞同步的方式保证线程安全。</p>
+<h3 id="2什么是CAS？"><a href="#2什么是CAS？" class="headerlink" title="2什么是CAS？"></a>2什么是CAS？</h3><p><code>CAS</code>是<code>Compare and Swap</code>的缩写，直译就是<strong>比较并交换</strong>。CAS是现代CPU广泛支持的一种对内存中的共享数据进行操作的一种特殊指令，这个指令会对内存中的共享数据做原子的读写操作。其作用是让CPU比较内存中某个值是否和预期的值相同，如果相同则将这个值更新为新值，不相同则不做更新。</p>
+<p>本质上来讲CAS是一种无锁的解决方案，也是一种基于乐观锁的操作，可以保证在多线程并发中保障共享资源的原子性操作，相对于synchronized或Lock来说，是一种轻量级的实现方案。</p>
+<p>Java中大量使用了CAS机制来实现多线程下数据更新的原子化操作，比如AtomicInteger、CurrentHashMap当中都有CAS的应用。但Java中并没有直接实现CAS，CAS相关的实现是借助<code>C/C++</code>调用CPU指令来实现的，效率很高，但Java代码需通过JNI才能调用。比如，Unsafe类提供的CAS方法（如compareAndSwapXXX）底层实现即为CPU指令cmpxchg。</p>
+<h3 id="3CAS的基本流程"><a href="#3CAS的基本流程" class="headerlink" title="3CAS的基本流程"></a>3CAS的基本流程</h3><p>下面我们用一张图来了解一下CAS操作的基本流程。</p>
+<p><img src="/2024/03/04/cong-yuan-ma-shang-li-jie-cas-cao-zuo/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240426163416.jpg"></p>
+<p>在上图中涉及到三个值的比较和操作：修改之前获取的（待修改）值A，业务逻辑计算的新值B，以及待修改值对应的内存位置的C。</p>
+<p>整个处理流程中，假设内存中存在一个变量i，它在内存中对应的值是A（第一次读取），此时经过业务处理之后，要把它更新成B，那么在更新之前会再读取一下i现在的值C，如果在业务处理的过程中i的值并没有发生变化，也就是A和C相同，才会把i更新（交换）为新值B。如果A和C不相同，那说明在业务计算时，i的值发生了变化，则不更新（交换）成B。最后，CPU会将旧的数值返回。而上述的一系列操作由CPU指令来保证是原子的。</p>
+<p>在《Java并发编程实践》中对CAS进行了更加通俗的描述：我认为原有的值应该是什么，如果是，则将原有的值更新为新值，否则不做修改，并告诉我原来的值是多少。</p>
+<p>在上述路程中，我们可以很清晰的看到乐观锁的思路，而且这期间并没有使用到锁。因此，相对于synchronized等悲观锁的实现，效率要高非常多。</p>
+<h3 id="4基于CAS的AtomicInteger使用"><a href="#4基于CAS的AtomicInteger使用" class="headerlink" title="4基于CAS的AtomicInteger使用"></a>4基于CAS的AtomicInteger使用</h3><p>关于CAS的实现，最经典最常用的当属AtomicInteger了，我们马上就来看一下AtomicInteger是如何利用CAS实现原子性操作的。为了形成更新鲜明的对比，先来看一下如果不使用CAS机制，想实现线程安全我们通常如何处理。</p>
+<p>在没有使用CAS机制时，为了保证线程安全，基于synchronized的实现如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ThreadSafeTest</span> <span class="token punctuation">&#123;</span>
 
-<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)**资源，但是每个线程有自己的**程序计数器**、</strong>虚拟机栈** 和 <strong>本地方法栈</strong>。</p>
-<h4 id="1-1程序计数器为什么是私有的？"><a href="#1-1程序计数器为什么是私有的？" class="headerlink" title="1.1程序计数器为什么是私有的？"></a>1.1程序计数器为什么是私有的？</h4><p>程序计数器主要有下面两个作用：</p>
-<ol>
-<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
-<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
-</ol>
-<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
-<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
-<h4 id="1-2虚拟机栈和本地方法栈为什么是私有的？"><a href="#1-2虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="1.2虚拟机栈和本地方法栈为什么是私有的？"></a>1.2虚拟机栈和本地方法栈为什么是私有的？</h4><ul>
-<li><strong>虚拟机栈：</strong> 每个 Java 方法在执行之前会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。方法调用对应着一个栈帧在 Java 虚拟机栈中入栈，方法执行结束对应着出栈。</li>
-<li><strong>本地方法栈：</strong> 和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
-</ul>
-<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
-<h4 id="1-3一句话了解堆和方法区"><a href="#1-3一句话了解堆和方法区" class="headerlink" title="1.3一句话了解堆和方法区"></a>1.3一句话了解堆和方法区</h4><p>堆和方法区是所有线程共享的资源，其中堆是进程中最大的一块内存，主要用于存放新创建的对象 (几乎所有对象都在这里分配内存)，方法区主要用于存放已被加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。</p>
-<hr>
-<h3 id="2-如何创建线程？"><a href="#2-如何创建线程？" class="headerlink" title="2.如何创建线程？"></a>2.如何创建线程？</h3><p>一般来说，创建线程有很多种方式，例如继承<code>Thread</code>类、实现<code>Runnable</code>接口、实现<code>Callable</code>接口、使用线程池、使用<code>CompletableFuture</code>类等等。</p>
-<p>不过，这些方式其实并没有真正创建出线程。准确点来说，这些都属于是在 Java 代码中使用多线程的方法。</p>
-<p>严格来说，Java 就只有一种方式可以创建线程，那就是通过<code>new Thread().start()</code>创建。不管是哪种方式，最终还是依赖于<code>new Thread().start()</code>。</p>
-<hr>
-<h3 id="3-线程的生命周期和状态"><a href="#3-线程的生命周期和状态" class="headerlink" title="3.线程的生命周期和状态"></a>3.线程的生命周期和状态</h3><p>线程由生到死的完整过程（生命周期）：当线程被创建并启动以后，既不是一启动就进入了执行状态，也不是一直处于执行状态，在 API 中 <code>java.lang.Thread.State</code> 这个枚举中给出了六种线程状态：</p>
-<table>
-<thead>
-<tr>
-<th>线程状态</th>
-<th>导致状态发生条件</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>NEW（新建）</td>
-<td>线程刚被创建，但是并未启动，还没调用 start 方法，只有线程对象，没有线程特征</td>
-</tr>
-<tr>
-<td>Runnable（可运行）</td>
-<td>线程可以在 Java 虚拟机中运行的状态，可能正在运行自己代码，也可能没有，这取决于操作系统处理器，调用了 t.start() 方法：就绪（经典叫法）</td>
-</tr>
-<tr>
-<td>Blocked（阻塞）</td>
-<td>当一个线程试图获取一个对象锁，而该对象锁被其他的线程持有，则该线程进入 Blocked 状态；当该线程持有锁时，该线程将变成 Runnable 状态</td>
-</tr>
-<tr>
-<td>Waiting（无限等待）</td>
-<td>一个线程在等待另一个线程执行一个（唤醒）动作时，该线程进入 Waiting 状态，进入这个状态后不能自动唤醒，必须等待另一个线程调用 notify 或者 notifyAll 方法才能唤醒</td>
-</tr>
-<tr>
-<td>Timed Waiting （限期等待）</td>
-<td>有几个方法有超时参数，调用将进入 Timed Waiting 状态，这一状态将一直保持到超时期满或者接收到唤醒通知。带有超时参数的常用方法有 Thread.sleep 、Object.wait</td>
-</tr>
-<tr>
-<td>Teminated（结束）</td>
-<td>run 方法正常退出而死亡，或者因为没有捕获的异常终止了 run 方法而死亡</td>
-</tr>
-</tbody></table>
-<img src="/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/640.png" style="zoom: 80%;">
+	<span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">volatile</span> <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 
-<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
-<blockquote>
-<p>在操作系统层面，线程有 READY 和 RUNNING 状态，而在 JVM 层面，只能看到 RUNNABLE 状态。因为现在的时分(time-sharing)多任务(multi-task)操作系统通常都是用时间分片方式抢占式轮转调度。这个时间分片很小，	一个线程在CPU上运行比如10-20ms（running），时间片用完就被换下等待调度(redy)。线程切换的如此之快，区分这两种状态就没什么意义了</p>
-</blockquote>
-<hr>
-<h3 id="4-如何预防和避免线程死锁？"><a href="#4-如何预防和避免线程死锁？" class="headerlink" title="4.如何预防和避免线程死锁？"></a>4.如何预防和避免线程死锁？</h3><p>产生死锁有4个必要条件：</p>
+    <span class="token keyword">public</span> <span class="token keyword">synchronized</span> <span class="token keyword">void</span> <span class="token function">increase</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        i<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>至于上面的实例具体实现，这里不再展开，很多相关的文章专门进行讲解，我们只需要知道为了保证i++的原子操作，在increase方法上使用了重量级的锁synchronized，这会导致该方法的性能低下，所有调用该方法的操作都需要同步等待处理。</p>
+<p>那么，如果采用基于CAS实现的AtomicInteger类，上述方法的实现便变得简单且轻量级了：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ThreadSafeTest</span> <span class="token punctuation">&#123;</span>
+
+	<span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">AtomicInteger</span> counter <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AtomicInteger</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token keyword">public</span> <span class="token keyword">int</span> <span class="token function">increase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+		<span class="token keyword">return</span> counter<span class="token punctuation">.</span><span class="token function">addAndGet</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>之所以可以如此安全、便捷地来实现安全操作，便是由于AtomicInteger类采用了CAS机制。下面，我们就来了解一下AtomicInteger的功能及源码实现。</p>
+<h3 id="5CAS的AtomicInteger类的原理"><a href="#5CAS的AtomicInteger类的原理" class="headerlink" title="5CAS的AtomicInteger类的原理"></a>5CAS的AtomicInteger类的原理</h3><p><code>AtomicInteger</code>是java.util.concurrent.atomic 包下的一个原子类，该包下还有<code>AtomicBoolean</code>, <code>AtomicLong</code>,<code>AtomicLongArray</code>, <code>AtomicReference</code>等原子类，主要用于在高并发环境下，保证线程安全。</p>
+<h4 id="5-1AtomicInteger常用API"><a href="#5-1AtomicInteger常用API" class="headerlink" title="5.1AtomicInteger常用API"></a>5.1AtomicInteger常用API</h4><p>AtomicInteger类提供了如下常见的API功能：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//获取当前的值</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">getAndSet</span><span class="token punctuation">(</span><span class="token keyword">int</span> newValue<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//获取当前的值，并设置新的值</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">getAndIncrement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//获取当前的值，并自增</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">getAndDecrement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//获取当前的值，并自减</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">getAndAdd</span><span class="token punctuation">(</span><span class="token keyword">int</span> delta<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//获取当前的值，并加上预期的值</span>
+<span class="token keyword">void</span> <span class="token function">lazySet</span><span class="token punctuation">(</span><span class="token keyword">int</span> newValue<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//最终会设置成newValue,使用lazySet设置值后，可能导致其他线程在之后的一小段时间内还是可以读到旧的值。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上述方法中，getAndXXX格式的方法都实现了原子操作。具体的使用方法参考上面的addAndGet案例即可。</p>
+<h4 id="5-2AtomicInteger核心源码"><a href="#5-2AtomicInteger核心源码" class="headerlink" title="5.2AtomicInteger核心源码"></a>5.2AtomicInteger核心源码</h4><p>下面看一下AtomicInteger代码中的核心实现代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AtomicInteger</span> <span class="token keyword">extends</span> <span class="token class-name">Number</span> <span class="token keyword">implements</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>Serializable</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">Unsafe</span> unsafe <span class="token operator">=</span> <span class="token class-name">Unsafe</span><span class="token punctuation">.</span><span class="token function">getUnsafe</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">long</span> valueOffset<span class="token punctuation">;</span>
+    <span class="token keyword">static</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">// 用于获取value字段相对当前对象的“起始地址”的偏移量</span>
+            valueOffset <span class="token operator">=</span> unsafe<span class="token punctuation">.</span><span class="token function">objectFieldOffset</span><span class="token punctuation">(</span><span class="token class-name">AtomicInteger</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getDeclaredField</span><span class="token punctuation">(</span><span class="token string">"value"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> ex<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">Error</span><span class="token punctuation">(</span>ex<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">volatile</span> <span class="token keyword">int</span> value<span class="token punctuation">;</span>
+
+    <span class="token comment">//返回当前值</span>
+    <span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> value<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">//递增加detla</span>
+    <span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">getAndAdd</span><span class="token punctuation">(</span><span class="token keyword">int</span> delta<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token comment">// 1、this：当前的实例 </span>
+        <span class="token comment">// 2、valueOffset：value实例变量的偏移量 </span>
+        <span class="token comment">// 3、delta：当前value要加上的数(value+delta)。</span>
+        <span class="token keyword">return</span> unsafe<span class="token punctuation">.</span><span class="token function">getAndAddInt</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> valueOffset<span class="token punctuation">,</span> delta<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">//递增加1</span>
+    <span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">incrementAndGet</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> unsafe<span class="token punctuation">.</span><span class="token function">getAndAddInt</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> valueOffset<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上述代码以AtomicInteger#incrementAndGet方法为例展示了AtomicInteger的基本实现。其中，在static静态代码块中，基于Unsafe类获取value字段相对当前对象的“起始地址”的偏移量，用于后续Unsafe类的处理。</p>
+<p>在处理自增的原子操作时，使用的是Unsafe类中的getAndAddInt方法，CAS的实现便是由Unsafe类的该方法提供，从而保证自增操作的原子性。</p>
+<p>同时，在AtomicInteger类中，可以看到value值通过volatile进行修饰，保证了该属性值的线程可见性。在多并发的情况下，一个线程的修改，可以保证到其他线程立马看到修改后的值。</p>
+<p>通过源码可以看出， <code>AtomicInteger</code> 底层是通过<strong>volatile</strong>变量和CAS两者相结合来保证更新数据的原子性。其中关于Unsafe类对CAS的实现，我们下面详细介绍。</p>
+<h3 id="6CAS的工作原理"><a href="#6CAS的工作原理" class="headerlink" title="6CAS的工作原理"></a>6CAS的工作原理</h3><p>CAS的实现原理简单来说就是由<strong>Unsafe类</strong>和其中的<strong>自旋锁</strong>来完成的，下面针对源代码来看一下这两块的内容。</p>
+<h4 id="6-1UnSafe类"><a href="#6-1UnSafe类" class="headerlink" title="6.1UnSafe类"></a>6.1UnSafe类</h4><p>在AtomicInteger核心源码中，已经看到CAS的实现是通过Unsafe类来完成的，先来了解一下Unsafe类的作用。</p>
+<p>sun.misc.Unsafe是JDK内部用的工具类。它通过暴露一些Java意义上说“不安全”的功能给Java层代码，来让JDK能够更多的使用Java代码来实现一些原本是平台相关的、需要使用native语言（例如C或C++）才可以实现的功能。该类不应该在JDK核心类库之外使用，这也是命名为Unsafe（不安全）的原因。</p>
+<p>JVM的实现可以自由选择如何实现Java对象的“布局”，也就是在内存里Java对象的各个部分放在哪里，包括对象的实例字段和一些元数据之类。</p>
+<p>Unsafe里关于对象字段访问的方法把对象布局抽象出来，它提供了objectFieldOffset()方法用于获取某个字段相对Java对象的“起始地址”的偏移量，也提供了getInt、getLong、getObject之类的方法可以使用前面获取的偏移量来访问某个Java对象的某个字段。在AtomicInteger的static代码块中便使用了objectFieldOffset()方法。</p>
+<p>Unsafe类的功能主要分为内存操作、CAS、Class相关、对象操作、数组相关、内存屏障、系统相关、线程调度等功能。这里我们只需要知道其功能即可，方便理解CAS的实现，注意不建议在日常开发中使用。</p>
+<h4 id="6-2UnSafe与CAS"><a href="#6-2UnSafe与CAS" class="headerlink" title="6.2UnSafe与CAS"></a>6.2UnSafe与CAS</h4><p>AtomicInteger调用了Unsafe#getAndAddInt方法：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">incrementAndGet</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+       <span class="token keyword">return</span> unsafe<span class="token punctuation">.</span><span class="token function">getAndAddInt</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> valueOffset<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>上述代码等于是AtomicInteger调用UnSafe类的CAS方法，JVM帮我们实现出汇编指令，从而实现原子操作。</p>
+<p>在Unsafe中getAndAddInt方法实现如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">getAndAddInt</span><span class="token punctuation">(</span><span class="token class-name">Object</span> var1<span class="token punctuation">,</span> <span class="token keyword">long</span> var2<span class="token punctuation">,</span> <span class="token keyword">int</span> var4<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	<span class="token keyword">int</span> var5<span class="token punctuation">;</span>
+	<span class="token keyword">do</span> <span class="token punctuation">&#123;</span>
+		var5 <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getIntVolatile</span><span class="token punctuation">(</span>var1<span class="token punctuation">,</span> var2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span> <span class="token keyword">while</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">compareAndSwapInt</span><span class="token punctuation">(</span>var1<span class="token punctuation">,</span> var2<span class="token punctuation">,</span> var5<span class="token punctuation">,</span> var5 <span class="token operator">+</span> var4<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> var5<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>getAndAddInt方法有三个参数：</p>
 <ul>
-<li>互斥条件：该资源任意时刻只能有一个线程占有</li>
-<li>请求与保持条件：一个线程因请求资源而阻塞时，对已获得的资源保持不放</li>
-<li>不剥夺条件：线程已获得的资源在使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源</li>
-<li>循环等待条件：即存在一个等待循环队列：p1 要 p2 的资源，p2 要 p1 的资源，形成了一个等待环路</li>
+<li>第一个参数表示当前对象，也就是new的那个AtomicInteger对象；</li>
+<li>第二个表示内存地址；</li>
+<li>第三个表示自增步伐，在AtomicInteger#incrementAndGet中默认的自增步伐是1。</li>
 </ul>
-<p>要预防死锁，我们破坏死锁产生的必要条件即可：</p>
+<p>getAndAddInt方法中，首先把当前对象主内存中的值赋给val5，然后进入while循环。判断当前对象此刻主内存中的值是否等于val5，如果是，就自增（交换值），否则继续循环，重新获取val5的值。</p>
+<p>在上述逻辑中核心方法是compareAndSwapInt方法，它是一个native方法，这个方法汇编之后是CPU原语指令，原语指令是连续执行不会被打断的，所以可以保证原子性。</p>
+<p>在getAndAddInt方法中还涉及到一个实现<strong>自旋锁</strong>。所谓的自旋，其实就是上面getAndAddInt方法中的do while循环操作。当预期值和主内存中的值不等时，就重新获取主内存中的值，这就是自旋。</p>
+<p>这里我们可以看到CAS实现的一个缺点：内部使用<strong>自旋</strong>的方式进行<strong>CAS</strong>更新（while循环进行CAS更新，如果更新失败，则循环再次重试）。如果长时间都不成功的话，就会造成CPU极大的开销。</p>
+<h3 id="7CAS的缺点"><a href="#7CAS的缺点" class="headerlink" title="7CAS的缺点"></a>7CAS的缺点</h3><p><code>CAS</code>高效地实现了原子性操作，但在以下三方面还存在着一些缺点：</p>
 <ul>
-<li>破坏请求与保持条件：一次性申请所有的资源。</li>
-<li>破坏不剥夺条件：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
-<li>破坏循环等待条件：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
+<li>循环时间长，开销大；</li>
+<li>只能保证一个共享变量的原子操作；</li>
+<li>ABA问题；</li>
 </ul>
-<hr>
+<p>下面就这个三个问题详细讨论一下。</p>
+<h4 id="7-1循环时间长开销大"><a href="#7-1循环时间长开销大" class="headerlink" title="7.1循环时间长开销大"></a>7.1循环时间长开销大</h4><p>在分析Unsafe源代码的时候我们已经提到，在Unsafe的实现中使用了自旋锁的机制。在该环节如果<code>CAS</code>操作失败，就需要循环进行<code>CAS</code>操作(do while循环同时将期望值更新为最新的)，如果长时间都不成功的话，那么会造成CPU极大的开销。如果JVM能支持处理器提供的pause指令那么效率会有一定的提升。</p>
+<h4 id="7-2只能保证一个共享变量的原子操作"><a href="#7-2只能保证一个共享变量的原子操作" class="headerlink" title="7.2只能保证一个共享变量的原子操作"></a>7.2只能保证一个共享变量的原子操作</h4><p>在最初的实例中，可以看出是针对一个共享变量使用了CAS机制，可以保证原子性操作。但如果存在多个共享变量，或一整个代码块的逻辑需要保证线程安全，CAS就无法保证原子性操作了，此时就需要考虑采用加锁方式（悲观锁）保证原子性，或者有一个取巧的办法，把多个共享变量合并成一个共享变量进行<code>CAS</code>操作。</p>
+<h4 id="7-3ABA问题"><a href="#7-3ABA问题" class="headerlink" title="7.3ABA问题"></a>7.3ABA问题</h4><p>虽然使用CAS可以实现非阻塞式的原子性操作，但是会产生ABA问题，ABA问题出现的基本流程：</p>
+<ul>
+<li>进程P1在共享变量中读到值为A；</li>
+<li>P1被抢占了，进程P2执行；</li>
+<li>P2把共享变量里的值从A改成了B，再改回到A，此时被P1抢占；</li>
+<li>P1回来看到共享变量里的值没有被改变，于是继续执行；</li>
+</ul>
+<p>虽然P1以为变量值没有改变，继续执行了，但是这个会引发一些潜在的问题。ABA问题最容易发生在lock free的算法中的，CAS首当其冲，因为CAS判断的是指针的地址。如果这个地址被重用了呢，问题就很大了（地址被重用是很经常发生的，一个内存分配后释放了，再分配，很有可能还是原来的地址）。</p>
+<p>ABA问题的解决思路就是使用版本号：在变量前面追加上版本号，每次变量更新的时候把版本号加1，那么A-&gt;B-&gt;A就会变成1A-&gt;2B-&gt;3A。</p>
+<p>另外，从Java 1.5开始，JDK的Atomic包里提供了一个类AtomicStampedReference来解决ABA问题。这个类的compareAndSet方法的作用是首先检查当前引用是否等于预期引用，并且检查当前标志是否等于预期标志，如果全部相等，则以原子方式将该引用和该标志的值设置为给定的更新值。</p>
 
                 
             </div>
@@ -505,7 +557,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/">https://fuchenglai.github.io/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/</a>
+                    <a href="https://fuchenglai.github.io/2024/03/04/cong-yuan-ma-shang-li-jie-cas-cao-zuo/">https://fuchenglai.github.io/2024/03/04/cong-yuan-ma-shang-li-jie-cas-cao-zuo/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -627,13 +679,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/10/27/quan-mian-jie-xi-java-zhu-jie/">
+                <a href="/2024/03/13/redis-gao-pin-mian-shi-ti/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="全面解析java注解">
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="Redis高频面试题">
                         
-                        <span class="card-title">全面解析java注解</span>
+                        <span class="card-title">Redis高频面试题</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -644,14 +696,14 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-10-27
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-03-13
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java/" class="post-category">
-                                    Java
+                            <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
+                                    中间件
                                 </a>
                             
                             
@@ -661,8 +713,20 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%B3%A8%E8%A7%A3/">
-                        <span class="chip bg-color">注解</span>
+                    <a href="/tags/Redis/">
+                        <span class="chip bg-color">Redis</span>
+                    </a>
+                    
+                    <a href="/tags/%E6%8C%81%E4%B9%85%E5%8C%96/">
+                        <span class="chip bg-color">持久化</span>
+                    </a>
+                    
+                    <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">
+                        <span class="chip bg-color">线程模型</span>
+                    </a>
+                    
+                    <a href="/tags/%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/">
+                        <span class="chip bg-color">淘汰策略</span>
                     </a>
                     
                 </div>
@@ -676,13 +740,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/10/04/concurrenthashmap-shi-ru-he-bao-zheng-xian-cheng-an-quan-de/">
+                <a href="/2024/02/28/tu-you-hou-duan-shi-xi-sheng-yi-mian-mian-jing/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="ConcurrentHashMap是如何保证线程安全的">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="途游-后端实习生一面面经">
                         
-                        <span class="card-title">ConcurrentHashMap是如何保证线程安全的</span>
+                        <span class="card-title">途游-后端实习生一面面经</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -693,27 +757,19 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-10-04
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-28
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java/" class="post-category">
-                                    Java
+                            <a href="/categories/%E9%9D%A2%E7%BB%8F/" class="post-category">
+                                    面经
                                 </a>
                             
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/JUC/">
-                        <span class="chip bg-color">JUC</span>
-                    </a>
-                    
                 </div>
                 
             </div>
