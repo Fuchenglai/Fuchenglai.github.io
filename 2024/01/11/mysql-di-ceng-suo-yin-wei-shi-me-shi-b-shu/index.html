@@ -4,9 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="并发编程基础, 小ceng的后端游乐场">
-    <meta name="description" content="1.什么是进程？什么是线程？进程是操作系统资源分配的基本单位。在 Java 中，当我们启动 main 函数时其实就是启动了⼀个 JVM 的进程，⽽ main函数所在的线程就是这个进程中的⼀个线程，也称主线程。
-线程是进程中的⼀个执⾏单元。⼀">
+    <meta name="keywords" content="mysql底层索引为什么是b+树？, 小ceng的后端游乐场">
+    <meta name="description" content="1.什么是索引?
+索引是帮助mysql高效获取数据的排好序的数据结构
+索引是存储在文件里的
+
+如果没有索引的话，就得循环一条一条的找，找一次就是一次IO，这样速度就会很慢。并且数据库的数据都是存在磁盘中的，我们从磁盘中取数据，每取一次就是一">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +21,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>并发编程基础 | 小ceng的后端游乐场</title>
+    <title>mysql底层索引为什么是b+树？ | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -313,12 +316,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/22.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/18.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">并发编程基础</h1>
+                    <h1 class="description center-align post-title">mysql底层索引为什么是b+树？</h1>
                 </div>
             </div>
         </div>
@@ -342,8 +345,12 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/JUC/">
-                                <span class="chip bg-color">JUC</span>
+                            <a href="/tags/MySQL/">
+                                <span class="chip bg-color">MySQL</span>
+                            </a>
+                        
+                            <a href="/tags/%E7%B4%A2%E5%BC%95/">
+                                <span class="chip bg-color">索引</span>
                             </a>
                         
                     </div>
@@ -354,8 +361,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Java/" class="post-category">
-                                Java
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
+                                数据库
                             </a>
                         
                     </div>
@@ -367,7 +374,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-10-18
+                    2024-01-11
                 </div>
                 
 
@@ -383,7 +390,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    6 分
+                    7 分
                 </div>
                 
 
@@ -401,96 +408,53 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="1-什么是进程？什么是线程？"><a href="#1-什么是进程？什么是线程？" class="headerlink" title="1.什么是进程？什么是线程？"></a>1.什么是进程？什么是线程？</h3><p>进程是操作系统资源分配的基本单位。在 Java 中，当我们启动 main 函数时其实就是启动了⼀个 JVM 的进程，⽽ main函数所在的线程就是这个进程中的⼀个线程，也称主线程。</p>
-<p>线程是进程中的⼀个执⾏单元。⼀个进程可以包含多个线程，这些线程共享进程的内存空间和系统资源。线程是操作系统调度的最⼩单位，它负责执⾏进程中的任务，但是线程的并发执⾏也可能导致⼀些问题，如竞态条件、死锁等。</p>
-<p>通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
-<img src="/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/java-runtime-data-areas-jdk1.8.png" style="zoom: 80%;">
+                <h3 id="1-什么是索引"><a href="#1-什么是索引" class="headerlink" title="1.什么是索引?"></a>1.什么是索引?</h3><ul>
+<li>索引是帮助mysql高效获取数据的<strong>排好序</strong>的<strong>数据结构</strong></li>
+<li>索引是存储在文件里的</li>
+</ul>
+<p>如果没有索引的话，就得循环一条一条的找，找一次就是一次IO，这样速度就会很慢。并且数据库的数据都是存在磁盘中的，我们从磁盘中取数据，每取一次就是一次IO，IO是非常耗时的。</p>
+<p>如果没有索引，当我们查找第7条数据时，就会循环7次，如果有百万级别的数据，那么就会查找百万次，显然这样是不行的，就需要数据结构算法来优化。</p>
+<h3 id="2-为什么不用二叉搜索树-BST-？"><a href="#2-为什么不用二叉搜索树-BST-？" class="headerlink" title="2.为什么不用二叉搜索树(BST)？"></a>2.为什么不用二叉搜索树(BST)？</h3><p>二叉树节点保存的都是单个索引，高度会随着数据增大而增高，但是比一条一条的循环会快。</p>
+<img src="/2024/01/11/mysql-di-ceng-suo-yin-wei-shi-me-shi-b-shu/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240429104938.jpg" style="zoom:80%;">
 
-<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)**资源，但是每个线程有自己的**程序计数器**、</strong>虚拟机栈** 和 <strong>本地方法栈</strong>。</p>
-<h4 id="1-1程序计数器为什么是私有的？"><a href="#1-1程序计数器为什么是私有的？" class="headerlink" title="1.1程序计数器为什么是私有的？"></a>1.1程序计数器为什么是私有的？</h4><p>程序计数器主要有下面两个作用：</p>
-<ol>
-<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
-<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
-</ol>
-<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
-<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
-<h4 id="1-2虚拟机栈和本地方法栈为什么是私有的？"><a href="#1-2虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="1.2虚拟机栈和本地方法栈为什么是私有的？"></a>1.2虚拟机栈和本地方法栈为什么是私有的？</h4><ul>
-<li><strong>虚拟机栈：</strong> 每个 Java 方法在执行之前会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。方法调用对应着一个栈帧在 Java 虚拟机栈中入栈，方法执行结束对应着出栈。</li>
-<li><strong>本地方法栈：</strong> 和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
-</ul>
-<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
-<h4 id="1-3一句话了解堆和方法区"><a href="#1-3一句话了解堆和方法区" class="headerlink" title="1.3一句话了解堆和方法区"></a>1.3一句话了解堆和方法区</h4><p>堆和方法区是所有线程共享的资源，其中堆是进程中最大的一块内存，主要用于存放新创建的对象 (几乎所有对象都在这里分配内存)，方法区主要用于存放已被加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。</p>
-<hr>
-<h3 id="2-如何创建线程？"><a href="#2-如何创建线程？" class="headerlink" title="2.如何创建线程？"></a>2.如何创建线程？</h3><p>一般来说，创建线程有很多种方式，例如继承<code>Thread</code>类、实现<code>Runnable</code>接口、实现<code>Callable</code>接口、使用线程池、使用<code>CompletableFuture</code>类等等。</p>
-<p>不过，这些方式其实并没有真正创建出线程。准确点来说，这些都属于是在 Java 代码中使用多线程的方法。</p>
-<p>严格来说，Java 就只有一种方式可以创建线程，那就是通过<code>new Thread().start()</code>创建。不管是哪种方式，最终还是依赖于<code>new Thread().start()</code>。</p>
-<hr>
-<h3 id="3-线程的生命周期和状态"><a href="#3-线程的生命周期和状态" class="headerlink" title="3.线程的生命周期和状态"></a>3.线程的生命周期和状态</h3><p>线程由生到死的完整过程（生命周期）：当线程被创建并启动以后，既不是一启动就进入了执行状态，也不是一直处于执行状态，在 API 中 <code>java.lang.Thread.State</code> 这个枚举中给出了六种线程状态：</p>
-<table>
-<thead>
-<tr>
-<th>线程状态</th>
-<th>导致状态发生条件</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>NEW（新建）</td>
-<td>线程刚被创建，但是并未启动，还没调用 start 方法，只有线程对象，没有线程特征</td>
-</tr>
-<tr>
-<td>Runnable（可运行）</td>
-<td>线程可以在 Java 虚拟机中运行的状态，可能正在运行自己代码，也可能没有，这取决于操作系统处理器，调用了 t.start() 方法：就绪（经典叫法）</td>
-</tr>
-<tr>
-<td>Blocked（阻塞）</td>
-<td>当一个线程试图获取一个对象锁，而该对象锁被其他的线程持有，则该线程进入 Blocked 状态；当该线程持有锁时，该线程将变成 Runnable 状态</td>
-</tr>
-<tr>
-<td>Waiting（无限等待）</td>
-<td>一个线程在等待另一个线程执行一个（唤醒）动作时，该线程进入 Waiting 状态，进入这个状态后不能自动唤醒，必须等待另一个线程调用 notify 或者 notifyAll 方法才能唤醒</td>
-</tr>
-<tr>
-<td>Timed Waiting （限期等待）</td>
-<td>有几个方法有超时参数，调用将进入 Timed Waiting 状态，这一状态将一直保持到超时期满或者接收到唤醒通知。带有超时参数的常用方法有 Thread.sleep 、Object.wait</td>
-</tr>
-<tr>
-<td>Teminated（结束）</td>
-<td>run 方法正常退出而死亡，或者因为没有捕获的异常终止了 run 方法而死亡</td>
-</tr>
-</tbody></table>
-<img src="/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/640.png" style="zoom: 80%;">
+<img src="/2024/01/11/mysql-di-ceng-suo-yin-wei-shi-me-shi-b-shu/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240429105015.jpg" style="zoom:80%;">
 
-<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
-<blockquote>
-<p>在操作系统层面，线程有 READY 和 RUNNING 状态，而在 JVM 层面，只能看到 RUNNABLE 状态。因为现在的时分(time-sharing)多任务(multi-task)操作系统通常都是用时间分片方式抢占式轮转调度。这个时间分片很小，	一个线程在CPU上运行比如10-20ms（running），时间片用完就被换下等待调度(redy)。线程切换的如此之快，区分这两种状态就没什么意义了</p>
-</blockquote>
-<hr>
-<h3 id="4-如何预防和避免线程死锁？"><a href="#4-如何预防和避免线程死锁？" class="headerlink" title="4.如何预防和避免线程死锁？"></a>4.如何预防和避免线程死锁？</h3><p>产生死锁有4个必要条件：</p>
+<p>不用二叉树是因为极端情况下会出现单边增长，退化成了链表，这样在数量大的情况下，和一条一条查找没有区别。</p>
+<h3 id="3-为什么不用红黑树"><a href="#3-为什么不用红黑树" class="headerlink" title="3.为什么不用红黑树?"></a>3.为什么不用红黑树?</h3><p><strong>红黑树有自平衡性质</strong>，不会出现单边增长，它会动态自旋转，在性能上比二叉树又高一点，但是mysql也没有用这种数据结构，因为数据量超大的情况下，数据高度也会一直增大，在最终这个树高度也非常大，解决不了根本问题。</p>
+<p><img src="/2024/01/11/mysql-di-ceng-suo-yin-wei-shi-me-shi-b-shu/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240429105409.jpg"></p>
+<h3 id="4-为什么不用HASH表？"><a href="#4-为什么不用HASH表？" class="headerlink" title="4.为什么不用HASH表？"></a>4.为什么不用HASH表？</h3><p>哈希表是键值对的集合，通过键(key)即可快速取出对应的值(value)，因此哈希表可以快速检索数据（接近 O（1））。hash算法一次就会定位到文件指针，速度快，但是还是没有用，如果范围查找的话就没有办法了。</p>
+<p>如果只是内存中的话，他的时间复杂度是O(1),速度会会很快，但是索引文件也是保存在磁盘上，而且hash是不连续的放在磁盘上的，这样查询起来也很慢，这才是不用hash的最根本原因。</p>
+<h3 id="5-为什么不用B树，而是使用了B-树"><a href="#5-为什么不用B树，而是使用了B-树" class="headerlink" title="5.为什么不用B树，而是使用了B+树"></a>5.为什么不用B树，而是使用了B+树</h3><p>相比上面的数据结构，b树增加了横向大小（度Degree），那么在高度上就减小了，查找次数就少了。</p>
+<p>b树，也称为b-树，全称<strong>多路平衡查找树</strong>，B+ 树是 B 树的一种变体。B 树和 B+树中的 B 是 <code>Balanced</code> （平衡）的意思。</p>
+<p>目前大部分数据库系统及文件系统都采用 B树或其变种 B+树作为索引结构。</p>
+<p><strong>B树和B+树有何异同？</strong></p>
 <ul>
-<li>互斥条件：该资源任意时刻只能有一个线程占有</li>
-<li>请求与保持条件：一个线程因请求资源而阻塞时，对已获得的资源保持不放</li>
-<li>不剥夺条件：线程已获得的资源在使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源</li>
-<li>循环等待条件：即存在一个等待循环队列：p1 要 p2 的资源，p2 要 p1 的资源，形成了一个等待环路</li>
+<li>B 树的所有节点既存放键(key) 也存放数据(data)，而 B+树只有叶子节点存放 key 和 data，其他内节点只存放 key。</li>
+<li>B 树的叶子节点都是独立的；B+树的叶子节点按照key大小顺序排列，有一条指针指相邻的叶子节点，形成了一个链表</li>
+<li>在 B 树中进行范围查询时，首先找到要查找的下限，然后对 B 树进行中序遍历，直到找到查找的上限；而 B+树的范围查询，只需要对链表进行遍历即可。</li>
 </ul>
-<p>要预防死锁，我们破坏死锁产生的必要条件即可：</p>
+<p>mysql取一次数据一般是<strong>16K</strong>，所以节点一般设置为<strong>16K</strong>。一个节点设置成16K并且保存了索引和data的话，如果 data 数据较大时将会导致每个节点（即一个页）能存储的 key 的数量很小，当存储的数据量很大时同样会导致 B-树的深度较大，增大查询时的磁盘 I&#x2F;O 次数，进而影响查询效率，所以引才使用了B+树。而且B+树在进行范围查找时效率也更高。</p>
+<p><strong>总结：</strong></p>
 <ul>
-<li>破坏请求与保持条件：一次性申请所有的资源。</li>
-<li>破坏不剥夺条件：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
-<li>破坏循环等待条件：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
+<li>B 树的所有节点既存放键(key) 也存放数据(data)，而 B+树只有叶子节点存放 key 和 data，其他内节点只存放 key。如果 data 数据较大时将会导致每个节点（即一个页）能存储的 key 的数量很小，当存储的数据量很大时同样会导致 B-树的深度较大，增大查询时的磁盘 I&#x2F;O 次数</li>
+<li>B 树的叶子节点都是独立的；B+树的叶子节点按照key大小顺序排列，有一条指针指相邻的叶子节点，形成了一个链表。在 B 树中进行范围查询时，首先找到要查找的下限，然后对 B 树进行中序遍历，直到找到查找的上限；而 B+树的范围查询，只需要对链表进行遍历即可。因此B+树在进行范围查找时效率更高。</li>
 </ul>
-<hr>
-<h3 id="5-sleep-方法和wait-方法对比"><a href="#5-sleep-方法和wait-方法对比" class="headerlink" title="5.sleep()方法和wait()方法对比"></a>5.sleep()方法和wait()方法对比</h3><p>共同点：两者都可以暂停线程的执行。</p>
-<p>区别：</p>
-<ul>
-<li><p><strong>sleep()方法没有释放锁，而wait()方法释放了锁。</strong></p>
-</li>
-<li><p>sleep()通常被用于暂停执行，而wait通常被用于线程间交互&#x2F;通信</p>
-</li>
-<li><p><code>sleep()</code>方法执行完成后，线程会自动苏醒，或者也可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。<code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。</p>
-</li>
-<li><p><code>sleep()</code> 是 <code>Thread</code> 类的静态本地方法，<code>wait()</code> 则是 <code>Object</code> 类的本地方法。为什么这样设计呢？下一个问题就会聊到。</p>
-</li>
-</ul>
+<h3 id="6-MyISAM和InnoDB实现B-树的比较"><a href="#6-MyISAM和InnoDB实现B-树的比较" class="headerlink" title="6.MyISAM和InnoDB实现B+树的比较"></a>6.MyISAM和InnoDB实现B+树的比较</h3><p>在 MySQL 中，MyISAM 引擎和 InnoDB 引擎都是使用 B+Tree 作为索引结构，但是，两者的实现方式不太一样。</p>
+<p>MyISAM 引擎中，B+Tree 叶节点的 data 域存放的是数据文件的地址，<strong>索引文件和数据文件是分离的</strong>。在索引检索的时候，首先按照 B+Tree 搜索算法搜索索引，如果指定的 Key 存在，则取出其 data 域的值，然后以 data 域的值为地址读取相应的数据记录。这被称为“<strong>非聚簇索引（非聚集索引）</strong>”。</p>
+<p>InnoDB 引擎中，其数据文件本身就是索引文件。其表数据文件本身就是按 B+Tree 组织的一个索引结构，树的叶节点 data 域保存了完整的数据记录。这个索引的 key 是数据表的主键，因此 InnoDB 表数据文件本身就是主索引。这被称为“<strong>聚簇索引（聚集索引）</strong>”，而其余的索引都作为 <strong>辅助索引</strong> ，辅助索引的 data 域存储相应记录主键的值而不是地址。在根据辅助索引查找时，则需要先取出主键的值，再走一遍主索引。所以建议选用数据小的主键字段做索引，字段长度越小，普通索引的叶子节点就越小，普通索引占用的空间也就越小。自增主键的插入数据模式，可以让主键索引尽量地保持递增顺序插入，不涉及到挪动其他记录，<strong>避免了页分裂</strong>，页分裂的目的就是保证后一个数据页中的所有行主键值比前一个数据页中主键值大</p>
+<h3 id="7-联合索引要满足最左原则"><a href="#7-联合索引要满足最左原则" class="headerlink" title="7.联合索引要满足最左原则"></a>7.联合索引要满足最左原则</h3><p>联合索引(col1, col2, col3)也是一棵B+树，其非叶子节点存储的是第一个关键字的索引，而叶子节点存储的则是三个关键字col1、col2、col3三个关键字的数据，且按照col1-col2-col3的顺序进行排序。</p>
+<img src="/2024/01/11/mysql-di-ceng-suo-yin-wei-shi-me-shi-b-shu/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240429153558.jpg" style="zoom:80%;">
+
+<p>例如：</p>
+<p>如果执行: SELECT * FROM T WHERE B&#x3D;‘赵六’ AND C&#x3D;123;</p>
+<p>那么无法使用索引，因为索引是用A字段先排序的，如果没有先确定A，直接查找B和C，那么将会是全表查询。</p>
+<p>如果执行: SELECT * FROM T WHERE A&#x3D;‘30’ ;</p>
+<p>那么，会先找到A字段，再在A等于30的数据中（比如有很多条），找B等于DE的数据。这样是可以用到索引的</p>
+<p>如果执行: SELECT * FROM T WHERE A&#x3D;‘18’ AND C&#x3D;345;</p>
+<p>那么，A字段可以索引，而C不能索引。所以可以部分索引，也比全表查询快</p>
+<p>如果执行 : SELECT * FROM T WHERE B&#x3D;DE AND C&#x3D;1234 and A&#x3D;‘2’</p>
+<p>是用到索引的，在and的情况下如果把第一个放到最后位置也是能用到索引的</p>
+<p>现在我想大家应该了解了什么为什么是最左原则。因为，B+树是按照最左边的字段以此构建的。</p>
 
                 
             </div>
@@ -517,7 +481,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/">https://fuchenglai.github.io/2023/10/18/juc-zhi-jin-cheng-xian-cheng-ji-chu/</a>
+                    <a href="https://fuchenglai.github.io/2024/01/11/mysql-di-ceng-suo-yin-wei-shi-me-shi-b-shu/">https://fuchenglai.github.io/2024/01/11/mysql-di-ceng-suo-yin-wei-shi-me-shi-b-shu/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -555,8 +519,12 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/JUC/">
-                                    <span class="chip bg-color">JUC</span>
+                                <a href="/tags/MySQL/">
+                                    <span class="chip bg-color">MySQL</span>
+                                </a>
+                            
+                                <a href="/tags/%E7%B4%A2%E5%BC%95/">
+                                    <span class="chip bg-color">索引</span>
                                 </a>
                             
                         </div>
@@ -639,13 +607,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/10/27/quan-mian-jie-xi-java-zhu-jie/">
+                <a href="/2024/01/14/shi-wu-ji-zhi-xiang-jie/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="全面解析java注解">
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="事务机制详解">
                         
-                        <span class="card-title">全面解析java注解</span>
+                        <span class="card-title">事务机制详解</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -656,14 +624,14 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-10-27
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-01-14
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java/" class="post-category">
-                                    Java
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
+                                    数据库
                                 </a>
                             
                             
@@ -673,8 +641,12 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%B3%A8%E8%A7%A3/">
-                        <span class="chip bg-color">注解</span>
+                    <a href="/tags/%E4%BA%8B%E5%8A%A1/">
+                        <span class="chip bg-color">事务</span>
+                    </a>
+                    
+                    <a href="/tags/MySQL/">
+                        <span class="chip bg-color">MySQL</span>
                     </a>
                     
                 </div>
@@ -688,13 +660,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/10/04/concurrenthashmap-shi-ru-he-bao-zheng-xian-cheng-an-quan-de/">
+                <a href="/2023/12/26/shen-ru-li-jie-https-xie-yi/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="ConcurrentHashMap是如何保证线程安全的">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="深入理解HTTPS协议">
                         
-                        <span class="card-title">ConcurrentHashMap是如何保证线程安全的</span>
+                        <span class="card-title">深入理解HTTPS协议</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -705,14 +677,14 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-10-04
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-12-26
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java/" class="post-category">
-                                    Java
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="post-category">
+                                    计算机网络
                                 </a>
                             
                             
@@ -722,8 +694,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/JUC/">
-                        <span class="chip bg-color">JUC</span>
+                    <a href="/tags/HTTPS/">
+                        <span class="chip bg-color">HTTPS</span>
                     </a>
                     
                 </div>
