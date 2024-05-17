@@ -341,6 +341,44 @@
     
     
     <entry>
+      <title>分布式基础（二）：BASE理论</title>
+      <link href="/2024/02/08/fen-bu-shi-ji-chu-er-base-li-lun/"/>
+      <url>/2024/02/08/fen-bu-shi-ji-chu-er-base-li-lun/</url>
+      
+        <content type="html"><![CDATA[<p>在上一篇 <a href="https://www.tpvlog.com/article/63">CAP理论</a> 中，我提到分布式系统理论上只能取CP或AP，如果要实现强一致性必然会影响可用性。但是，大多数系统实际上不需要那么强的一致性，而是更关注可用性。比如一个3节点的集群，假设每个节点的可用性为 99.9％，那么整个集群的可用性为 99.7％，也就是说，每个月约宕机 129.6 分钟，这对于很多系统是非常严重的问题，所以生产环境，大多数系统都会采用可用性优先的 AP 模型。</p><hr><p>在对大规模分布式系统的实践过程中，eBay 的架构师 Dan Pritchett 提出了BASE理论，其核心思想就是：</p><blockquote><p>即使无法做到强一致性（Strong Consistency，CAP 的一致性就是强一致性），但分布式系统可以采用适合的方式达到最终一致性（Eventual Consitency）。</p></blockquote><p>Base 理论是 CAP 理论中的 AP 的延伸，是对互联网大规模分布式系统的实践总结，强调可用性。BASE 是 <strong>基本可用（Basically Available）</strong> 、<strong>软状态（Soft-state）</strong> 和 <strong>最终一致（Eventually Consistent）</strong> 三个短语的缩写：</p><img src="/2024/02/08/fen-bu-shi-ji-chu-er-base-li-lun/base.png" style="zoom: 67%;"><h3 id="1-基本可用"><a href="#1-基本可用" class="headerlink" title="1.基本可用"></a>1.基本可用</h3><p>在BASE理论中，基本可用是说，当分布式系统在出现不可预知的故障时，允许损失部分功能的可用性，保障核心功能的可用性。</p><p>具体来说，你可以把基本可用理解成，当系统节点出现大规模故障的时候，比如专线的光纤被挖断、突发流量导致系统过载，这个时候可以通过服务降级，牺牲部分功能的可用性，保障系统的核心功能可用。</p><h4 id="1-1实现方式"><a href="#1-1实现方式" class="headerlink" title="1.1实现方式"></a>1.1实现方式</h4><p>实现分布式系统基本可用的手段有很多，常见的有：</p><ul><li>流量削峰</li><li>请求排队</li><li>服务降级</li><li>服务熔断</li></ul><p>所以，<strong>基本可用在本质上是一种妥协，也就是在出现节点故障或系统过载的时候，通过牺牲非核心功能的可用性，保障核心功能的稳定运行</strong>。</p><hr><h3 id="2-最终一致"><a href="#2-最终一致" class="headerlink" title="2.最终一致"></a>2.最终一致</h3><p>最终一致性是指，分布式系统即使无法做到强一致性，但应当根据自身业务特点，采用适当的方式在一定时限后使各个节点的数据最终能够达到一致的状态。这个时限取决于网络延时，系统负载，数据复制方案设计等等因素。</p><p>几乎所有的互联网系统采用的都是最终一致性，只有在实在无法使用最终一致性，才使用强一致性或事务，比如，对于决定系统运行的敏感元数据，需要考虑采用强一致性，对于涉账类的支付系统或清算系统的数据，需要考虑采用事务。</p><p>我们可以将CAP理论中的“强一致性”理解为最终一致性的特例，也就是说，你可以把强一致性看作是不存在延迟的一致性。在实践中，你也可以这样思考： 如果业务功能无法容忍一致性的延迟（比如分布式锁对应的数据），就实现强一致性；如果能容忍短暂的一致性延迟（比如 QQ 状态数据），则可以考虑最终一致性。</p><h4 id="2-1实现方式"><a href="#2-1实现方式" class="headerlink" title="2.1实现方式"></a>2.1实现方式</h4><p>那么如何实现最终一致性呢？你首先要知道它以什么为准，因为这是实现最终一致性的关键。一般来说，在实际工程实践中有这样几种方式：</p><ul><li><strong>读时修复：</strong>在读取数据时，检测数据的不一致，进行修复。比如 Cassandra 的 Read Repair 实现，具体来说，就是向 Cassandra 系统查询数据的时候，如果检测到不同节点的副本数据不一致，系统就自动修复数据；</li><li><strong>写时修复：</strong>在写入数据时，检测数据的不一致，进行修复。比如 Cassandra 的 Hinted Handoff 实现，具体来说，就是Cassandra 集群的节点之间远程写数据的时候，如果写失败就将数据缓存下来，然后定时重传，修复数据的不一致性。</li><li><strong>异步修复：</strong>这个是最常用的方式，通过定时对账检测副本数据的一致性，并修复。</li></ul><p>注意，因为写时修复不需要做数据一致性对比，性能消耗比较低，对系统运行影响也不大，所以许多开源框架都是用这种方式实现最终一致性的。而读时修复和异步修复因为需要做数据的一致性对比，性能消耗比较多，所以需要尽量优化一致性对比的算法，降低性能消耗，避免对系统运行造成影响。</p><blockquote><p>在实现最终一致性的时候，一般要实现自定义写一致性级别（All、Quorum、One、Any）， 比如<a href="https://www.tpvlog.com/article/153">Elasticsearch</a>在进行索引数据同步时，就支持各种写一致性级别。</p></blockquote><hr><h3 id="3-软状态"><a href="#3-软状态" class="headerlink" title="3.软状态"></a>3.软状态</h3><p>软状态，描述的是实现服务可用性的时候系统数据的一种过渡状态，也就是说不同节点间，数据副本存在短暂的不一致。</p><p>比如，分布式存储中一般一份数据至少会有N个副本，允许系统在不同节点的数据副本之间进行数据同步的过程中存在延时。mysql replication的异步复制也是一种体现。</p><p>这里，我们只需要知道软状态是一种过渡状态就可以了，BASE理论的重点是基本可用以及最终一致性。</p><hr><h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h3><p>BASE 理论是对 CAP 中一致性和可用性权衡的结果，它来源于对大规模互联网分布式系统实践的总结，是基于 CAP 定理逐步演化而来的。它的核心思想是：<strong>如果不是必须的话，不推荐实现事务或强一致性，鼓励可用性和性能优先，根据业务的特点，来实现非常弹性的基本可用，以及数据的最终一致性</strong>。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式基础 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>分布式基础（一）：CAP理论</title>
+      <link href="/2024/02/05/fen-bu-shi-ji-chu-yi-cap-li-lun/"/>
+      <url>/2024/02/05/fen-bu-shi-ji-chu-yi-cap-li-lun/</url>
+      
+        <content type="html"><![CDATA[<p>集中式应用进行服务化拆分后，必然会出现一个问题：<em><strong>如何保证各个节点（Node）之间的数据一致性？</strong></em></p><p>比如以下场景：<br>用户首先发起一次更新操作，映射到节点A；然后，用户又做了一次查询操作，操作映射到了节点B，此时A和B的数据如果不一致，对用户来说就会造成困扰。</p><p>分布式系统为了提高可用性，必然会引入<strong>冗余机制（副本）</strong>，而冗余便带来了上面描述的一致性问题。为了解决这类问题，加州大学伯克利分校的<a href="https://en.wikipedia.org/wiki/Eric_Brewer_(scientist)">Eric Brewer</a> 教授提出了 CAP 猜想。2年后， Seth Gilbert 和 Nancy Lynch 从理论上<a href="https://dl.acm.org/citation.cfm?id=564601">证明了猜想</a>的可能性。从此，CAP 理论正式在学术上成为了分布式计算领域的公认定理。</p><h3 id="1-CAP三指标"><a href="#1-CAP三指标" class="headerlink" title="1.CAP三指标"></a>1.CAP三指标</h3><p>CAP 理论是一个很好的思考框架，它对分布式系统的特性做了高度抽象，抽象成了<strong>一致性</strong>、<strong>可用性</strong>和<strong>分区容错性</strong>，并对特性间的冲突做了总结。一旦掌握它，我们自然而然就能根据业务场景的特点进行权衡，设计出适合的系统模型。</p><img src="/2024/02/05/fen-bu-shi-ji-chu-yi-cap-li-lun/cap.png" style="zoom:67%;"><p>我们先来看看CAP理论中三个指标的含义。</p><h4 id="1-1一致性（Consistence）"><a href="#1-1一致性（Consistence）" class="headerlink" title="1.1一致性（Consistence）"></a>1.1一致性（Consistence）</h4><p>一致性，指的是客户端的每次读操作，不管访问哪个节点，要么读到的都是同一份最新数据，要么读取失败。</p><p>注意，一致性是站在客户端的视角出发的，并不是说在某个时间点分布式系统的所有节点的数据是一致的。事实上，在一个事务执行过程中，系统就是处于一种不一致状态，但是客户端是无法读取事务未提交的数据的，此时客户端会直接读取失败。</p><p>CAP理论中的一致性是<em><strong>强一致性</strong></em>，举个例子来理解下：</p><p>初始时，节点1和节点2的数据是一致的，然后客户端向节点1写入了新数据“X &#x3D; 2”：</p><img src="/2024/02/05/fen-bu-shi-ji-chu-yi-cap-li-lun/yzx.png" style="zoom:67%;"><p>节点1在本地更新数据后，通过节点间的通讯，同步数据到节点2，确认节点2写入成功后，然后返回成功给客户端：</p><img src="/2024/02/05/fen-bu-shi-ji-chu-yi-cap-li-lun/yzx2.png" style="zoom:67%;"><p>这样两个节点的数据就是一致的了，之后，不管客户端访问哪个节点，读取到的都是同一份最新数据。如果节点2在同步数据的过程中，有另外的客户端来访问任意节点，都会拒绝，这就是强一致性。</p><h4 id="1-2可用性-Availability"><a href="#1-2可用性-Availability" class="headerlink" title="1.2可用性(Availability)"></a>1.2可用性(Availability)</h4><p>可用性，指的是客户端的请求，不管访问哪个节点，都能得到响应数据，但不保证是同一份最新数据。你也可以把可用性看作是分布式系统对访问本系统的客户端的另外一种承诺：<strong>我尽力给你返回数据，不会不响应你，但是我不保证每个节点给你的数据都是最新的</strong>。</p><p>这个指标强调的是服务可用，但不保证数据的一致。</p><h4 id="1-3分区容错性-Network-partitioning"><a href="#1-3分区容错性-Network-partitioning" class="headerlink" title="1.3分区容错性(Network partitioning)"></a>1.3分区容错性(Network partitioning)</h4><p>分区容错性，指的是当节点间出现消息丢失、高延迟或者已经发生网络分区时，系统仍然可以继续提供服务。也就是说，分布式系统在告诉访问本系统的客户端：<strong>不管我的内部出现什么样的数据同步问题，我会一直运行，提供服务</strong>。</p><p>分区容错性，强调的是集群对分区故障的容错能力。 因为分布式系统与单机系统不同，它涉及到多节点间的通讯和交互，节点间的分区故障是必然发生的，所以在分布式系统中分区容错性是必须要考虑的。</p><p>既然分区容错是必须要考虑的，那么这时候系统该如何运行呢？是选择一致性（C）呢，还是选择可用性（P）呢？这就引出了著名的“CAP不可能三角”。</p><hr><h3 id="2-CA-CP-AP的选择"><a href="#2-CA-CP-AP的选择" class="headerlink" title="2.CA&#x2F;CP&#x2F;AP的选择"></a>2.CA&#x2F;CP&#x2F;AP的选择</h3><p>所谓“CAP不可能三角”，其实就是CAP理论中提到的： <strong>对于一个分布式系统而言，一致性（Consistency）、可用性（Availability）、分区容错性（Partition Tolerance）3 个指标不可兼得，只能在 3 个指标中选择 2 个</strong>。</p><p>上面说过了，因为只要有网络交互就一定会有延迟和数据丢失，而这种状况我们必须接受，同时还必须保证系统不能挂掉，所以节点间的分区故障是必然发生的。也就是说，分区容错性（P）是前提，是必须要保证的。</p><h4 id="2-1CP架构"><a href="#2-1CP架构" class="headerlink" title="2.1CP架构"></a>2.1CP架构</h4><p>当选择了一致性（C）的时候，如果因为消息丢失、延迟过高发生了网络分区，那么这个时候，当集群节点接收到来自客户端的写请求时，因为无法保证所有节点都是最新信息，所以系统将返回写失败错误，也就是说集群拒绝新数据写入。</p><p>如下图，T1时刻，客户端往节点A写入<strong>Message 2</strong>，此时发生了网络分区，节点A的数据无法同步到节点B；T2时刻，如果客户端分别读取了节点A和节点B的数据，就会出现数据不一致。</p><img src="/2024/02/05/fen-bu-shi-ji-chu-yi-cap-li-lun/cp.png"><p>此时，为了保证一致性（C），客户端从节点B读取数据时，节点B应当返回<strong>error</strong>，提示客户端”系统发生了错误”，这种方式相当于放弃了可用性（A），此时CAP三者只能满足CP。</p><h4 id="2-2AP架构"><a href="#2-2AP架构" class="headerlink" title="2.2AP架构"></a>2.2AP架构</h4><p>当选择了可用性（A）的时候，系统将始终处理客户端的查询，返回特定信息，如果发生了网络分区，一些节点将无法返回最新的特定信息，它们将返回自己当前的相对新的信息。</p><p>如下图，T1时刻，客户端往节点A写入<strong>Message 2</strong>，此时发生了网络分区，节点A的数据无法同步到节点B；T2时刻，客户端访问节点B时，节点B将自己当前拥有的数据<strong>Message 1</strong>返回给客户端，而实际上当前最新数据已经是<strong>Message2</strong>了，这就不满足一致性（C），此时CAP三者只能满足AP。</p><img src="/2024/02/05/fen-bu-shi-ji-chu-yi-cap-li-lun/ap.png"><blockquote><p>注意：这里节点B返回的<strong>Message 1</strong>虽然不是一个”正确“的结果，但是一个”合理“的结果，因为节点B只是返回的不是最新结果，并不是一个错乱的值。</p></blockquote><hr><h3 id="3-总结"><a href="#3-总结" class="headerlink" title="3.总结"></a>3.总结</h3><p>本章，我对CAP理论进行了基本的讲解，总结一下：</p><ul><li>CA 模型：在分布式系统中不存在，因为舍弃 P，意味着舍弃分布式系统，就比如单机版关系型数据库 MySQL，如果 MySQL 要考虑主备或集群部署时，它必须考虑 P。</li><li>CP 模型：采用 CP 模型的分布式系统，一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性。因为为了防止数据不一致，集群将拒绝新数据的写入，典型的应用是 ZooKeeper，Etcd 和 HBase。</li><li>AP 模型：采用 AP 模型的分布式系统，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但当出现分区故障时，相同的读操作，访问不同的节点，得到响应数据可能不一样。典型应用就比如 Cassandra 和 DynamoDB。</li></ul><p>最后，关于CAP 理论有个误解：就是认为无论在什么情况下，分布式系统都只能在 C 和 A 中选择 1 个。 事实上，在不存在网络分区的情况下（也就是分布式系统正常运行时），C 和 A 能够同时保证。只有当发生分区故障的时候，也就是说需要 P 时，才会在 C 和 A 之间做出选择。</p><p>所以，我们在进行系统设计时，需要根据实际的业务场景， 在一致性和可用性之间做出权衡。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式基础 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>JVM之垃圾回收机制</title>
       <link href="/2024/02/02/jvm-zhi-la-ji-hui-shou-ji-zhi/"/>
       <url>/2024/02/02/jvm-zhi-la-ji-hui-shou-ji-zhi/</url>
@@ -556,7 +594,7 @@
       
       <categories>
           
-          <category> 消息队列 </category>
+          <category> 消息中间件 </category>
           
       </categories>
       
@@ -789,6 +827,31 @@
         <tags>
             
             <tag> JUC </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>RocketMQ架构</title>
+      <link href="/2023/10/05/rocketmq-jia-gou/"/>
+      <url>/2023/10/05/rocketmq-jia-gou/</url>
+      
+        <content type="html"><![CDATA[<p>本章，我们先来看下RocketMQ的基本架构，涉及哪些核心组件，以及各个组件之间的关系又是怎样的。</p><h3 id="1-基本架构"><a href="#1-基本架构" class="headerlink" title="1.基本架构"></a>1.基本架构</h3><p>在RockectMQ中，一共有四个核心组件：<strong>NameServer</strong>、<strong>Broker</strong>、<strong>Producer</strong>、<strong>Consumer</strong>，它们之间的基本关系可以用<a href="http://rocketmq.apache.org/docs/rmq-arc/">RocketMQ官方</a>的一张图表示：</p><p><img src="/2023/10/05/rocketmq-jia-gou/jiagou.png"></p><p>上图中，Broker Cluster就是各个RocketMQ进程，Producer Cluster和Consumer Cluster分别是生产者和消费者，NameServer Cluster是路由中心。</p><h4 id="1-1Broker"><a href="#1-1Broker" class="headerlink" title="1.1Broker"></a>1.1Broker</h4><p>我们在每台机器上部署的RocketMQ进程，就称为<strong>Broker</strong>。 Broker主要负责消息的存储，一般来说，在一台配置好一点的机器上部署单个Broker实例后，可以抗大约10万QPS的请求。</p><p>我们可以看上图，Broker本身可以构建成一个集群，我们的所有消息数据是以数据分片的形式分布在各个Broker节点上，也就是每个Broker节点保存总数据的一部分。此外，为了保证集群的可用性，每个Broker节点都有自己的副本（Slave），它们之间会进行数据同步。</p><blockquote><p>Broker集群的整个架构就是数据分片集群架构和主从架构的结合</p></blockquote><h4 id="1-2NameServer"><a href="#1-2NameServer" class="headerlink" title="1.2NameServer"></a>1.2NameServer</h4><p>NameServer是RocketMQ的路由中心，每一个NameServer节点都保存着<strong>全量</strong>的路由信息。因为Broker是集群部署，所以当生产者发送消息时，需要知道将消息发送到哪个Broker，当消息者获取消息时，也需要知道从哪个Broker获取消息。</p><p>每一个Broker节点（包括Slave）都会通过<strong>心跳机制</strong>（TCP长连接），将自己的基本信息注册到每一个NameServer中，这样Producer和Consumer就可以从NameServer拉取到路由消息。</p><p>默认情况下，每个Broker会<strong>每隔30s</strong>给所有的NameServer发送心跳，告诉NameServer自己还活着；与此同时，每个NameServer<strong>每隔10s</strong>检查一下各个Broker的最近一次心跳时间，如果发现某个Broker<strong>超过120s</strong>都没发送心跳，就认为这个Broker已经挂掉了，会将其从路由信息里移除。</p><p><img src="/2023/10/05/rocketmq-jia-gou/xtjz.png"></p><blockquote><p>所谓的路由信息，可以理解为Broker集群里的各个Broker的自身信息。</p></blockquote><h4 id="1-3Producer"><a href="#1-3Producer" class="headerlink" title="1.3Producer"></a>1.3Producer</h4><p>生产者，用于生产消息，会<strong>定时从NameServer拉取路由信息</strong>，然后根据路由信息与指定的Broker建立TCP长连接，从而将消息发送到Broker中。</p><h4 id="1-4Consumer"><a href="#1-4Consumer" class="headerlink" title="1.4Consumer"></a>1.4Consumer</h4><p>消费者，用于消费消息，会<strong>定时从NameServer拉取路由信息</strong>，然后根据路由信息与指定的Broker建立TCP长连接，从而从Broker拉取消息。</p><hr><h3 id="2-高可用"><a href="#2-高可用" class="headerlink" title="2.高可用"></a>2.高可用</h3><p>了解完RocketMQ的基本架构后，我们先来看看RocketMQ是如何实现高可用的。由于Producer和Consumer是直接与我们的客户端程序相关的，可用性由我们自己来保证，所以重点看下NameServer和Broker。</p><h4 id="2-1NameServer的可用性"><a href="#2-1NameServer的可用性" class="headerlink" title="2.1NameServer的可用性"></a>2.1NameServer的可用性</h4><p>NameServer管理着Broker的基本信息，如果NameServer挂掉了，那么生产者和消费者就找不到Broker了，所以NameServer需要以集群方式部署来实现高可用。在RocketMQ中，<strong>每个NameServer都保存着Broker集群的所有Broker信息</strong>，所以就算一台NameServer服务器宕机了，还有其它NameServer可用。</p><h4 id="2-2Broker的可用性"><a href="#2-2Broker的可用性" class="headerlink" title="2.2Broker的可用性"></a>2.2Broker的可用性</h4><p>每个Broker节点都是主从架构，所以就算主节点宕掉了，从节点依然可以提供服务。但这里就要思考两个问题：</p><ol><li>主从节点之间如何进行数据同步？</li><li>RokectMQ是否具有故障自动转移机制（即主节点挂掉后，从节点自动成为主节点，不需要人工介入）？</li></ol><p>对于第一点，每一个Slave-Broker节点都会去自己的Master节点那里拉取数据，以进行同步；</p><p>对于第二点，在RocketMQ4.5版本以前，如果Master节点挂掉了，需要手动选出一个Slave节点重新作为Master节点，效率很低。所以4.5版本后，RocketMQ引入了<strong>Dleger机制</strong>，采用Raft协议进行主从节点的选举，实现故障自动转移。</p><p><img src="/2023/10/05/rocketmq-jia-gou/kyx.png"></p><hr><h3 id="3-可扩展"><a href="#3-可扩展" class="headerlink" title="3.可扩展"></a>3.可扩展</h3><p>RocketMQ之所以具有可扩展性，是因为每个Broker节点只保存整体数据的一部分，这样当数据量越来越大时，可以进行水平切分。如果读者对RabbitMQ有所了解就知道，RabbitMQ中的每个节点保存着全量数据，那么当数据量越来越大时，是没法水平扩展的，而RocketMQ通过数据分散集群的模式实现了水平扩展。</p><h4 id="3-1Topic和Tag"><a href="#3-1Topic和Tag" class="headerlink" title="3.1Topic和Tag"></a>3.1Topic和Tag</h4><p>在RocketMQ中，每一个消息都有其所属的<em><strong>Topic</strong></em>，所谓Topic，就是<em><strong>数据集合</strong></em>的意思，是一个逻辑概念。</p><p>举个例子，假设我们的订单系统需要往MQ里发送订单消息，那此时就应该建立一个Topic，它的名字可以叫做：topic_orderInfo，也就是一个包含了所有订单消息的数据集合。然后生产者发送消息时，就必须指定好消息所属的Topic，消费者消费消息时，也需要指定从哪个Topic里获取消息。</p><p>Broker在存储消息时，每一个Topic中的所有消息数据可能会分散在不同的Broker节点上，我们可以在创建Topic时进行指定。比如，假设我们的topic_orderInfo包含900万条消息，我们指定其分散在3个Broker节点上，那么每个节点就包含300万条消息数据：</p><p><img src="/2023/10/05/rocketmq-jia-gou/topic.png"></p><p>除了Topic外，还有一个<code>Tag</code>分类，区分在于 Topic 是一级分类，而 Tag 可以理解为是二级分类。</p><img src="/2023/10/05/rocketmq-jia-gou/tag.png" style="zoom:80%;"><p>那到底什么时候该用 Topic，什么时候该用 Tag？建议如下：</p><ul><li>消息类型是否一致：如普通消息、事务消息、定时（延时）消息、顺序消息，不同的消息类型使用不同的 Topic，无法通过 Tag 进行区分；</li><li>业务是否相关联：没有直接关联的消息，如淘宝交易消息，京东物流消息使用不同的 Topic 进行区分；而同样是天猫交易消息，电器类订单、女装类订单、化妆品类订单的消息可以用 Tag 进行区分；</li><li>消息优先级是否一致：如同样是物流消息，盒马必须小时内送达，天猫超市 24 小时内送达，淘宝物流则相对会慢一些，不同优先级的消息用不同的 Topic 进行区分；</li><li>消息量级是否相当：有些业务消息虽然量小但是实时性要求高，如果跟某些万亿量级的消息使用同一个 Topic，则有可能会因为过长的等待时间而“饿死”，此时需要将不同量级的消息进行拆分，使用不同的 Topic。</li></ul><blockquote><p>每个Broker都通过心跳机制告诉NameServer：我这里有哪些类型的Topic，每类Topic的哪些数据保存在我这。所以生产者才会知道向哪个Broker发送消息，消费者同理。</p><p>另外要注意：<strong>生产者只能往Master-Broker节点发送消息，消费既可以从Master-Broker节点消费消息，也可以从Slave-Broker节点消费消息</strong>，这个我们后面讲解Broker持久化原理时会详细介绍。</p></blockquote><hr><h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h3><p>本章，我们介绍了RocketMQ的基本架构，并对其中的<em><strong>NameServer*<strong>、</strong>*Broker**<em>、</em></strong>Producer*<strong>、</strong></em>Customer***这四个核心组件进行了简要讲解。RocketMQ实现高可用和可扩展的思路其实没什么新意，就是基于Raft协议的主从架构，以及数据分散集群模式。</p><p>如果读者对Spring Cloud有所了解，就会发现，RocketMQ的基本架构和Spring Cloud中的很多组件非常相似，比如***NameServer***，其实就是类似于Spring Cloud中的Eureka服务注册中心。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 消息中间件 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> RocketMQ </tag>
             
         </tags>
       
