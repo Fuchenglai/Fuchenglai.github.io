@@ -316,31 +316,6 @@
     
     
     <entry>
-      <title>情人节小诗一首</title>
-      <link href="/2024/02/14/qing-ren-jie-xiao-shi-yi-shou/"/>
-      <url>/2024/02/14/qing-ren-jie-xiao-shi-yi-shou/</url>
-      
-        <content type="html"><![CDATA[<p>今天是情人节，而我在朋友圈吃一波狗粮，然后在java里给自己new一个对象。<br>以前我是堆，你是栈<br>你总是能精准的找到我，给我指明出路<br>后来有一天我明白了<br>我变成了栈，你却隐身堆海<br>我却找不到你了，空指针了<br>我不愿意如此，在下一轮full gc前<br>我找到了object家的finalize<br>又找到了你，这次我不会放手<br>在世界重启前，一边躲着full gc一边老去</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> 生活 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 杂感 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>分布式基础（二）：BASE理论</title>
       <link href="/2024/02/08/fen-bu-shi-ji-chu-er-base-li-lun/"/>
       <url>/2024/02/08/fen-bu-shi-ji-chu-er-base-li-lun/</url>
