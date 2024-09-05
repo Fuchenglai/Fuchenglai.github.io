@@ -1056,7 +1056,7 @@
 <li>具体产品（ConcreteProduct）：实现了抽象产品角色所定义的接口，由具体工厂来创建，它同具体工厂之间是多对一的关系。</li>
 </ul>
 <p>示例：</p>
-<p>现在需要做一款跨平台的游戏，需要兼容Android，Ios，Wp三个移动操作系统，该游戏针对每个系统都设计了一套操作控制器（OperationController）和界面控制器（UIController），下面通过抽闲工厂方式完成这款游戏的架构设计。</p>
+<p>现在需要做一款跨平台的游戏，需要兼容Android，Ios，Wp三个移动操作系统，该游戏针对每个系统都设计了一套操作控制器（OperationController）和界面控制器（UIController），下面通过抽象工厂方式完成这款游戏的架构设计。</p>
 <p>由题可知，游戏里边的各个平台的UIController和OperationController应该是我们最终生产的具体产品。所以新建两个抽象产品接口。</p>
 <p>抽象操作控制器：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">interface</span> <span class="token class-name">OperationController</span> <span class="token punctuation">&#123;</span>
@@ -1111,7 +1111,7 @@
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>下面定义一个抽闲工厂，该工厂需要可以创建OperationController和UIController。</p>
+<p>下面定义一个抽象工厂，该工厂需要可以创建OperationController和UIController。</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">SystemFactory</span> <span class="token punctuation">&#123;</span>
     <span class="token keyword">public</span> <span class="token class-name">OperationController</span> <span class="token function">createOperationController</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">public</span> <span class="token class-name">UIController</span> <span class="token function">createInterfaceController</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
