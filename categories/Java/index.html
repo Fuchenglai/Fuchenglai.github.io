@@ -377,11 +377,11 @@
                 
                 
                 
-                <a href="/categories/Java/" title="Java: 13">
+                <a href="/categories/Java/" title="Java: 15">
                     <span class="chip center-align waves-effect waves-light
                              chip-active "
                             style="background-color: #F9EBEA;">Java
-                        <span class="tag-length">13</span>
+                        <span class="tag-length">15</span>
                     </span>
                 </a>
                 
@@ -477,6 +477,99 @@
 
     <article id="articles" class="container articles">
         <div class="row tags-posts">
+            
+            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2024/06/27/jie-kou-he-chou-xiang-lei-de-qu-bie/">
+                        <div class="card-image tag-image">
+                            
+                            
+                            <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="接口和抽象类的区别">
+                            
+                            <span class="card-title">接口和抽象类的区别</span>
+                        </div>
+                    </a>
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                本文基于jdk1.8谈论接口和抽象类的区别
+1.抽象类1.1抽象类的定义抽象类通常包含抽象方法、非抽象方法和属性。子类要么实现这些抽象方法，要么也声明为抽象类。非抽象方法和属性可以有具体的实现代码，并且可以被子类继承，根据需要进行覆盖和修改
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-27
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                
+                                <a href="/categories/Java/" class="post-category">
+                                    Java
+                                </a>
+                                
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/JavaSE/">
+                            <span class="chip bg-color">JavaSE</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2024/06/12/shen-ru-li-jie-hashset-ke-bian-dui-xiang-yin-fa-de-wen-ti/">
+                        <div class="card-image tag-image">
+                            
+                            
+                            <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="深入理解HashSet:可变对象引发的问题">
+                            
+                            <span class="card-title">深入理解HashSet:可变对象引发的问题</span>
+                        </div>
+                    </a>
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                问题遇到了一奇怪的问题，现象是同一个对象，在一个HashSet里面存了两份。当时以为是hashcode和equals方法没有写对，但是仔细检查后没有发现错误。仔细debug发现，其hashcode不同。于是想到也许是对象的hashcode发
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-12
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                
+                                <a href="/categories/Java/" class="post-category">
+                                    Java
+                                </a>
+                                
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/JavaSE/">
+                            <span class="chip bg-color">JavaSE</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
@@ -772,15 +865,9 @@
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
-                                1.Java中的常见注解JDK自带注解三种标准注解
+                                1.概念类的组成部分，可以给类携带一些额外的信息，提供一种安全的类似注释标记的机制，用来将任何信息或元数据（metadata）与程序元素（类、方法、成员变量等）进行关联。
 
-@Override
-@Deprecated
-@SuppressWarnings
-
-先定义一个接口，初始时有2个方法：
-public interface Person &#123;
-   
+注解是给编译器或 JVM 看的，编译器或 JVM 可以根据注解来完
                             
                         </div>
                         <div class="publish-info">
@@ -852,99 +939,6 @@ public interface Person &#123;
                         
                         <a href="/tags/JUC/">
                             <span class="chip bg-color">JUC</span>
-                        </a>
-                        
-                    </div>
-                    
-                </div>
-            </div>
-            
-            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
-                    <a href="/2023/10/04/concurrenthashmap-shi-ru-he-bao-zheng-xian-cheng-an-quan-de/">
-                        <div class="card-image tag-image">
-                            
-                            
-                            <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="ConcurrentHashMap是如何保证线程安全的">
-                            
-                            <span class="card-title">ConcurrentHashMap是如何保证线程安全的</span>
-                        </div>
-                    </a>
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                1.HashMap的问题它根据键的hashCode值存储数据，大多数情况下可以直接定位到它的值，因而具有很快的访问速度，但遍历顺序却是不确定的。HashMap最多只允许一条记录的键为null，允许多条记录的值为null。HashMap非线程
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-10-04
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/Java/" class="post-category">
-                                    Java
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                    <div class="card-action article-tags">
-                        
-                        <a href="/tags/JUC/">
-                            <span class="chip bg-color">JUC</span>
-                        </a>
-                        
-                    </div>
-                    
-                </div>
-            </div>
-            
-            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
-                    <a href="/2023/09/26/java-yu-yan-chang-jian-mian-shi-ti/">
-                        <div class="card-image tag-image">
-                            
-                            
-                            <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="Java语言常见面试题">
-                            
-                            <span class="card-title">Java语言常见面试题</span>
-                        </div>
-                    </a>
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                1.说一说你对static关键字的理解在Java类里只能包含成员变量、方法、构造器、初始化块、内部类5种成员，而static除了构造器以外其他4种都可以修饰，以static修饰的成员就是类成员。类成员属于整个类，而不属于单个对象。
-对sta
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-09-26
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/Java/" class="post-category">
-                                    Java
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                    <div class="card-action article-tags">
-                        
-                        <a href="/tags/JavaSE/">
-                            <span class="chip bg-color">JavaSE</span>
                         </a>
                         
                     </div>

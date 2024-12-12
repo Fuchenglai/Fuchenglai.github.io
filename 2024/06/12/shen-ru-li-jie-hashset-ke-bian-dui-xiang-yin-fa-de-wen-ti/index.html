@@ -4,9 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Java语言常见面试题, 小ceng的后端游乐场">
-    <meta name="description" content="1.说一说你对static关键字的理解在Java类里只能包含成员变量、方法、构造器、初始化块、内部类5种成员，而static除了构造器以外其他4种都可以修饰，以static修饰的成员就是类成员。类成员属于整个类，而不属于单个对象。
-类成员储">
+    <meta name="keywords" content="深入理解HashSet:可变对象引发的问题, 小ceng的后端游乐场">
+    <meta name="description" content="问题遇到了一奇怪的问题，现象是同一个对象，在一个HashSet里面存了两份。当时以为是hashcode和equals方法没有写对，但是仔细检查后没有发现错误。仔细debug发现，其hashcode不同。于是想到也许是对象的hashcode发">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Java语言常见面试题 | 小ceng的后端游乐场</title>
+    <title>深入理解HashSet:可变对象引发的问题 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -313,12 +312,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Java语言常见面试题</h1>
+                    <h1 class="description center-align post-title">深入理解HashSet:可变对象引发的问题</h1>
                 </div>
             </div>
         </div>
@@ -367,7 +366,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-09-26
+                    2024-06-12
                 </div>
                 
 
@@ -376,14 +375,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.2k
+                    519
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    18 分
+                    2 分
                 </div>
                 
 
@@ -401,188 +400,75 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="1-说一说你对static关键字的理解"><a href="#1-说一说你对static关键字的理解" class="headerlink" title="1.说一说你对static关键字的理解"></a>1.说一说你对static关键字的理解</h3><p>在Java类里只能包含成员变量、方法、构造器、初始化块、内部类5种成员，而static除了构造器以外其他4种都可以修饰，以static修饰的成员就是<strong>类成员</strong>。类成员属于整个类，而不属于单个对象。</p>
-<p>类成员储存在方法区中，对象是存放在堆内存的</p>
-<p>对static关键字而言，有一条非常重要的规则：类成员不能访问实例成员。因为类成员是属于类的，类成员的作用域比实例成员的作用域更大，完全可能出现类成员已经初始化完成，但实例成员还没有初始化的情况，如果允许类成员访问实例成员将会引起大量错误。</p>
-<h3 id="2-什么是静态内部类"><a href="#2-什么是静态内部类" class="headerlink" title="2.什么是静态内部类"></a>2.什么是静态内部类</h3><p>如果使用static来修饰一个内部类，则这个内部类就被称为静态内部类。</p>
-<p>静态内部类需满足如下规则：</p>
-<ol>
-<li>静态内部类可以包含静态成员，也可以包含非静态成员；</li>
-<li>静态内部类不能访问外部类的实例成员，只能访问它的静态成员；</li>
-<li>外部类的所有方法、初始化块都能访问其内部定义的静态内部类；</li>
-<li>在外部类的外部，也可以实例化静态内部类，语法如下：<code>外部类.内部类 变量名 = new 外部类.内部类构造方法();</code></li>
-</ol>
-<h3 id="3-说一说你对final关键字的理解"><a href="#3-说一说你对final关键字的理解" class="headerlink" title="3.说一说你对final关键字的理解"></a>3.说一说你对final关键字的理解</h3><ul>
-<li>修饰对象：成员变量，方法，类，局部变量（方法中的变量）</li>
-<li>final修饰的属性的初始化可以在编译期，也可以在运行期，初始化后不能被改变。</li>
-<li>final修饰的方法表示该方法在子类中不能被重写，final修饰的类表示该类不能被继承。</li>
-<li>对于基本类型数据，final会将值变为一个常数（创建后不能被修改）；但是对于对象句柄（亦可称作引用或者指针），final会将句柄变为一个常数（进行声明时，必须将句柄初始化到一个具体的对象。而且不能再将句柄指向另一个对象。但是，对象的本身是可以修改的。这一限制也适用于数组，数组也属于对象，数组本身也是可以修改的。方法参数中的final句柄，意味着在该方法内部，我们不能改变参数句柄指向的实际东西，也就是说在方法内部不能给形参句柄再另外赋值）。</li>
-</ul>
-<h3 id="3-static-final和final-static有什么区别吗？"><a href="#3-static-final和final-static有什么区别吗？" class="headerlink" title="3.static final和final static有什么区别吗？"></a>3.static final和final static有什么区别吗？</h3><p>没区别，写法问题</p>
-<h3 id="4-static-final是什么？"><a href="#4-static-final是什么？" class="headerlink" title="4.static final是什么？"></a>4.static final是什么？</h3><p>static final修饰的属性表示一旦给值，就不可修改，并且可以通过类名访问。</p>
-<p>static final也可以修饰方法，表示该方法不能重写，可以通过类名调用。</p>
-<h3 id="5-final、finally、finalize的区别？"><a href="#5-final、finally、finalize的区别？" class="headerlink" title="5.final、finally、finalize的区别？"></a>5.final、finally、finalize的区别？</h3><ol>
-<li>final就是不可变的意思，可以修饰成员变量、局部变量、⽅法和类。修饰变量时，这个变量必须初始化，所以也称为常量。</li>
-<li>finally是异常处理的⼀部分，只能⽤在try&#x2F;catch中，并且附带⼀个语句块表示这段语句⼀定会被执⾏，⽆论是否抛出异常。</li>
-<li>finalize是java.lang.Object中的⽅法，也就是每⼀个对象都有这个⽅法，⼀个对象的finalize⽅法只会调⽤⼀次，调⽤了不⼀定被回收，因为只有对象被回收的时候才会被回收，就会导致前⾯调⽤，后⾯回收的时候出现问题，不推荐使⽤。</li>
-</ol>
-<h3 id="6-浅拷贝和深拷贝有什么区别？"><a href="#6-浅拷贝和深拷贝有什么区别？" class="headerlink" title="6.浅拷贝和深拷贝有什么区别？"></a>6.浅拷贝和深拷贝有什么区别？</h3><ul>
-<li>浅拷⻉：浅拷⻉创建⼀个新对象，然后将原对象的⾮静态字段复制到新对象。如果字段是基本数据类型，那么就复制其值；如果字段是引⽤类型，复制的就是引⽤⽽不是实际对象。</li>
-<li>创建⼀个新对象，并递归复制原对象中的所有引⽤类型的字段指向的对象，⽽不是共享引⽤。因此，新对象和原对象中的引⽤类型字段引⽤的是两组不同的对象。</li>
-</ul>
-<p>总结：</p>
-<ul>
-<li><p>浅拷⻉复制对象，包括对象的引⽤，两者共享引⽤对象。</p>
-</li>
-<li><p>深拷⻉复制对象及其引⽤的对象，两者不共享引⽤对象，即使引⽤对象也会被复制。</p>
-</li>
-<li><p>在Java中，浅拷⻉通常通过 clone ⽅法实现，深拷⻉可以通过⼿动实现 clone ⽅法、序列化和反序列化，或</p>
-<p>者使⽤第三⽅库来实现。</p>
-</li>
-</ul>
-<h3 id="7-反射机制是什么？"><a href="#7-反射机制是什么？" class="headerlink" title="7.反射机制是什么？"></a>7.反射机制是什么？</h3><p>反射的核心类是<code>Class</code>类，它是Java反射机制的入口。通过Class类，可以获取类的构造器、方法、字段等信息，而不需要在编译时确定这些信息。</p>
-<p>反射的基本步骤包括获取<code>Class</code>对象，获取类的信息（构造器、方法、字段等），然后通过Constructor、Method、Field等类的实例进行具体的操作。</p>
-<p>优点：程序可以在运行时动态的获取和操作类的信息，这使得代码更加灵活，能够使用不同的场景和需求。</p>
-<p>缺点：反射允许绕过编译时的类型检查，这可能导致在运⾏时出现类型安全性问题，并且它涉及到在运⾏时进⾏类型检查和动态分派。这可能导致性能开销。</p>
-<h3 id="8-如何对Integer和Double类型判断值相等？"><a href="#8-如何对Integer和Double类型判断值相等？" class="headerlink" title="8.如何对Integer和Double类型判断值相等？"></a>8.如何对Integer和Double类型判断值相等？</h3><p>Integer、Double不能直接进行比较，这包括：</p>
-<ul>
-<li>不能用&#x3D;&#x3D;进行直接比较，因为它们是不同的数据类型；</li>
-<li>不能转为字符串进行比较，因为转为字符串后，浮点值带小数点，整数值不带，这样它们永远都不相等；</li>
-<li>不能使用compareTo方法进行比较，虽然它们都有compareTo方法，但该方法只能对相同类型进行比较。</li>
-</ul>
-<p>正确方法：整数、浮点类型的包装类，都继承于Number类型，而Number类型分别定义了将数字转换为byte、short、int、long、float、double的方法。所以，可以将Integer、Double先转为转换为相同的基本数据类型（如double），然后使用&#x3D;&#x3D;进行比较。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">Integer</span> i <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
-<span class="token class-name">Double</span> d <span class="token operator">=</span> <span class="token number">100.00</span><span class="token punctuation">;</span>
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>i<span class="token punctuation">.</span><span class="token function">doubleValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> d<span class="token punctuation">.</span><span class="token function">doubleValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+                <h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>遇到了一奇怪的问题，现象是同一个对象，在一个HashSet里面存了两份。当时以为是hashcode和equals方法没有写对，但是仔细检查后没有发现错误。仔细debug发现，其hashcode不同。于是想到也许是对象的hashcode发生了变化。</p>
+<p>通过查看HashMap的源码（HashSet的add是用HashMap的put实现的）发现，加入HashSet的对象，其hashcode是在执行add方法的时候进行计算的。所以如果一个对象的hashCode方法中包含可变域，那么将对象加入HashSet后，将其中的某个用于计算hashcode的域改变，然后再次加入HashSet后，便会出现一个对象在HashSet中存在两份的奇怪现象。</p>
+<h3 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h3><p>示例：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">HashSet</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Set</span></span><span class="token punctuation">;</span>
+ 
+ 
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> 
+<span class="token punctuation">&#123;</span>
+	<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">TestClass</span>
+	<span class="token punctuation">&#123;</span>
+		<span class="token keyword">int</span> field<span class="token punctuation">;</span>
+		
+		<span class="token keyword">public</span> <span class="token class-name">TestClass</span><span class="token punctuation">(</span><span class="token keyword">int</span> field<span class="token punctuation">)</span>
+		<span class="token punctuation">&#123;</span>
+			<span class="token keyword">this</span><span class="token punctuation">.</span>field<span class="token operator">=</span>field<span class="token punctuation">;</span>
+		<span class="token punctuation">&#125;</span>
+		
+		<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setField</span><span class="token punctuation">(</span><span class="token keyword">int</span> field<span class="token punctuation">)</span>
+		<span class="token punctuation">&#123;</span>
+			<span class="token keyword">this</span><span class="token punctuation">.</span>field<span class="token operator">=</span>field<span class="token punctuation">;</span>
+		<span class="token punctuation">&#125;</span>
+		
+		<span class="token annotation punctuation">@Override</span>
+		<span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">equals</span><span class="token punctuation">(</span><span class="token class-name">Object</span> obj<span class="token punctuation">)</span>
+		<span class="token punctuation">&#123;</span>
+			<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token operator">==</span>obj<span class="token punctuation">)</span>
+				<span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+			<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token punctuation">(</span>obj <span class="token keyword">instanceof</span> <span class="token class-name">TestClass</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+				<span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+			<span class="token class-name">TestClass</span> testObj<span class="token operator">=</span><span class="token punctuation">(</span><span class="token class-name">TestClass</span><span class="token punctuation">)</span>obj<span class="token punctuation">;</span>
+			<span class="token keyword">return</span> field<span class="token operator">==</span>testObj<span class="token punctuation">.</span>field<span class="token punctuation">;</span>
+		<span class="token punctuation">&#125;</span>
+		<span class="token annotation punctuation">@Override</span>
+		<span class="token keyword">public</span> <span class="token keyword">int</span> <span class="token function">hashCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token punctuation">&#123;</span>
+			<span class="token keyword">return</span> field<span class="token punctuation">;</span>
+		<span class="token punctuation">&#125;</span>
+	<span class="token punctuation">&#125;</span>
+	<span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> 
+	<span class="token punctuation">&#123;</span>
+		<span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">TestClass</span><span class="token punctuation">></span></span> testSet<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">HashSet</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">TestClass</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token class-name">TestClass</span> obj1<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">TestClass</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		testSet<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>obj1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>testSet<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>testSet<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>obj1<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		
+		obj1<span class="token punctuation">.</span><span class="token function">setField</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>testSet<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>testSet<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>obj1<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		
+		testSet<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>obj1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>testSet<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>testSet<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>obj1<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
 
-<h3 id="9-和equals-有什么区别？"><a href="#9-和equals-有什么区别？" class="headerlink" title="9.&#x3D;&#x3D;和equals()有什么区别？"></a>9.&#x3D;&#x3D;和equals()有什么区别？</h3><p>&#x3D;&#x3D;运算符：</p>
-<ul>
-<li>作用于基本数据类型时，是比较两个数值是否相等；</li>
-<li>作用于引用数据类型时，是比较两个对象的内存地址是否相同，即判断它们是否为同一个对象；</li>
-</ul>
-<p>equals()方法：</p>
-<ul>
-<li>没有重写时，Object默认以 &#x3D;&#x3D; 来实现，即比较两个对象的内存地址是否相同；</li>
-<li>进行重写后，一般会按照对象的内容来进行比较，若两个对象内容相同则认为对象相等，否则认为对象不等。</li>
-</ul>
-<h3 id="10-说一说hashCode-和equals-的关系"><a href="#10-说一说hashCode-和equals-的关系" class="headerlink" title="10.说一说hashCode()和equals()的关系"></a>10.说一说hashCode()和equals()的关系</h3><p>hashCode()用于获取哈希码（散列码），eauqls()用于比较两个对象是否相等，它们应遵守如下规定：</p>
-<ul>
-<li>如果两个对象相等，则它们必须有相同的哈希码。</li>
-<li>如果两个对象有相同的哈希码，则它们未必相等。</li>
-</ul>
-<p><strong>扩展阅读：</strong></p>
-<p>在Java中，Set接口代表无序的、元素不可重复的集合，HashSet则是Set接口的典型实现。</p>
-<p>当向HashSet中加入一个元素时，它需要判断集合中是否已经包含了这个元素，从而避免重复存储。由于这个判断十分的频繁，所以要讲求效率，绝不能采用遍历集合逐个元素进行比较的方式。实际上，HashSet是通过获取对象的哈希码，以及调用对象的equals()方法来解决这个判断问题的。</p>
-<p>HashSet首先会调用对象的hashCode()方法获取其哈希码，并通过哈希码确定该对象在集合中存放的位置。假设这个位置之前已经存了一个对象，则HashSet会调用equals()对两个对象进行比较。若相等则说明对象重复，此时不会保存新加的对象。若不等说明对象不重复，但是它们存储的位置发生了碰撞，此时HashSet会采用链式结构在同一位置保存多个对象，即将新加对象链接到原来对象的之后。之后，再有新添加对象也映射到这个位置时，就需要与这个位置中所有的对象进行equals()比较，若均不相等则将其链到最后一个对象之后。</p>
-<h3 id="11-为什么要重写hashCode-和equals"><a href="#11-为什么要重写hashCode-和equals" class="headerlink" title="11.为什么要重写hashCode()和equals()?"></a>11.为什么要重写hashCode()和equals()?</h3><p>Object类提供的equals()方法默认是用&#x3D;&#x3D;来进行比较的，也就是说只有两个对象是同一个对象时，才能返回相等的结果。而实际的业务中，我们通常的需求是，若两个不同的对象它们的内容是相同的，就认为它们相等。鉴于这种情况，Object类中equals()方法的默认实现是没有实用价值的，所以通常都要重写。</p>
-<p>⽽由于hashCode()与equals()具有联动关系（如果两个对象相等，则它们必须有相同的哈希码），所以equals()⽅法重写时，通常也要将hashCode()进⾏重写，使得这两个⽅法始终保持⼀致性。</p>
-<h3 id="12-String类可以被继承吗？"><a href="#12-String类可以被继承吗？" class="headerlink" title="12.String类可以被继承吗？"></a>12.String类可以被继承吗？</h3><p>String类由final修饰，所以不能被继承。</p>
-<p><strong>扩展阅读</strong></p>
-<p>在Java中，String类被设计为不可变类，主要表现在它保存字符串的成员变量是final的。</p>
-<ul>
-<li>Java 9之前字符串采用char[]数组来保存字符，即 private final char[] value；</li>
-<li>Java 9做了改进，采用byte[]数组来保存字符，即 private final byte[] value；</li>
-</ul>
-<p>之所以要把String类设计为不可变类，主要是出于安全和性能的考虑，可归纳为如下4点。</p>
-<ul>
-<li>由于字符串无论在任何 Java 系统中都广泛使用，会用来存储敏感信息，如账号，密码，网络路径，文件处理等场景里，保证字符串 String 类的安全性就尤为重要了，如果字符串是可变的，容易被篡改，那我们就无法保证使用字符串进行操作时，它是安全的，很有可能出现 SQL 注入，访问危险文件等操作。</li>
-<li>在多线程中，只有不变的对象和值是线程安全的，可以在多个线程中共享数据。由于 String 天然的不可变，当一个线程”修改“了字符串的值，只会产生一个新的字符串对象，不会对其他线程的访问产生副作用，访问的都是同样的字符串数据，不需要任何同步操作。</li>
-<li>字符串作为基础的数据结构，大量地应用在一些集合容器之中，尤其是一些散列集合，在散列集合中，存放元素都要根据对象的 hashCode() 方法来确定元素的位置。由于字符串 hashcode 属性不会变更，保证了唯一性，使得类似 HashMap，HashSet 等容器才能实现相应的缓存功能。由于 String 的不可变，避免重复计算 hashcode，只要使用缓存的 hashcode 即可，这样一来大大提高了在散列集合中使用 String 对象的性能。</li>
-<li>当字符串不可变时，字符串常量池才有意义。字符串常量池的出现，可以减少创建相同字面量的字符串，让不同的引用指向池中同一个字符串，为运行时节约很多的堆内存。若字符串可变，字符串常量池失去意义，基于常量池的 String.intern() 方法也失效，每次创建新的字符串将在堆内开辟出新的空间，占据更多的内存。</li>
-</ul>
-<p>因为要保证String类的不可变，那么将这个类定义为final的就很容易理解了。如果没有final修饰，那么就会存在String的子类，这些子类可以重写String类的方法，强行改变字符串的值，这便违背了String类设计的初衷。</p>
-<h3 id="13-使用字符串时，new和””更推荐使用哪种方式？"><a href="#13-使用字符串时，new和””更推荐使用哪种方式？" class="headerlink" title="13.使用字符串时，new和””更推荐使用哪种方式？"></a>13.使用字符串时，new和””更推荐使用哪种方式？</h3><p>先看看 “hello” 和 new String(“hello”) 的区别：</p>
-<ul>
-<li>当Java程序直接使用 “hello” 的字符串直接量时，JVM将会使用常量池来管理这个字符串；</li>
-<li>当使用 new String(“hello”) 时，JVM会先使用常量池来管理 “hello” 直接量，再调用String类的构造器来创建一个新的String对象，新创建的String对象被保存在堆内存中。</li>
-</ul>
-<p>显然，采用new的方式会多创建一个对象出来，会占用更多的内存，所以一般建议使用直接量的方式创建字符串。</p>
-<h3 id="14-说一说你对字符串拼接的理解"><a href="#14-说一说你对字符串拼接的理解" class="headerlink" title="14.说一说你对字符串拼接的理解"></a>14.说一说你对字符串拼接的理解</h3><p>拼接字符串有很多种方式，其中最常用的有4种，下面列举了这4种方式各自适合的场景。</p>
-<ol>
-<li>+ 运算符：如果拼接的都是字符串直接量，则适合使用 + 运算符实现拼接；</li>
-<li>StringBuilder：如果拼接的字符串中包含变量，并不要求线程安全，则适合使用StringBuilder；</li>
-<li>StringBuffer：如果拼接的字符串中包含变量，并且要求线程安全，则适合使用StringBuffer；</li>
-<li>String类的concat方法：如果只是对两个字符串进行拼接，并且包含变量，则适合使用concat方法；</li>
-</ol>
-<p><strong>扩展阅读</strong></p>
-<p>采用 + 运算符拼接字符串时：</p>
-<ul>
-<li>如果拼接的都是字符串直接量，则在编译时编译器会将其直接优化为一个完整的字符串，和你直接写一个完整的字符串是一样的，所以效率非常的高。</li>
-<li>如果拼接的字符串中包含变量，则在编译时编译器采用StringBuilder对其进行优化，即自动创建StringBuilder实例并调用其append()方法，将这些字符串拼接在一起，效率也很高。但如果这个拼接操作是在循环中进行的，那么每次循环编译器都会创建一个StringBuilder实例，再去拼接字符串，相当于执行了 new StringBuilder().append(str)，所以此时效率很低。</li>
-</ul>
-<p>采用StringBuilder&#x2F;StringBuffer拼接字符串时：</p>
-<ul>
-<li>StringBuilder&#x2F;StringBuffer都有字符串缓冲区，缓冲区的容量在创建对象时确定，并且默认为16。当拼接的字符串超过缓冲区的容量时，会触发缓冲区的扩容机制，即缓冲区加倍。</li>
-<li>缓冲区频繁的扩容会降低拼接的性能，所以如果能提前预估最终字符串的长度，则建议在创建可变字符串对象时，放弃使用默认的容量，可以指定缓冲区的容量为预估的字符串的长度。</li>
-</ul>
-<p>采用String类的concat方法拼接字符串时：</p>
-<ul>
-<li>concat方法的拼接逻辑是，先创建一个足以容纳待拼接的两个字符串的字节数组，然后先后将两个字符串拼到这个数组里，最后将此数组转换为字符串。</li>
-<li>在拼接大量字符串的时候，concat方法的效率低于StringBuilder。但是只拼接2个字符串时，concat方法的效率要优于StringBuilder。并且这种拼接方式代码简洁，所以只拼2个字符串时建议优先选择concat方法。</li>
-</ul>
-<h3 id="15-面向对象有哪三大特性？详细讲讲这些特性的含义"><a href="#15-面向对象有哪三大特性？详细讲讲这些特性的含义" class="headerlink" title="15.面向对象有哪三大特性？详细讲讲这些特性的含义"></a>15.面向对象有哪三大特性？详细讲讲这些特性的含义</h3><p>三大特性是封装、继承和多态</p>
-<ol>
-<li>封装：是指将对象的数据和操作数据的方法捆绑在一起，形成一个独立的对象（类）。封装还意味着隐藏对象的内部状态和实现细节，仅通过对象提供的接口（方法）来访问对象的属性和行为。这样做的好处是提高了代码的安全性和可维护性，因为对象的内部实现可以自由更改，而不影响外部代码。</li>
-<li>继承：继承是一种创建新类的方式，子类可以继承父类或超类的属性和方法。继承支持代码的复用，允许开发者在现有类的基础上添加新功能，而不必重写现有代码。继承还支持建立类之间的层次结构，使得代码更加有组织。</li>
-<li>多态： 是指允许不同类的对象对同一消息做出响应的能力，即同一个接口可以被不同的实例以不同的方式实现。这意味着一个函数或者方法可以有多个不同的行为。多态使得代码更加灵活，因为可以用统一的接口来处理不同类型的对象，而具体的行为则取决于对象的实际类型。</li>
-</ol>
-<h3 id="16-什么是代码块"><a href="#16-什么是代码块" class="headerlink" title="16.什么是代码块"></a>16.什么是代码块</h3><p>代码块又叫初始化块，属于类中的成员，即类的一部分 类似于方法，将逻辑语句封装在方法提中，通过{}定义的一段代码。但和方法不同，没有方法名，没有返回值，没有参数，只有方法体，而且不用通过对象或类显示调用，而是在加载类的时候或者创建对象的时候隐式调用。</p>
-<ol>
-<li><p>静态代码块：使用<code>static</code>关键字去定义，静态代码块中的代码会在JVM类加载时运行，且只被执行一次。</p>
-</li>
-<li><p>构造代码块：和静态代码块的唯一区别就是没有static修饰</p>
-</li>
-<li><p>普通代码块：定义在方法中的代码块，一般不会这么无聊去使用它。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token comment">//直接使用&#123;&#125;定义普通代码块</span>
-        <span class="token punctuation">&#123;</span>
-            <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">;</span>
-            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"x1="</span><span class="token operator">+</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-        
-        <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">100</span><span class="token punctuation">;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"x2="</span><span class="token operator">+</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>其输出如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token punctuation">[</span><span class="token class-name">Main</span>$<span class="token class-name">TestClass</span><span class="token annotation punctuation">@1</span><span class="token punctuation">]</span>
+<span class="token boolean">true</span>
+<span class="token punctuation">[</span><span class="token class-name">Main</span>$<span class="token class-name">TestClass</span><span class="token annotation punctuation">@2</span><span class="token punctuation">]</span>
+<span class="token boolean">false</span>
+<span class="token punctuation">[</span><span class="token class-name">Main</span>$<span class="token class-name">TestClass</span><span class="token annotation punctuation">@2</span><span class="token punctuation">,</span> <span class="token class-name">Main</span>$<span class="token class-name">TestClass</span><span class="token annotation punctuation">@2</span><span class="token punctuation">]</span>
+<span class="token boolean">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>无论这三部分的位置如何放置，都是静态代码块先执行，然后是构造代码块。静态代码块只会执行一次，构造代码块在每次实例化对象时都会执行。</p>
-</li>
-</ol>
-<h3 id="17-子类继承父类各方法的执行顺序"><a href="#17-子类继承父类各方法的执行顺序" class="headerlink" title="17.子类继承父类各方法的执行顺序"></a>17.子类继承父类各方法的执行顺序</h3><p><strong>第一次创建子类对象：</strong></p>
-<ol>
-<li>父类静态代码块</li>
-<li>子类静态代码块</li>
-<li>父类构造代码块</li>
-<li>父类构造方法</li>
-<li>子类构造代码块</li>
-<li>子类构造方法</li>
-</ol>
-<p><strong>之后创建子类对象，父类和子类的静态代码块不会执行，其余不变</strong></p>
-<p><strong>解释：</strong></p>
-<p>1、java的机制是先编译成字节码文件.class  然后在JVM上解释器逐行翻译成机器码文件，那从.class 到JVM加载的时候，就执行static代码块和static变量，所以先执行静态代码块，并且执行顺序是先执行父类的在执行子类的。</p>
-<p>2、创建对象的时候，调用了它的构造方法，所有子类的构造方法第一行的时候都隐含 super()，所以会先调用父类的构造方法，而每次在执行构造方法之前都会执行代码块，父类的代码块，父类的构造方法执行完毕之后，开始执行子类的代码块，构造方法。</p>
-<p>3、补充：</p>
-<p>​    （1）如果有多个构造方法（比如：有参的、无参的、参数个数不同的），根据创建对象时传的参数找对应的构造方法（比如：无参的找无参的，有参的找有参的）。</p>
-<p>​    （2）多态的顺序也是这样的。</p>
-<p>​    （3）加上main方法</p>
-<p>​            子类和main方法在同一个类中，如果在new子类对象之前main方法中有语句，那么顺序就是：静态、main（）的语句、父类代码块、父类构造方法…… </p>
-<p>​            如果新建一个测试类、在new子类对象之前main方法中有语句，顺序为：main（）的语句、静态、父类代码块。</p>
-<p>​       解释：如果子类和main在同一个类中，加载子类，静态、执行main。如果不在同一个类，先加载main的类，执行到new子类时，才加载子类。</p>
-<h3 id="18-为什么Java是单继承的，可以实现多个接口？"><a href="#18-为什么Java是单继承的，可以实现多个接口？" class="headerlink" title="18.为什么Java是单继承的，可以实现多个接口？"></a>18.为什么Java是单继承的，可以实现多个接口？</h3><p>多继承会产生钻石问题(菱形继承)：</p>
-<ul>
-<li>类 B 和类 C 继承自类 A，且都重写了类 A 中的同一个方法</li>
-<li>类 D 同时继承了类 B 和类 C</li>
-<li>对于类 B、C 重写的类 A 中的方法，类 D 会继承哪一个？这里就会产生歧义</li>
-<li>考虑到这种二义性问题，Java 不支持多重继承</li>
-</ul>
-<p>Java 支持类实现多接口</p>
-<ul>
-<li>接口中的方法是抽象的，一个类实现可以多个接口</li>
-<li>假设这些接口中存在相同方法(方法名与参数相同)，在实现接口时，这个方法需要实现类来实现，并不会出现二义性的问题</li>
-</ul>
+<p>可以看到，第一次将对象obj1加入testSet后，testSet中只有一个对象，且contains方法有效。然后将对象obj1中的field值改变，此时testSet的contains便失效了。因为此时obj1的hashcode改变，testSet无法根据hashcode来找到之前的那个对象。然后将obj1再次加入testSet中，此时testSet里面便有同一个对象的两个引用了。</p>
+<h3 id="启示"><a href="#启示" class="headerlink" title="启示"></a>启示</h3><p>不要把对象的可变域作为hashcode的计算依据，否则会出现各种意想不到的情况。比如contains失效、remove失效等等。  建议将hashcode使用的域选定为不容易更改的，如id,name，并且将这些属性设为final。</p>
 
                 
             </div>
@@ -609,7 +495,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2023/09/26/java-yu-yan-chang-jian-mian-shi-ti/">https://fuchenglai.github.io/2023/09/26/java-yu-yan-chang-jian-mian-shi-ti/</a>
+                    <a href="https://fuchenglai.github.io/2024/06/12/shen-ru-li-jie-hashset-ke-bian-dui-xiang-yin-fa-de-wen-ti/">https://fuchenglai.github.io/2024/06/12/shen-ru-li-jie-hashset-ke-bian-dui-xiang-yin-fa-de-wen-ti/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -731,13 +617,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/10/02/spring-shi-wu-ji-chu/">
+                <a href="/2024/06/23/bi-zhi-bi-hui-de-linux-ming-ling/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="Spring事务基础">
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="必知必会的Linux命令">
                         
-                        <span class="card-title">Spring事务基础</span>
+                        <span class="card-title">必知必会的Linux命令</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -748,14 +634,14 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-10-02
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-06-23
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%A1%86%E6%9E%B6/" class="post-category">
-                                    框架
+                            <a href="/categories/OS/" class="post-category">
+                                    OS
                                 </a>
                             
                             
@@ -765,12 +651,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Spring/">
-                        <span class="chip bg-color">Spring</span>
-                    </a>
-                    
-                    <a href="/tags/%E4%BA%8B%E5%8A%A1/">
-                        <span class="chip bg-color">事务</span>
+                    <a href="/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
                     </a>
                     
                 </div>
@@ -784,13 +666,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/09/20/java-yi-chang-ji-zhi-xiang-jie/">
+                <a href="/2024/04/30/ru-he-ji-yu-udp-shi-xian-ke-kao-chuan-shu/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Java异常机制详解">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="如何基于UDP实现可靠传输">
                         
-                        <span class="card-title">Java异常机制详解</span>
+                        <span class="card-title">如何基于UDP实现可靠传输</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -801,27 +683,15 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-09-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-04-30
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/Java/" class="post-category">
-                                    Java
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Fuchanglai
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E5%BC%82%E5%B8%B8/">
-                        <span class="chip bg-color">异常</span>
-                    </a>
-                    
                 </div>
                 
             </div>

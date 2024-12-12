@@ -376,14 +376,14 @@ Shell的位置处在用户与内核">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    721
+                    1.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    2 分
+                    4 分
                 </div>
                 
 
@@ -444,7 +444,39 @@ Shell的位置处在用户与内核">
 <li><p>find [查找范围] [查找条件表达式] 用来在指定目录下查找文件，并返回文件或目录的绝对路径。当不添加查找范围时，默认在当前目录下查找子目录和文件<br>在&#x2F;var目录下查找文件名以cron开头的文件</p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">find</span> /var <span class="token parameter variable">-name</span> cron* <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
 </ol>
-<h4 id="2-3打包、压缩、解压"><a href="#2-3打包、压缩、解压" class="headerlink" title="2.3打包、压缩、解压"></a>2.3打包、压缩、解压</h4>
+<h4 id="2-3打包、压缩、解压"><a href="#2-3打包、压缩、解压" class="headerlink" title="2.3打包、压缩、解压"></a>2.3打包、压缩、解压</h4><h4 id="查找一个文件是否包含”text”字符串，用的Linux命令是什么"><a href="#查找一个文件是否包含”text”字符串，用的Linux命令是什么" class="headerlink" title="查找一个文件是否包含”text”字符串，用的Linux命令是什么"></a>查找一个文件是否包含”text”字符串，用的Linux命令是什么</h4><p>在Linux中，你可以使用<code>grep</code>命令来查找文件中是否包含特定的字符串。如果你想查找一个文件是否包含”text”字符串，可以使用以下命令：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">grep</span> <span class="token string">"text"</span> filename<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>这里的<code>filename</code>是你想要搜索的文件名。如果文件中包含”text”字符串，<code>grep</code>命令会显示包含该字符串的行。</p>
+<p>如果你想在多个文件中搜索，可以使用通配符：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">grep</span> <span class="token string">"text"</span> *<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>或者使用递归搜索目录中的所有文件：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">grep</span> <span class="token parameter variable">-r</span> <span class="token string">"text"</span> /path/to/directory<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>这里的<code>/path/to/directory</code>是你想要搜索的目录路径。<code>-r</code>选项告诉<code>grep</code>递归地在所有子目录中搜索。</p>
+<h4 id="Linux中vi和vim的区别"><a href="#Linux中vi和vim的区别" class="headerlink" title="Linux中vi和vim的区别"></a>Linux中vi和vim的区别</h4><p><code>vi</code>和<code>vim</code>是Linux系统中常用的文本编辑器，它们之间有着密切的关系：</p>
+<ol>
+<li><p><strong>vi</strong>：</p>
+<ul>
+<li><code>vi</code>是Linux系统中最基本的文本编辑器，它是一个模式编辑器，有命令模式、插入模式等。</li>
+<li><code>vi</code>没有<code>vim</code>那么多的增强功能，比如语法高亮、标签页功能等。</li>
+<li><code>vi</code>是<code>vim</code>的精简版，体积更小，功能更少。</li>
+</ul>
+</li>
+<li><p><strong>vim</strong>：</p>
+<ul>
+<li><code>vim</code>是<code>vi</code>的增强版，它继承了<code>vi</code>的所有功能，并且增加了许多新的功能。</li>
+<li><code>vim</code>支持语法高亮，可以更容易地区分代码中的不同元素。</li>
+<li><code>vim</code>支持多标签页编辑，可以在同一个窗口中打开多个文件进行编辑。</li>
+<li><code>vim</code>支持插件，可以通过安装插件来扩展其功能。</li>
+<li><code>vim</code>通常被认为是一个程序而不是一个编辑器，因为它可以做很多编辑器之外的事情。</li>
+</ul>
+</li>
+</ol>
+<p>在大多数Linux发行版中，当你安装<code>vim</code>时，<code>vi</code>命令会被链接到<code>vim</code>，所以当你在终端中输入<code>vi</code>时，实际上是在运行<code>vim</code>。这意味着你可以使用<code>vi</code>命令来启动<code>vim</code>编辑器，但是<code>vim</code>提供了更多的功能和更好的用户体验。</p>
+<p>简而言之，<code>vim</code>是<code>vi</code>的一个更现代、功能更丰富的版本。如果你只需要基本的编辑功能，可以使用<code>vi</code>；如果你需要更高级的功能，比如语法高亮、多标签页编辑等，那么<code>vim</code>会是更好的选择。</p>
+<h4 id="Linux使用vim的基本操作"><a href="#Linux使用vim的基本操作" class="headerlink" title="Linux使用vim的基本操作"></a>Linux使用vim的基本操作</h4>
                 
             </div>
             <hr/>
@@ -588,18 +620,17 @@ Shell的位置处在用户与内核">
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/06/23/bi-zhi-bi-hui-de-linux-ming-ling/">
+                <a href="/2024/06/27/jie-kou-he-chou-xiang-lei-de-qu-bie/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="必知必会的Linux命令">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="接口和抽象类的区别">
                         
-                        <span class="card-title">必知必会的Linux命令</span>
+                        <span class="card-title">接口和抽象类的区别</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -609,27 +640,26 @@ Shell的位置处在用户与内核">
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-23
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-06-27
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/OS/" class="post-category">
-                                    OS
+                            <a href="/categories/Java/" class="post-category">
+                                    Java
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Linux/">
-                        <span class="chip bg-color">Linux</span>
+                    <a href="/tags/JavaSE/">
+                        <span class="chip bg-color">JavaSE</span>
                     </a>
                     
                 </div>
@@ -643,13 +673,13 @@ Shell的位置处在用户与内核">
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/04/30/ru-he-ji-yu-udp-shi-xian-ke-kao-chuan-shu/">
+                <a href="/2024/06/12/shen-ru-li-jie-hashset-ke-bian-dui-xiang-yin-fa-de-wen-ti/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="如何基于UDP实现可靠传输">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="深入理解HashSet:可变对象引发的问题">
                         
-                        <span class="card-title">如何基于UDP实现可靠传输</span>
+                        <span class="card-title">深入理解HashSet:可变对象引发的问题</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -660,15 +690,27 @@ Shell的位置处在用户与内核">
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-04-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-06-12
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            Fuchanglai
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java/" class="post-category">
+                                    Java
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/JavaSE/">
+                        <span class="chip bg-color">JavaSE</span>
+                    </a>
+                    
                 </div>
                 
             </div>
