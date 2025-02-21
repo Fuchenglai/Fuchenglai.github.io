@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="归档: 2023/12, 小ceng的后端游乐场">
+    <meta name="keywords" content="归档: 2024, 小ceng的后端游乐场">
     <meta name="description" content="记录生活与技术中的所学、所想、所悟">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>归档: 2023/12 | 小ceng的后端游乐场</title>
+    <title>归档: 2024 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -461,7 +461,7 @@
             
             
             <div class="cd-timeline-img year" data-aos="zoom-in-up">
-                <a href="/archives/2023">2023</a>
+                <a href="/archives/2024">2024</a>
             </div>
             
 
@@ -469,45 +469,43 @@
             
             
             <div class="cd-timeline-img month" data-aos="zoom-in-up">
-                <a href="/archives/2023/12">12</a>
+                <a href="/archives/2024/01">01</a>
             </div>
             
 
             
             <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>26</span>
+                <span>14</span>
             </div>
             <article class="cd-timeline-content" data-aos="fade-up">
                 <div class="article col s12 m6">
                     <div class="card">
-                        <a href="/2023/12/26/shen-ru-li-jie-https-xie-yi/">
+                        <a href="/2024/01/14/shi-wu-ji-zhi-xiang-jie/">
                             <div class="card-image">
                                 
                                 
-                                <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="深入理解HTTPS协议">
+                                <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="事务机制详解">
                                 
-                                <span class="card-title">深入理解HTTPS协议</span>
+                                <span class="card-title">事务机制详解</span>
                             </div>
                         </a>
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    1.什么是安全？在通信过程中，具备以下特性则认为安全：机密性、完整性、不可否认、身份认证
-
-机密性：数据必须保密，只能有信任的人读取，其他人是不可见的秘密。通俗的说：就是不能让不相关的人看到不该看的东西。
-也叫作一致性，也就是数据在传输过程
+                                    基本介绍事务（Transaction）是访问和更新数据库的程序执行单元；事务中可能包含一个或多个 SQL 语句，这些语句要么都执行，要么都不执行，作为一个关系型数据库，MySQL 支持事务。
+单元中的每条 SQL 语句都相互依赖，形成一个整
                                 
                             </div>
                             <div class="publish-info">
                                 <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2023-12-26
+                                    <i class="far fa-clock fa-fw icon-date"></i>2024-01-14
                                 </span>
                                 <span class="publish-author">
                                     
                                     <i class="fas fa-bookmark fa-fw icon-category"></i>
                                     
-                                    <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="post-category">
-                                    计算机网络
+                                    <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
+                                    数据库
                                     </a>
                                     
                                     
@@ -518,7 +516,9 @@
                         
                         <div class="card-action article-tags">
                             
-                            <a href="/tags/HTTPS/"><span class="chip bg-color">HTTPS</span></a>
+                            <a href="/tags/%E4%BA%8B%E5%8A%A1/"><span class="chip bg-color">事务</span></a>
+                            
+                            <a href="/tags/MySQL/"><span class="chip bg-color">MySQL</span></a>
                             
                         </div>
                         
@@ -537,144 +537,33 @@
 
             
             <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>23</span>
+                <span>11</span>
             </div>
             <article class="cd-timeline-content" data-aos="fade-up">
                 <div class="article col s12 m6">
                     <div class="card">
-                        <a href="/2023/12/23/qian-xi-jin-cheng-tong-xin/">
+                        <a href="/2024/01/11/mysql-di-ceng-suo-yin-wei-shi-me-shi-b-shu/">
                             <div class="card-image">
                                 
                                 
-                                <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="浅析进程通信">
+                                <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="mysql底层索引为什么是b+树？">
                                 
-                                <span class="card-title">浅析进程通信</span>
+                                <span class="card-title">mysql底层索引为什么是b+树？</span>
                             </div>
                         </a>
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    首先我们要知道，进程通信需要操作系统支持，因为各进程拥有的内存地址空间相互独立，为了保证安全，一个进程不能直接访问另一个进程的地址空间安全。
-进程间通信的方式有三种：管道通信，共享存储，消息队列。
-管道通信管道又分为匿名管道和命名管道。
-匿
+                                    1.什么是索引?
+索引是帮助mysql高效获取数据的排好序的数据结构
+索引是存储在文件里的
+
+如果没有索引的话，就得循环一条一条的找，找一次就是一次IO，这样速度就会很慢。并且数据库的数据都是存在磁盘中的，我们从磁盘中取数据，每取一次就是一
                                 
                             </div>
                             <div class="publish-info">
                                 <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2023-12-23
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/OS/" class="post-category">
-                                    OS
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                        <div class="card-action article-tags">
-                            
-                            <a href="/tags/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><span class="chip bg-color">进程管理</span></a>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>22</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2023/12/22/rocketmq-chang-jian-mian-shi-ti/">
-                            <div class="card-image">
-                                
-                                
-                                <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="RocketMQ常见面试题">
-                                
-                                <span class="card-title">RocketMQ常见面试题</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    1.如何保证顺序消费？在生产中经常会有一些类似报表系统这样的系统，需要做 MySQL 的 binlog 同步。比如订单系统要同步订单表的数据到大数据部门的 MySQL 库中用于报表统计分析，通常的做法是基于 Canal 这样的中间件去监听订
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2023-12-22
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
-                                    消息中间件
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>16</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2023/12/16/suo-yin-ji-zhi-xiang-jie/">
-                            <div class="card-image">
-                                
-                                
-                                <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="索引机制详解">
-                                
-                                <span class="card-title">索引机制详解</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    索引介绍基本介绍MySQL 官方对索引的定义为：索引（index）是帮助 MySQL 高效获取数据的一种数据结构，本质是排好序的快速查找数据结构。在表数据之外，数据库系统还维护着满足特定查找算法的数据结构，这些数据结构以某种方式指向数据， 
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2023-12-16
+                                    <i class="far fa-clock fa-fw icon-date"></i>2024-01-11
                                 </span>
                                 <span class="publish-author">
                                     
@@ -703,132 +592,33 @@
             </article>
         </div>
         
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>12</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2023/12/12/redis-de-dui-xiang-xi-tong/">
-                            <div class="card-image">
-                                
-                                
-                                <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="Redis的对象系统">
-                                
-                                <span class="card-title">Redis的对象系统</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    1.概述Redis的对象系统包括string、hash、list、set、zset这五种类型的对象，每种对象都用到了至少一种我们前面介绍的数据结构。
-使用对象的好处：
-
-Redis可以在执行命令前，可以根据对象的类型来判断一个对象是否可以执
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2023-12-12
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/%E7%BC%93%E5%AD%98/" class="post-category">
-                                    缓存
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                        <div class="card-action article-tags">
-                            
-                            <a href="/tags/Redis/"><span class="chip bg-color">Redis</span></a>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>07</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2023/12/07/redis-chang-jian-shu-ju-jie-gou-he-shu-ju-lei-xing/">
-                            <div class="card-image">
-                                
-                                
-                                <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="Redis常见数据结构和数据类型">
-                                
-                                <span class="card-title">Redis常见数据结构和数据类型</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    字符串SDSRedis 构建了简单动态字符串（SDS）的数据类型，作为 Redis 的默认字符串表示，包含字符串的键值对在底层都是由 SDS 实现
-struct sdshdr &#123;
-    // 记录buf数组中已使用字节的数量，等
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2023-12-07
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/%E7%BC%93%E5%AD%98/" class="post-category">
-                                    缓存
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                        <div class="card-action article-tags">
-                            
-                            <a href="/tags/Redis/"><span class="chip bg-color">Redis</span></a>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
     </div>
 
 </main>
+
+
+<div class="container paging">
+    <div class="row">
+        <div class="col s6 m4 l4">
+            
+            <a href="/archives/2024/page/3/"
+               class="left btn-floating btn-large waves-effect waves-light bg-color">
+                <i class="fas fa-angle-left"></i>
+            </a>
+            
+        </div>
+        <div class="page-info col m4 l4 hide-on-small-only">
+            <div class="center-align b-text-gray">4 / 4</div>
+        </div>
+        <div class="col s6 m4 l4">
+            
+            <a class="right btn-floating btn-large disabled">
+                <i class="fas fa-angle-right"></i>
+            </a>
+            
+        </div>
+    </div>
+</div>
 
 
 

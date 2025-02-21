@@ -4,10 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Push消费和Pull消费, 小ceng的后端游乐场">
-    <meta name="description" content="MQ的消费模式可以大致分为两种，一种是推Push，一种是拉Pull。
+    <meta name="keywords" content="如何保证缓存一致性, 小ceng的后端游乐场">
+    <meta name="description" content="1.如何保证缓存一致性？使用缓存代表不需要强一致性，只需要最终一致性
+1.1数据库和缓存数据强一致场景：
+同步双写：更新 DB 时同样更新 cache，保证在一个事务中，通过加锁来保证更新 cache 时不存在线程安全问题
 
-Push是服务端主动推送消息给客户端，由系统控制读取操作，收到消息后自动调用处理函数来处理消息。优点是及时性较好，但如果客户端没有做好流控，一旦服务端推送大量消息到客户">
+延迟双删：先淘">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +21,7 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Push消费和Pull消费 | 小ceng的后端游乐场</title>
+    <title>如何保证缓存一致性 | 小ceng的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -319,7 +321,7 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Push消费和Pull消费</h1>
+                    <h1 class="description center-align post-title">如何保证缓存一致性</h1>
                 </div>
             </div>
         </div>
@@ -351,8 +353,8 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
-                                消息中间件
+                            <a href="/categories/%E7%BC%93%E5%AD%98/" class="post-category">
+                                缓存
                             </a>
                         
                     </div>
@@ -364,7 +366,7 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-12-17
+                    2024-12-29
                 </div>
                 
 
@@ -373,14 +375,14 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.4k
+                    579
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    5 分
+                    2 分
                 </div>
                 
 
@@ -398,113 +400,36 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>MQ的消费模式可以大致分为两种，一种是推Push，一种是拉Pull。</p>
+                <h3 id="1-如何保证缓存一致性？"><a href="#1-如何保证缓存一致性？" class="headerlink" title="1.如何保证缓存一致性？"></a>1.如何保证缓存一致性？</h3><p>使用缓存代表不需要强一致性，只需要最终一致性</p>
+<h4 id="1-1数据库和缓存数据强一致场景："><a href="#1-1数据库和缓存数据强一致场景：" class="headerlink" title="1.1数据库和缓存数据强一致场景："></a>1.1数据库和缓存数据强一致场景：</h4><ul>
+<li><p>同步双写：更新 DB 时同样更新 cache，保证在一个事务中，通过加锁来保证更新 cache 时不存在线程安全问题</p>
+</li>
+<li><p>延迟双删：先淘汰缓存再写数据库，休眠 1 秒再次淘汰缓存，可以将 1 秒内造成的缓存脏数据再次删除</p>
+</li>
+<li><p>异步通知：</p>
 <ul>
-<li>Push是服务端主动推送消息给客户端，由系统控制读取操作，收到消息后自动调用处理函数来处理消息。优点是及时性较好，但如果客户端没有做好流控，一旦服务端推送大量消息到客户端时，就会导致客户端消息堆积甚至崩溃。</li>
-<li>Pull是客户端需要主动到服务端取数据，读取操作中的大部分功能由使用者自主控制。优点是客户端可以依据自己的消费能力进行消费，但拉取的频率也需要用户自己控制，拉取频繁容易造成服务端和客户端的压力，拉取间隔长又容易造成消费不及时。</li>
+<li>基于 MQ 的异步通知：对数据的修改后，代码需要发送一条消息到 MQ 中，缓存服务监听 MQ 消息</li>
+<li>Canal 订阅 MySQL binlog 的变更上报给 Kafka，系统监听 Kafka 消息触发缓存失效，或者直接将变更发送到处理服务，<strong>没有任何代码侵入</strong></li>
 </ul>
-<h3 id="1-DefaultMQPushConsumer的使用"><a href="#1-DefaultMQPushConsumer的使用" class="headerlink" title="1.DefaultMQPushConsumer的使用"></a>1.DefaultMQPushConsumer的使用</h3><p>RocketMQ Push消费的示例代码如下</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Consumer</span> <span class="token punctuation">&#123;</span>
-  <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">InterruptedException</span><span class="token punctuation">,</span> <span class="token class-name">MQClientException</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// 初始化consumer，并设置group name</span>
-    <span class="token class-name">DefaultMQPushConsumer</span> consumer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DefaultMQPushConsumer</span><span class="token punctuation">(</span><span class="token string">"please_rename_unique_group_name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-   
-    <span class="token comment">// 设置NameServer地址 </span>
-    consumer<span class="token punctuation">.</span><span class="token function">setNamesrvAddr</span><span class="token punctuation">(</span><span class="token string">"localhost:9876"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment">//订阅一个或多个topic，并指定tag过滤条件，这里指定*表示接收所有tag的消息</span>
-    consumer<span class="token punctuation">.</span><span class="token function">subscribe</span><span class="token punctuation">(</span><span class="token string">"TopicTest"</span><span class="token punctuation">,</span> <span class="token string">"*"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment">//注册回调接口来处理从Broker中收到的消息</span>
-    consumer<span class="token punctuation">.</span><span class="token function">registerMessageListener</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">MessageListenerConcurrently</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-      <span class="token annotation punctuation">@Override</span>
-      <span class="token keyword">public</span> <span class="token class-name">ConsumeConcurrentlyStatus</span> <span class="token function">consumeMessage</span><span class="token punctuation">(</span><span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">MessageExt</span><span class="token punctuation">></span></span> msgs<span class="token punctuation">,</span> <span class="token class-name">ConsumeConcurrentlyContext</span> context<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s Receive New Messages: %s %n"</span><span class="token punctuation">,</span> <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> msgs<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment">// 返回消息消费状态，ConsumeConcurrentlyStatus.CONSUME_SUCCESS为消费成功</span>
-        <span class="token keyword">return</span> <span class="token class-name">ConsumeConcurrentlyStatus</span><span class="token punctuation">.</span><span class="token constant">CONSUME_SUCCESS</span><span class="token punctuation">;</span>
-      <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment">// 启动Consumer</span>
-    consumer<span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Consumer Started.%n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>低耦合，可以同时通知多个缓存服务，但是时效性一般，可能存在中间不一致状态</p>
+</li>
+</ul>
+<h4 id="1-2低一致性场景："><a href="#1-2低一致性场景：" class="headerlink" title="1.2低一致性场景："></a>1.2低一致性场景：</h4><ul>
+<li>更新 DB 的时候同样更新 cache，但是给缓存加一个比较短的过期时间，这样就可以保证即使数据不一致影响也比较小</li>
+<li>使用 Redis 自带的内存淘汰机制</li>
+</ul>
+<h3 id="2-先操作数据库还是先操作redis"><a href="#2-先操作数据库还是先操作redis" class="headerlink" title="2.先操作数据库还是先操作redis"></a>2.先操作数据库还是先操作redis</h3><p>在保证Redis缓存一致性时，<strong>优先选择先更新数据库再删除缓存</strong>（Cache-Aside Pattern），这是业界主流方案。</p>
+<h4 id="2-1为什么先更新数据库再删除缓存？"><a href="#2-1为什么先更新数据库再删除缓存？" class="headerlink" title="2.1为什么先更新数据库再删除缓存？"></a>2.1<strong>为什么先更新数据库再删除缓存？</strong></h4><ul>
+<li><strong>逻辑合理性</strong>：数据库是数据的唯一权威来源，缓存应作为数据库的从属。先更新数据库可确保数据源头的正确性.</li>
+<li><strong>并发安全</strong>：若先删除缓存再更新数据库，在并发场景下可能导致<strong>旧数据回填缓存</strong>，例如：请求A把缓存删了，还没来得及更新数据库，请求B读取了数据库旧值并写入缓存（这里可以想象缓存是永不过期的），而先更新数据库再删除缓存能降低此类风险。</li>
+</ul>
+<h3 id="3-延迟双删"><a href="#3-延迟双删" class="headerlink" title="3.延迟双删"></a>3.延迟双删</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">write</span><span class="token punctuation">(</span><span class="token class-name">String</span> key<span class="token punctuation">,</span> <span class="token class-name">Object</span> data<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    redis<span class="token punctuation">.</span><span class="token function">del</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>          <span class="token comment">// 第一次删除</span>
+    db<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>         <span class="token comment">// 更新数据库</span>
+    <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">sleep</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment">// 等待读请求完成</span>
+    redis<span class="token punctuation">.</span><span class="token function">del</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>          <span class="token comment">// 第二次异步删除</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>首先需要初始化消费者，初始化消费者时，必须填写ConsumerGroupName，同一个消费组的ConsumerGroupName是相同的，这是判断消费者是否属于同一个消费组的重要属性。然后是设置NameServer地址。然后是调用subscribe方法订阅Topic，subscribe方法需要指定需要订阅的Topic名，也可以增加消息过滤的条件，比如TagA等，上述代码中指定*表示接收所有tag的消息。除了订阅之外，还需要注册回调接口编写消费逻辑来处理从Broker中收到的消息，调用registerMessageListener方法，需要传入MessageListener的实现，上述代码中是并发消费，因此是MessageListenerConcurrently的实现</p>
-<h4 id="集群模式和广播模式"><a href="#集群模式和广播模式" class="headerlink" title="集群模式和广播模式"></a>集群模式和广播模式</h4><p>我们可以通过以下代码来设置采用集群模式，RocketMQ Push Consumer默认为集群模式，同一个消费组内的消费者分担消费。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java">consumer<span class="token punctuation">.</span><span class="token function">setMessageModel</span><span class="token punctuation">(</span><span class="token class-name">MessageModel</span><span class="token punctuation">.</span><span class="token constant">CLUSTERING</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>通过以下代码来设置采用广播模式，广播模式下，消费组内的每一个消费者都会消费全量消息。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java">consumer<span class="token punctuation">.</span><span class="token function">setMessageModel</span><span class="token punctuation">(</span><span class="token class-name">MessageModel</span><span class="token punctuation">.</span><span class="token constant">BROADCASTING</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-
-
-<h4 id="并发消费和顺序消费"><a href="#并发消费和顺序消费" class="headerlink" title="并发消费和顺序消费"></a>并发消费和顺序消费</h4><p>上面已经介绍设置Push Consumer并发消费的方法，通过在注册消费回调接口时传入MessageListenerConcurrently接口的实现来完成。在并发消费中，可能会有多个线程同时消费一个队列的消息，因此即使发送端通过发送顺序消息保证消息在同一个队列中按照FIFO的顺序，也无法保证消息实际被顺序消费。</p>
-<p>因此RocketMQ提供了顺序消费的方式， 顺序消费设置与并发消费API层面只有一处不同，在注册消费回调接口时传入MessageListenerOrderly接口的实现。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java">consumer<span class="token punctuation">.</span><span class="token function">registerMessageListener</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">MessageListenerOrderly</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">AtomicLong</span> consumeTimes <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AtomicLong</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token class-name">ConsumeOrderlyStatus</span> <span class="token function">consumeMessage</span><span class="token punctuation">(</span><span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">MessageExt</span><span class="token punctuation">></span></span> msgs<span class="token punctuation">,</span> <span class="token class-name">ConsumeOrderlyContext</span> context<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s Receive New Messages: %s %n"</span><span class="token punctuation">,</span> <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> msgs<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>consumeTimes<span class="token punctuation">.</span><span class="token function">incrementAndGet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>consumeTimes<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">return</span> <span class="token class-name">ConsumeOrderlyStatus</span><span class="token punctuation">.</span><span class="token constant">SUCCESS</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>consumeTimes<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> <span class="token number">5</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            context<span class="token punctuation">.</span><span class="token function">setSuspendCurrentQueueTimeMillis</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">return</span> <span class="token class-name">ConsumeOrderlyStatus</span><span class="token punctuation">.</span><span class="token constant">SUSPEND_CURRENT_QUEUE_A_MOMENT</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> <span class="token class-name">ConsumeOrderlyStatus</span><span class="token punctuation">.</span><span class="token constant">SUCCESS</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>顺序消费也有两种返回结果，ConsumeOrderlyStatus.SUCCESS表示消费成功，ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT表示消费失败。</p>
-<p><strong>可以看到RocketMQ提供的消费者API却非常简单，用户并不需要关注重平衡或者拉取的逻辑，只需要写好自己的消费逻辑即可。</strong></p>
-<h3 id="2-DefaultMQPullConsumer的使用"><a href="#2-DefaultMQPullConsumer的使用" class="headerlink" title="2.DefaultMQPullConsumer的使用"></a>2.DefaultMQPullConsumer的使用</h3><p>Pull Consumer的代码示例如下</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">PullConsumerTest</span> <span class="token punctuation">&#123;</span>
-  <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">MQClientException</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">DefaultMQPullConsumer</span> consumer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DefaultMQPullConsumer</span><span class="token punctuation">(</span><span class="token string">"please_rename_unique_group_name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    consumer<span class="token punctuation">.</span><span class="token function">setNamesrvAddr</span><span class="token punctuation">(</span><span class="token string">"localhost:9876"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    consumer<span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-      <span class="token class-name">MessageQueue</span> mq <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">MessageQueue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-      mq<span class="token punctuation">.</span><span class="token function">setQueueId</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-      mq<span class="token punctuation">.</span><span class="token function">setTopic</span><span class="token punctuation">(</span><span class="token string">"TopicTest"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-      mq<span class="token punctuation">.</span><span class="token function">setBrokerName</span><span class="token punctuation">(</span><span class="token string">"jinrongtong-MacBook-Pro.local"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-      <span class="token keyword">long</span> offset <span class="token operator">=</span> <span class="token number">26</span><span class="token punctuation">;</span>
-      <span class="token class-name">PullResult</span> pullResult <span class="token operator">=</span> consumer<span class="token punctuation">.</span><span class="token function">pull</span><span class="token punctuation">(</span>mq<span class="token punctuation">,</span> <span class="token string">"*"</span><span class="token punctuation">,</span> offset<span class="token punctuation">,</span> <span class="token number">32</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-      <span class="token keyword">if</span> <span class="token punctuation">(</span>pullResult<span class="token punctuation">.</span><span class="token function">getPullStatus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span><span class="token class-name">PullStatus</span><span class="token punctuation">.</span><span class="token constant">FOUND</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s%n"</span><span class="token punctuation">,</span> pullResult<span class="token punctuation">.</span><span class="token function">getMsgFoundList</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        consumer<span class="token punctuation">.</span><span class="token function">updateConsumeOffset</span><span class="token punctuation">(</span>mq<span class="token punctuation">,</span> pullResult<span class="token punctuation">.</span><span class="token function">getNextBeginOffset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-      <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-      e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    consumer<span class="token punctuation">.</span><span class="token function">shutdown</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>首先需要初始化<code>DefaultMQPullConsumer</code>并启动，然后构造需要拉取的队列<code>MessageQueue</code>，除了构造外也可以如下所示调用<code>fetchSubscribeMessageQueues</code>方法获取某个Topic的所有队列，然后挑选队列进行拉取。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">MessageQueue</span><span class="token punctuation">></span></span> queueSet <span class="token operator">=</span>  consumer<span class="token punctuation">.</span><span class="token function">fetchSubscribeMessageQueues</span><span class="token punctuation">(</span><span class="token string">"TopicTest"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>找到或者构造完队列之后，调用pull方法就可以进行拉取，需要传入拉取的队列，过滤表达式，拉取的位点，最大拉取消息条数等参数。拉取完成后会返回拉取结果<code>PullResult</code>，PullResult中的PullStatus表示结果状态，如下所示</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">enum</span> <span class="token class-name">PullStatus</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/**
-     * Founded
-     */</span>
-    <span class="token constant">FOUND</span><span class="token punctuation">,</span>
-    <span class="token comment">/**
-     * No new message can be pull
-     */</span>
-    <span class="token constant">NO_NEW_MSG</span><span class="token punctuation">,</span>
-    <span class="token comment">/**
-     * Filtering results can not match
-     */</span>
-    <span class="token constant">NO_MATCHED_MSG</span><span class="token punctuation">,</span>
-    <span class="token comment">/**
-     * Illegal offset,may be too big or too small
-     */</span>
-    <span class="token constant">OFFSET_ILLEGAL</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>FOUND表示拉取到消息，NO_NEW_MSG表示没有发现新消息，NO_MATCHED_MSG表示没有匹配的消息，OFFSET_ILLEGAL表示传入的拉取位点是非法的，有可能偏大或偏小。如果拉取状态是FOUND，我们可以通过<code>pullResult</code>的<code>getMsgFoundList</code>方法获取拉取到的消息列表。最后，如果消费完成，通过<code>updateConsumeOffset</code>方法更新消费位点。</p>
 
                 
             </div>
@@ -531,7 +456,7 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://fuchenglai.github.io/2024/12/17/push-xiao-fei-he-pull-xiao-fei/">https://fuchenglai.github.io/2024/12/17/push-xiao-fei-he-pull-xiao-fei/</a>
+                    <a href="https://fuchenglai.github.io/2024/12/29/ru-he-bao-zheng-huan-cun-yi-zhi-xing/">https://fuchenglai.github.io/2024/12/29/ru-he-bao-zheng-huan-cun-yi-zhi-xing/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -649,13 +574,13 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/12/29/ru-he-bao-zheng-huan-cun-yi-zhi-xing/">
+                <a href="/2025/02/18/shi-me-shi-huan-cun-ji-chuan-huan-cun-chuan-tou-huan-cun-xue-beng/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="如何保证缓存一致性">
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="什么是缓存击穿、缓存穿透、缓存雪崩">
                         
-                        <span class="card-title">如何保证缓存一致性</span>
+                        <span class="card-title">什么是缓存击穿、缓存穿透、缓存雪崩</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -666,7 +591,7 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-12-29
+                            <i class="far fa-clock fa-fw icon-date"></i>2025-02-18
                         </span>
                         <span class="publish-author">
                             
@@ -690,13 +615,13 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/11/21/9377-you-xi-hou-duan-mian-jing/">
+                <a href="/2024/12/17/push-xiao-fei-he-pull-xiao-fei/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="9377游戏后端面经">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="Push消费和Pull消费">
                         
-                        <span class="card-title">9377游戏后端面经</span>
+                        <span class="card-title">Push消费和Pull消费</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -707,14 +632,14 @@ Push是服务端主动推送消息给客户端，由系统控制读取操作，�
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-11-21
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-12-17
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E9%9D%A2%E7%BB%8F/" class="post-category">
-                                    面经
+                            <a href="/categories/%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
+                                    消息中间件
                                 </a>
                             
                             
