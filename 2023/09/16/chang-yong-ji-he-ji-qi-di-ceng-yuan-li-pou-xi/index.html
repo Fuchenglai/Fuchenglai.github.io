@@ -377,7 +377,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    14.2k
+                    14.3k
                 </div>
                 
 
@@ -404,7 +404,7 @@
             <div id="articleContent">
                 <h3 id="1-框架体系"><a href="#1-框架体系" class="headerlink" title="1. 框架体系"></a>1. 框架体系</h3><p>先来看一张图，脑海里有一个知识体系的印象</p>
 <p><img src="/2023/09/16/chang-yong-ji-he-ji-qi-di-ceng-yuan-li-pou-xi/%E9%9B%86%E5%90%88.png"></p>
-<p>集合主要有两类：Collection 和 Map。<br><strong>Collection</strong> 接口的实现子类都是<strong>单列集合</strong>（即操作元素时是一个一个的操作）。<br><strong>Map</strong> 接口的实现子类是<strong>双列集合</strong>（即操作元素时是键值对一起操作的)</p>
+<p>集合主要有两类：Collection 和 Map。<br><strong>Collection</strong> 接口的实现子类都是<strong>单列集合</strong>（即操作元素时是一个一个的操作）。<br><strong>Map</strong> 接口的实现子类是<strong>双列集合</strong>（即操作元素时是键值对的方式来操作的，键值对是以内部类Enrty来实现的)</p>
 <p><strong>List</strong>:存储有序的、可重复的数据（“动态”数组）<br><strong>Set</strong>:存储无序的、不可重复的数据（类似高中学习的集合）</p>
 <p><strong>Collections</strong>是一个工具类，提供一些静态方法，如让集合元素排序（类似数组的工具类Arrays）</p>
 <hr>
@@ -1796,6 +1796,7 @@ n <span class="token operator">|=</span> n <span class="token operator">>>></spa
         <span class="token operator">:</span> comparator<span class="token punctuation">.</span><span class="token function">compare</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">K</span><span class="token punctuation">)</span>k1<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token class-name">K</span><span class="token punctuation">)</span>k2<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
 </ul>
+<h3 id="4-其他"><a href="#4-其他" class="headerlink" title="4.其他"></a>4.其他</h3><h4 id="4-1HashMap关于存储null值"><a href="#4-1HashMap关于存储null值" class="headerlink" title="4.1HashMap关于存储null值"></a>4.1HashMap关于存储null值</h4><p>Hashtable中，key和value都不允许出现null值。在HashMap中，key出现null最多只能有一个，value出现null值可以有多个，所以我们用get()方法返回null值时既可以表示hashMap中没有这个键，也可以表示这个键对应的值就是null，因此在hashMap中要判断是否存在某个键要使用containsKey()方法而不是get()方法</p>
 
                 
             </div>
@@ -2163,7 +2164,7 @@ n <span class="token operator">|=</span> n <span class="token operator">>>></spa
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             
-                <span id="year">2019-2024</span>
+                <span id="year">2019-2025</span>
             
             <a href="/about" target="_blank">Fuchanglai</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>

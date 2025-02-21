@@ -467,13 +467,6 @@ ClassPathXmlApplicationContext 是一">
 
 <hr>
 <h5 id="FactoryBean"><a href="#FactoryBean" class="headerlink" title="FactoryBean"></a>FactoryBean</h5><p>FactoryBean：对单一的 bean 的初始化过程进行封装，达到简化配置的目的</p>
-<p>FactoryBean与 BeanFactory 区别：</p>
-<ul>
-<li><p>FactoryBean：封装单个 bean 的创建过程，就是工厂的 Bean</p>
-</li>
-<li><p>BeanFactory：Spring 容器顶层接口，定义了 bean 相关的获取操作</p>
-</li>
-</ul>
 <p>代码实现：</p>
 <ul>
 <li><p>FactoryBean，实现类一般是 MapperFactoryBean，创建 DAO 层接口的实现类</p>
@@ -505,6 +498,10 @@ ClassPathXmlApplicationContext 是一">
     	<span class="token punctuation">&#125;</span>
   	<span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<h5 id="两者区别："><a href="#两者区别：" class="headerlink" title="两者区别："></a>两者区别：</h5><ul>
+<li>BeanFactory：IoC容器顶层接口，给IoC容器提供了一套完整的规范。以Factory结尾，表示它是一个工厂类（接口），用于管理Bean的一个工厂。</li>
+<li>FactoryBean：也是一个工厂类接口，用户可以通过该接口定制实例化Bean的逻辑，Spring自身就提供了70多个FactoryBean的实现，他们隐藏了一些实例化复杂Bean的细节，从而给上层应用带来便捷</li>
 </ul>
 <hr>
 <h4 id="过滤器"><a href="#过滤器" class="headerlink" title="过滤器"></a>过滤器</h4><h5 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h5><ul>
@@ -1480,8 +1477,8 @@ ClassPathXmlApplicationContext 是一">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-category">
-                                    中间件
+                            <a href="/categories/%E7%BC%93%E5%AD%98/" class="post-category">
+                                    缓存
                                 </a>
                             
                             
@@ -1676,7 +1673,7 @@ ClassPathXmlApplicationContext 是一">
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             
-                <span id="year">2019-2024</span>
+                <span id="year">2019-2025</span>
             
             <a href="/about" target="_blank">Fuchanglai</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>

@@ -5,8 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="Java语言常见面试题, 小ceng的后端游乐场">
-    <meta name="description" content="1.说一说你对static关键字的理解在Java类里只能包含成员变量、方法、构造器、初始化块、内部类5种成员，而static除了构造器以外其他4种都可以修饰，以static修饰的成员就是类成员。类成员属于整个类，而不属于单个对象。
-类成员储">
+    <meta name="description" content="1.说一说你对static关键字的理解在Java类里只能包含成员变量、方法、内部类3种成员，都可以使用static修饰，外加代码块可以使用static修饰，以static修饰的成员就是类成员。类成员属于整个类，而不属于单个对象。
+类成员储存">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -376,7 +376,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.2k
+                    5.4k
                 </div>
                 
 
@@ -401,9 +401,32 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="1-说一说你对static关键字的理解"><a href="#1-说一说你对static关键字的理解" class="headerlink" title="1.说一说你对static关键字的理解"></a>1.说一说你对static关键字的理解</h3><p>在Java类里只能包含成员变量、方法、构造器、初始化块、内部类5种成员，而static除了构造器以外其他4种都可以修饰，以static修饰的成员就是<strong>类成员</strong>。类成员属于整个类，而不属于单个对象。</p>
-<p>类成员储存在方法区中，对象是存放在堆内存的</p>
-<p>对static关键字而言，有一条非常重要的规则：类成员不能访问实例成员。因为类成员是属于类的，类成员的作用域比实例成员的作用域更大，完全可能出现类成员已经初始化完成，但实例成员还没有初始化的情况，如果允许类成员访问实例成员将会引起大量错误。</p>
+                <h3 id="1-说一说你对static关键字的理解"><a href="#1-说一说你对static关键字的理解" class="headerlink" title="1.说一说你对static关键字的理解"></a>1.说一说你对static关键字的理解</h3><p>在Java类里只能包含成员变量、方法、内部类3种成员，都可以使用static修饰，外加代码块可以使用static修饰，以static修饰的成员就是<strong>类成员</strong>。类成员属于整个类，而不属于单个对象。</p>
+<p>类成员储存在方法区中，对象是存放在堆内存的。</p>
+<p>对static关键字而言，有一条非常重要的规则：类成员不能访问实例成员，实例成员可以访问类成员。因为JVM的初始化顺序是先静态域，然后是非静态域，所以可能出现类成员已经初始化完成，但实例成员还没有初始化的情况，如果允许类成员访问实例成员将会引起大量错误。</p>
+<h3 id="16-什么是代码块"><a href="#16-什么是代码块" class="headerlink" title="16.什么是代码块"></a>16.什么是代码块</h3><p>代码块又叫初始化块，属于类中的成员，即类的一部分 类似于方法，将逻辑语句封装在方法提中，通过{}定义的一段代码。但和方法不同，没有方法名，没有返回值，没有参数，只有方法体，而且不用通过对象或类显示调用，而是在加载类的时候或者创建对象的时候隐式调用。</p>
+<ol>
+<li><p>静态代码块：使用<code>static</code>关键字去定义，静态代码块中的代码会在JVM类加载时运行，且只被执行一次。</p>
+</li>
+<li><p>构造代码块：和静态代码块的唯一区别就是没有static修饰</p>
+</li>
+<li><p>普通代码块：定义在方法中的代码块，一般不会这么无聊去使用它。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token comment">//直接使用&#123;&#125;定义普通代码块</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"x1="</span><span class="token operator">+</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+        
+        <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">100</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"x2="</span><span class="token operator">+</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>无论这三部分的位置如何放置，都是静态代码块先执行，然后是构造代码块。静态代码块只会执行一次，构造代码块在每次实例化对象时都会执行。</p>
+</li>
+</ol>
 <h3 id="2-什么是静态内部类"><a href="#2-什么是静态内部类" class="headerlink" title="2.什么是静态内部类"></a>2.什么是静态内部类</h3><p>如果使用static来修饰一个内部类，则这个内部类就被称为静态内部类。</p>
 <p>静态内部类需满足如下规则：</p>
 <ol>
@@ -478,30 +501,36 @@
 <p>HashSet首先会调用对象的hashCode()方法获取其哈希码，并通过哈希码确定该对象在集合中存放的位置。假设这个位置之前已经存了一个对象，则HashSet会调用equals()对两个对象进行比较。若相等则说明对象重复，此时不会保存新加的对象。若不等说明对象不重复，但是它们存储的位置发生了碰撞，此时HashSet会采用链式结构在同一位置保存多个对象，即将新加对象链接到原来对象的之后。之后，再有新添加对象也映射到这个位置时，就需要与这个位置中所有的对象进行equals()比较，若均不相等则将其链到最后一个对象之后。</p>
 <h3 id="11-为什么要重写hashCode-和equals"><a href="#11-为什么要重写hashCode-和equals" class="headerlink" title="11.为什么要重写hashCode()和equals()?"></a>11.为什么要重写hashCode()和equals()?</h3><p>Object类提供的equals()方法默认是用&#x3D;&#x3D;来进行比较的，也就是说只有两个对象是同一个对象时，才能返回相等的结果。而实际的业务中，我们通常的需求是，若两个不同的对象它们的内容是相同的，就认为它们相等。鉴于这种情况，Object类中equals()方法的默认实现是没有实用价值的，所以通常都要重写。</p>
 <p>⽽由于hashCode()与equals()具有联动关系（如果两个对象相等，则它们必须有相同的哈希码），所以equals()⽅法重写时，通常也要将hashCode()进⾏重写，使得这两个⽅法始终保持⼀致性。</p>
-<h3 id="12-String类可以被继承吗？"><a href="#12-String类可以被继承吗？" class="headerlink" title="12.String类可以被继承吗？"></a>12.String类可以被继承吗？</h3><p>String类由final修饰，所以不能被继承。</p>
+<hr>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><h3 id="12-String类可以被继承吗？"><a href="#12-String类可以被继承吗？" class="headerlink" title="12.String类可以被继承吗？"></a>12.String类可以被继承吗？</h3><p>String类由final修饰，所以不能被继承。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">class</span> <span class="token class-name">String</span>
+    <span class="token keyword">implements</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>Serializable</span><span class="token punctuation">,</span> <span class="token class-name">Comparable</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span><span class="token punctuation">,</span> <span class="token class-name">CharSequence</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token keyword">char</span> value<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">//省略</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
 <p><strong>扩展阅读</strong></p>
 <p>在Java中，String类被设计为不可变类，主要表现在它保存字符串的成员变量是final的。</p>
 <ul>
 <li>Java 9之前字符串采用char[]数组来保存字符，即 private final char[] value；</li>
 <li>Java 9做了改进，采用byte[]数组来保存字符，即 private final byte[] value；</li>
 </ul>
-<p>之所以要把String类设计为不可变类，主要是出于安全和性能的考虑，可归纳为如下4点。</p>
-<ul>
-<li>由于字符串无论在任何 Java 系统中都广泛使用，会用来存储敏感信息，如账号，密码，网络路径，文件处理等场景里，保证字符串 String 类的安全性就尤为重要了，如果字符串是可变的，容易被篡改，那我们就无法保证使用字符串进行操作时，它是安全的，很有可能出现 SQL 注入，访问危险文件等操作。</li>
-<li>在多线程中，只有不变的对象和值是线程安全的，可以在多个线程中共享数据。由于 String 天然的不可变，当一个线程”修改“了字符串的值，只会产生一个新的字符串对象，不会对其他线程的访问产生副作用，访问的都是同样的字符串数据，不需要任何同步操作。</li>
-<li>字符串作为基础的数据结构，大量地应用在一些集合容器之中，尤其是一些散列集合，在散列集合中，存放元素都要根据对象的 hashCode() 方法来确定元素的位置。由于字符串 hashcode 属性不会变更，保证了唯一性，使得类似 HashMap，HashSet 等容器才能实现相应的缓存功能。由于 String 的不可变，避免重复计算 hashcode，只要使用缓存的 hashcode 即可，这样一来大大提高了在散列集合中使用 String 对象的性能。</li>
-<li>当字符串不可变时，字符串常量池才有意义。字符串常量池的出现，可以减少创建相同字面量的字符串，让不同的引用指向池中同一个字符串，为运行时节约很多的堆内存。若字符串可变，字符串常量池失去意义，基于常量池的 String.intern() 方法也失效，每次创建新的字符串将在堆内开辟出新的空间，占据更多的内存。</li>
-</ul>
-<p>因为要保证String类的不可变，那么将这个类定义为final的就很容易理解了。如果没有final修饰，那么就会存在String的子类，这些子类可以重写String类的方法，强行改变字符串的值，这便违背了String类设计的初衷。</p>
+<p>之所以要把String类设计为不可变类，主要是出于安全和性能的考虑，可归纳为如下2点。</p>
+<ol>
+<li>是保证了线程安全，由于 String 的不可变，当一个线程”修改“了字符串的值，只会产生一个新的字符串对象，不会对其他线程的访问产生副作用，访问的都是同样的字符串数据，不需要任何同步操作。如果在多线程的环境中，我们需要对某个字符串频繁的修改，可以使用StringBuffer类。</li>
+<li>节约内存，JVM里面有字符串常量池，可以减少创建相同字面量的字符串，让不同的引用指向池中同一个字符串，为运行时节约很多的堆内存。</li>
+</ol>
 <h3 id="13-使用字符串时，new和””更推荐使用哪种方式？"><a href="#13-使用字符串时，new和””更推荐使用哪种方式？" class="headerlink" title="13.使用字符串时，new和””更推荐使用哪种方式？"></a>13.使用字符串时，new和””更推荐使用哪种方式？</h3><p>先看看 “hello” 和 new String(“hello”) 的区别：</p>
 <ul>
 <li>当Java程序直接使用 “hello” 的字符串直接量时，JVM将会使用常量池来管理这个字符串；</li>
 <li>当使用 new String(“hello”) 时，JVM会先使用常量池来管理 “hello” 直接量，再调用String类的构造器来创建一个新的String对象，新创建的String对象被保存在堆内存中。</li>
 </ul>
 <p>显然，采用new的方式会多创建一个对象出来，会占用更多的内存，所以一般建议使用直接量的方式创建字符串。</p>
-<h3 id="14-说一说你对字符串拼接的理解"><a href="#14-说一说你对字符串拼接的理解" class="headerlink" title="14.说一说你对字符串拼接的理解"></a>14.说一说你对字符串拼接的理解</h3><p>拼接字符串有很多种方式，其中最常用的有4种，下面列举了这4种方式各自适合的场景。</p>
+<h3 id="14-字符串拼接"><a href="#14-字符串拼接" class="headerlink" title="14.字符串拼接"></a>14.字符串拼接</h3><p>拼接字符串有很多种方式，其中最常用的有4种，下面列举了这4种方式各自适合的场景。</p>
 <ol>
-<li>+ 运算符：如果拼接的都是字符串直接量，则适合使用 + 运算符实现拼接；</li>
+<li>+ 运算符：如果拼接的都是字符串字面量，则适合使用 + 运算符实现拼接；</li>
 <li>StringBuilder：如果拼接的字符串中包含变量，并不要求线程安全，则适合使用StringBuilder；</li>
 <li>StringBuffer：如果拼接的字符串中包含变量，并且要求线程安全，则适合使用StringBuffer；</li>
 <li>String类的concat方法：如果只是对两个字符串进行拼接，并且包含变量，则适合使用concat方法；</li>
@@ -509,8 +538,8 @@
 <p><strong>扩展阅读</strong></p>
 <p>采用 + 运算符拼接字符串时：</p>
 <ul>
-<li>如果拼接的都是字符串直接量，则在编译时编译器会将其直接优化为一个完整的字符串，和你直接写一个完整的字符串是一样的，所以效率非常的高。</li>
-<li>如果拼接的字符串中包含变量，则在编译时编译器采用StringBuilder对其进行优化，即自动创建StringBuilder实例并调用其append()方法，将这些字符串拼接在一起，效率也很高。但如果这个拼接操作是在循环中进行的，那么每次循环编译器都会创建一个StringBuilder实例，再去拼接字符串，相当于执行了 new StringBuilder().append(str)，所以此时效率很低。</li>
+<li>如果拼接的都是字符串字面量，拼接操作在编译器的编译期间就执行了，会直接把拼接后的常量放入字符串常量池中。</li>
+<li>如果拼接操作包含字符串引用，那么它是在Java运行期间执行的，新创建的字符串存放在堆内存中。</li>
 </ul>
 <p>采用StringBuilder&#x2F;StringBuffer拼接字符串时：</p>
 <ul>
@@ -522,44 +551,23 @@
 <li>concat方法的拼接逻辑是，先创建一个足以容纳待拼接的两个字符串的字节数组，然后先后将两个字符串拼到这个数组里，最后将此数组转换为字符串。</li>
 <li>在拼接大量字符串的时候，concat方法的效率低于StringBuilder。但是只拼接2个字符串时，concat方法的效率要优于StringBuilder。并且这种拼接方式代码简洁，所以只拼2个字符串时建议优先选择concat方法。</li>
 </ul>
-<h3 id="15-面向对象有哪三大特性？详细讲讲这些特性的含义"><a href="#15-面向对象有哪三大特性？详细讲讲这些特性的含义" class="headerlink" title="15.面向对象有哪三大特性？详细讲讲这些特性的含义"></a>15.面向对象有哪三大特性？详细讲讲这些特性的含义</h3><p>三大特性是封装、继承和多态</p>
+<hr>
+<h2 id="OOP"><a href="#OOP" class="headerlink" title="OOP"></a>OOP</h2><h3 id="15-面向对象有哪三大特性？详细讲讲这些特性的含义"><a href="#15-面向对象有哪三大特性？详细讲讲这些特性的含义" class="headerlink" title="15.面向对象有哪三大特性？详细讲讲这些特性的含义"></a>15.面向对象有哪三大特性？详细讲讲这些特性的含义</h3><p>三大特性是封装、继承和多态</p>
 <ol>
 <li>封装：是指将对象的数据和操作数据的方法捆绑在一起，形成一个独立的对象（类）。封装还意味着隐藏对象的内部状态和实现细节，仅通过对象提供的接口（方法）来访问对象的属性和行为。这样做的好处是提高了代码的安全性和可维护性，因为对象的内部实现可以自由更改，而不影响外部代码。</li>
 <li>继承：继承是一种创建新类的方式，子类可以继承父类或超类的属性和方法。继承支持代码的复用，允许开发者在现有类的基础上添加新功能，而不必重写现有代码。继承还支持建立类之间的层次结构，使得代码更加有组织。</li>
 <li>多态： 是指允许不同类的对象对同一消息做出响应的能力，即同一个接口可以被不同的实例以不同的方式实现。这意味着一个函数或者方法可以有多个不同的行为。多态使得代码更加灵活，因为可以用统一的接口来处理不同类型的对象，而具体的行为则取决于对象的实际类型。</li>
 </ol>
-<h3 id="16-什么是代码块"><a href="#16-什么是代码块" class="headerlink" title="16.什么是代码块"></a>16.什么是代码块</h3><p>代码块又叫初始化块，属于类中的成员，即类的一部分 类似于方法，将逻辑语句封装在方法提中，通过{}定义的一段代码。但和方法不同，没有方法名，没有返回值，没有参数，只有方法体，而且不用通过对象或类显示调用，而是在加载类的时候或者创建对象的时候隐式调用。</p>
+<h3 id="16-在创建子类对象时类的初始化过程"><a href="#16-在创建子类对象时类的初始化过程" class="headerlink" title="16.在创建子类对象时类的初始化过程"></a>16.在创建子类对象时类的初始化过程</h3><p><strong>第一次创建子类对象：</strong></p>
 <ol>
-<li><p>静态代码块：使用<code>static</code>关键字去定义，静态代码块中的代码会在JVM类加载时运行，且只被执行一次。</p>
-</li>
-<li><p>构造代码块：和静态代码块的唯一区别就是没有static修饰</p>
-</li>
-<li><p>普通代码块：定义在方法中的代码块，一般不会这么无聊去使用它。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token comment">//直接使用&#123;&#125;定义普通代码块</span>
-        <span class="token punctuation">&#123;</span>
-            <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">;</span>
-            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"x1="</span><span class="token operator">+</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-        
-        <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">100</span><span class="token punctuation">;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"x2="</span><span class="token operator">+</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>无论这三部分的位置如何放置，都是静态代码块先执行，然后是构造代码块。静态代码块只会执行一次，构造代码块在每次实例化对象时都会执行。</p>
-</li>
-</ol>
-<h3 id="17-子类继承父类各方法的执行顺序"><a href="#17-子类继承父类各方法的执行顺序" class="headerlink" title="17.子类继承父类各方法的执行顺序"></a>17.子类继承父类各方法的执行顺序</h3><p><strong>第一次创建子类对象：</strong></p>
-<ol>
-<li>父类静态代码块</li>
-<li>子类静态代码块</li>
+<li>父类静态域</li>
+<li>子类静态域</li>
 <li>父类构造代码块</li>
 <li>父类构造方法</li>
 <li>子类构造代码块</li>
 <li>子类构造方法</li>
 </ol>
+<p><strong>规律就是 父类先于子类 静态的先于非静态的</strong></p>
 <p><strong>之后创建子类对象，父类和子类的静态代码块不会执行，其余不变</strong></p>
 <p><strong>解释：</strong></p>
 <p>1、java的机制是先编译成字节码文件.class  然后在JVM上解释器逐行翻译成机器码文件，那从.class 到JVM加载的时候，就执行static代码块和static变量，所以先执行静态代码块，并且执行顺序是先执行父类的在执行子类的。</p>
@@ -583,6 +591,20 @@
 <li>接口中的方法是抽象的，一个类实现可以多个接口</li>
 <li>假设这些接口中存在相同方法(方法名与参数相同)，在实现接口时，这个方法需要实现类来实现，并不会出现二义性的问题</li>
 </ul>
+<h3 id="19-谈谈你对super和this的理解"><a href="#19-谈谈你对super和this的理解" class="headerlink" title="19.谈谈你对super和this的理解"></a>19.谈谈你对super和this的理解</h3><p><img src="/2023/09/26/java-yu-yan-chang-jian-mian-shi-ti/this_super_20250107152609.jpg"></p>
+<ul>
+<li>this:代表当前对象名（在程序易产生二义性之处，应该使用this来指明当前对象；如果函数的形参与类中的成员属性同名，这时需要this来指明成员属性名）</li>
+<li>this()和super()都是指的是对象，所以均不可在static环境中使用</li>
+<li>从本质上讲，this是一个指向本对象的指针，而super是一个java关键字</li>
+</ul>
+<p>在java中，所有的子类构造器会默认调用super()，用于初始化父类，同时当父类中存在有参构造器时，必须再提供无参构造器，否则子类构造器默认调用super()方法时就会出现找不到的报错。</p>
+<h3 id="20-谈谈你对重载和重写的理解"><a href="#20-谈谈你对重载和重写的理解" class="headerlink" title="20.谈谈你对重载和重写的理解"></a>20.谈谈你对重载和重写的理解</h3><ol>
+<li>方法重载（overload）：在一个类中有相同的函数名，但是参数不同，参数不同包括个数不同，顺序不同，类型不同，然后重载的返回值可以不同</li>
+<li>方法重写（override）:方法重写要求遵守两同两小一大原则：方法名相同，参数相同；子类返回类型小于等于父类方法返回类型，子类抛出异常小于等于父类方法抛出异常；子类访问权限大于等于父类方法访问权限</li>
+</ol>
+<h4 id="21-谈谈你对ThreadLocal的理解"><a href="#21-谈谈你对ThreadLocal的理解" class="headerlink" title="21.谈谈你对ThreadLocal的理解"></a>21.谈谈你对ThreadLocal的理解</h4><p>ThreadLoca是线程局部存储TLS(thread local storage)的一种实现，是解决多线程中的对同一变量的的访问冲突的一种技术，ThreadLocal会为每一个线程维护一个和该线程绑定的变量的副本。</p>
+<p>ThreadLocal可以给一个初始值，而每个线程都会获得这个初始化值的一个副本，这样才能保证不同的线程都有一份拷贝。ThreadLocal 不是用于解决共享变量的问题的，不是为了协调线程同步而存在，而是为了方便每个线程处理自己的状态而引入的一个机制.</p>
+<p>它是一种采用空间换时间的技术，用副本代替加锁。threadlocal就像一个key，具体的副本值value保存在thread对象的map里面，多个线程可以通过同一个key取出自己map里面对应的value，本质上threadlocal的get和set都操作的是每个thread自己的数据，实际上threadlocal对象自身没有变化，只是每个线程把同一个threadlocal对象当做一把打开自己map的钥匙而已，多个thread是可以并发调用get和set的并且不出错。</p>
 
                 
             </div>
@@ -954,7 +976,7 @@
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             
-                <span id="year">2019-2024</span>
+                <span id="year">2019-2025</span>
             
             <a href="/about" target="_blank">Fuchanglai</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>

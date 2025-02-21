@@ -371,14 +371,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.6k
+                    3.2k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    9 分
+                    11 分
                 </div>
                 
 
@@ -492,19 +492,50 @@ listenfd <span class="token operator">=</span> <span class="token function">sock
 <li>内核检测文件描述符可读还是通过遍历实现，当文件描述符数组很长时，遍历操作耗时也很长。<br>方案：通过事件唤醒机制唤醒替代遍历</li>
 <li>内核检测完文件描述符数组后，当存在可读的文件描述符数组时，用户态需要再遍历检测一遍<br>方案：仅将可读部分文件描述符同步给用户态，不需要用户态再次遍历</li>
 </ol>
-<p>epoll 基于高效的红黑树结构，提供了三个核心操作：epoll_create、epoll_ctl、epoll_wait</p>
-<p><strong>epoll_create：</strong></p>
-<p>用于创建epoll文件描述符，该文件描述符用于后续的epoll操作，参数size目前还没有实际用处，我们只要填一个大于0的数就行。</p>
+<p>epoll 基于高效的红黑树结构，提供了三个核心操作：epoll_create、epoll_ctl、epoll_wait，也就是三步走：创建、登记、等待事件。</p>
+<p><strong>第一步：创建epoll对象</strong></p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> epoll_fd <span class="token operator">=</span> <span class="token function">epoll_create</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>有了epoll_fd就可以管理所有的网络连接（fd）了</p>
+<p><strong>为什么epoll使用的数据结构是红黑树？</strong></p>
+<ol>
+<li>自平衡、节点有序：红黑树是一种自平衡二叉树，确保 <code>fd</code> 列表始终保持有序，方便快速查找。</li>
+<li>操作高效：红黑树的增、删、查操作的时间复杂度为 <code>O(log N)</code>，即使面对成百上千的 （<code>fd</code>），也能迅速找到或更新信息。</li>
+</ol>
 <img src="/2024/03/27/io-mo-xing-jie-shao-select-poll-epoll/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240430160508.png" style="zoom:50%;">
 
-<p><strong>epoll_ctl：</strong></p>
+<p><strong>第二步：添加fd并设定监听事件</strong></p>
 <p>epoll_ctl函数用于增加，删除，修改epoll事件，epoll事件会存储于内核epoll结构体红黑树中</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">struct</span> <span class="token class-name">epoll_event</span> ev<span class="token punctuation">;</span>
+ev<span class="token punctuation">.</span>events <span class="token operator">=</span> EPOLLIN<span class="token punctuation">;</span>        <span class="token comment">// 设置监听“有新请求”事件</span>
+ev<span class="token punctuation">.</span>data<span class="token punctuation">.</span>fd <span class="token operator">=</span> sock_fd<span class="token punctuation">;</span>       <span class="token comment">// 客户的文件描述符</span>
+<span class="token function">epoll_ctl</span><span class="token punctuation">(</span>epoll_fd<span class="token punctuation">,</span> EPOLL_CTL_ADD<span class="token punctuation">,</span> sock_fd<span class="token punctuation">,</span> <span class="token operator">&amp;</span>ev<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
 <img src="/2024/03/27/io-mo-xing-jie-shao-select-poll-epoll/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240430160758.png" style="zoom: 50%;">
 
-<p><strong>epoll_wait：</strong></p>
-<p>epoll_wait用于监听套接字事件，可以通过设置超时时间timeout来控制监听的行为为阻塞模式还是超时模式。</p>
+<p><strong>第三步：等待事件触发-集中处理fd的请求</strong></p>
+<p>当所有fd都登记好之后，<strong>epoll</strong> 就进入了“待命模式”，它会专注于那些“真的有事”的 VIP 客户，其他客户保持静默就不用理会。这个等待事件触发的过程通过 <strong>epoll_wait</strong> 完成，epoll_wait用于监听套接字事件。</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">struct</span> <span class="token class-name">epoll_event</span> events<span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span><span class="token punctuation">;</span>          <span class="token comment">// 用来存储触发事件的客户</span>
+<span class="token keyword">int</span> nfds <span class="token operator">=</span> <span class="token function">epoll_wait</span><span class="token punctuation">(</span>epoll_fd<span class="token punctuation">,</span> events<span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 等待事件</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> nfds<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>events<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span>events <span class="token operator">&amp;</span> EPOLLIN<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token comment">// 处理客户的请求</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>epoll_wait</strong>  只会通知我们那些“有需求”的 VIP 客户。每当调用 <strong>epoll_wait</strong>，它会检查所有已登记的 VIP 客户，并把有事件的客户集中放在 <strong>events</strong> 数组里，返回给我们。这样一来，我们只需处理这些真正有需求的 VIP 客户，其他静默的客户则可以忽略，省时省力。</p>
 <img src="/2024/03/27/io-mo-xing-jie-shao-select-poll-epoll/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240430161014.png" style="zoom:50%;">
 
+<p><strong>epoll 采用的另一个数据结构：双向链表：</strong></p>
+<p>在内核中，<strong>epoll</strong> 会把所有“发出请求”的 VIP 客户(真正有数据到来的客户端fd)从红黑树移到双向链表中。双向链表中只存储那些有数据到来的客户端 fd，这样 <strong>epoll_wait</strong> 能一次性返回所有“有数据到来”的客户端fd，进一步提高效率。</p>
+<p><strong>红黑树 + 双向链表：epoll 的高效组合</strong></p>
+<ul>
+<li>红黑树：负责管理所有 VIP 客户的注册信息，确保增删查的效率。</li>
+<li>双向链表：只存放那些已触发事件的客户，保证我们只需集中处理“有需求”的客户。</li>
+</ul>
+<p>这种红黑树和双向链表的组合，让 epoll 能高效筛选出有请求的 VIP 客户，把系统资源集中在真正有需求的连接上，大大提高了性能。epoll_wait 就像 epoll贴心的“智能秘书”，只提醒我们需要处理的 VIP 客户，保证我们高效完成所有请求。</p>
 <p><strong>整体运转如下：</strong></p>
 <img src="/2024/03/27/io-mo-xing-jie-shao-select-poll-epoll/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240430161140.png" style="zoom:50%;">
 
@@ -512,7 +543,7 @@ listenfd <span class="token operator">=</span> <span class="token function">sock
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">listenfd <span class="token operator">=</span> <span class="token function">socket</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">// 打开一个网络通信套接字</span>
 <span class="token function">bind</span><span class="token punctuation">(</span>listenfd<span class="token punctuation">)</span><span class="token punctuation">;</span>        <span class="token comment">// 绑定</span>
 <span class="token function">listen</span><span class="token punctuation">(</span>listenfd<span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment">// 监听</span>
-<span class="token keyword">int</span> epfd <span class="token operator">=</span> <span class="token function">epoll_create</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 创建 epoll 对象</span>
+<span class="token keyword">int</span> ep_fd <span class="token operator">=</span> <span class="token function">epoll_create</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 创建 epoll 对象</span>
 <span class="token keyword">while</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
   connfd <span class="token operator">=</span> <span class="token function">accept</span><span class="token punctuation">(</span>listenfd<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 阻塞 等待建立连接</span>
   <span class="token function">epoll_ctl</span><span class="token punctuation">(</span>connfd<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 将新连接加入到 epoll 对象</span>
@@ -689,13 +720,13 @@ listenfd <span class="token operator">=</span> <span class="token function">sock
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/03/30/jvm-zhi-la-ji-hui-shou-qi/">
+                <a href="/2024/03/27/spring-chang-jian-mian-shi-ti/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="JVM之垃圾回收器">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Spring常见面试题">
                         
-                        <span class="card-title">JVM之垃圾回收器</span>
+                        <span class="card-title">Spring常见面试题</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -706,14 +737,14 @@ listenfd <span class="token operator">=</span> <span class="token function">sock
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-03-30
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-03-27
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java/" class="post-category">
-                                    Java
+                            <a href="/categories/%E6%A1%86%E6%9E%B6/" class="post-category">
+                                    框架
                                 </a>
                             
                             
@@ -723,8 +754,16 @@ listenfd <span class="token operator">=</span> <span class="token function">sock
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/JVM/">
-                        <span class="chip bg-color">JVM</span>
+                    <a href="/tags/IoC/">
+                        <span class="chip bg-color">IoC</span>
+                    </a>
+                    
+                    <a href="/tags/AOP/">
+                        <span class="chip bg-color">AOP</span>
+                    </a>
+                    
+                    <a href="/tags/Spring/">
+                        <span class="chip bg-color">Spring</span>
                     </a>
                     
                 </div>
@@ -916,7 +955,7 @@ listenfd <span class="token operator">=</span> <span class="token function">sock
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             
-                <span id="year">2019-2024</span>
+                <span id="year">2019-2025</span>
             
             <a href="/about" target="_blank">Fuchanglai</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
