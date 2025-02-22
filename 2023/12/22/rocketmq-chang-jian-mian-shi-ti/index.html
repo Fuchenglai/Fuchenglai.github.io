@@ -371,14 +371,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    984
+                    1.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    3 分
+                    4 分
                 </div>
                 
 
@@ -405,9 +405,62 @@
 <h4 id="1-2部分顺序消息"><a href="#1-2部分顺序消息" class="headerlink" title="1.2部分顺序消息"></a>1.2部分顺序消息</h4><p>要保证部分消息有序，需要发送端和消费端配合处理。在发送端，要做到把同一业务ID的消息发送到同一个Message Queue；在消费过程中，要做到从同一个Message Queue读取的消息不被并发处理，这样才能达到部分有序。</p>
 <p>发送端使用MessageQueueSelector类来控制把消息发往哪个Message Queue。消费端通过使用MessageListenerOrderly类来解决单Message Queue的消息被并发处理的问题。</p>
 <hr>
-<h3 id="2-消息重复问题"><a href="#2-消息重复问题" class="headerlink" title="2.消息重复问题"></a>2.消息重复问题</h3><p>对分布式消息队列来说，同时做到确保一定投递和不重复投递是很难的，也就是所谓的“有且仅有一次”。在鱼和熊掌不可兼得的情况下，RocketMQ选择了确保一定投递，保证消息不丢失，但有可能造成消息重复。</p>
-<p>消息重复一般情况下不会发生，但是如果消息量大，网络有波动，消息重复就是个大概率事件。比如Producer有个函数setRetryTimesWhenSendFailed，设置在同步方式下自动重试的次数，默认值是2，这样当第一次发送消息时，Broker端接收到了消息但是没有正确返回发送成功的状态，就造成了消息重复。</p>
-<p>解决消息重复有两种方法：第一种方法是保证消费逻辑的幂等性（多次调用和一次调用效果相同）；另一种方法是维护一个已消费消息的记录，消费前查询这个消息是否被消费过。这两种方法都需要使用者自己实现。</p>
+<h3 id="2-消息重复问题"><a href="#2-消息重复问题" class="headerlink" title="2.消息重复问题"></a>2.消息重复问题</h3><h4 id="产生问题的原因"><a href="#产生问题的原因" class="headerlink" title="产生问题的原因"></a>产生问题的原因</h4><p>RocketMQ的At least Once 机制保证消息不丢失，但是可能会造成消息重复，RocketMQ 中无法避免消息重复（Exactly-Once），在互联网应用中，尤其在网络不稳定的情况下，以下几种情况会导致消息重复问题：</p>
+<ol>
+<li>生产者重复发送：生产者发送消息到 Broker 后，如果没有收到响应（例如网络闪断），会触发重试机制（默认重试 2 次），导致 Broker 存储重复的消息 </li>
+<li>消费者Offset提交失败：消费者处理消息后，Offset 提交到 Broker 是异步的（默认 5 秒一次），若消费者宕机或重启，未提交的 Offset 会导致重复消费</li>
+<li>负载均衡导致的：消费者组扩容&#x2F;缩容时，队列重新分配可能导致部分消息被重复拉取</li>
+</ol>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>由于 RocketMQ 无法完全避免消息重复，<strong>业务层需实现幂等性</strong>，确保同一消息多次处理结果一致；</p>
+<ul>
+<li><p><strong>唯一标识法</strong></p>
+<p>生产者生成唯一ID，每条消息携带唯一业务 ID（如订单号+时间戳），消费者通过 Redis 或数据库记录已处理 ID。</p>
+</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 生产者发送消息时添加唯一ID</span>
+<span class="token class-name">Message</span> msg <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Message</span><span class="token punctuation">(</span><span class="token string">"Topic"</span><span class="token punctuation">,</span> <span class="token string">"Tag"</span><span class="token punctuation">,</span> <span class="token string">"Order-20231001-001"</span><span class="token punctuation">.</span><span class="token function">getBytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>​		消费者处理前检查唯一 ID 是否已存在：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">String</span> msgId <span class="token operator">=</span> message<span class="token punctuation">.</span><span class="token function">getKeys</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>redis<span class="token punctuation">.</span><span class="token function">exists</span><span class="token punctuation">(</span>msgId<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> <span class="token class-name">ConsumeConcurrentlyStatus</span><span class="token punctuation">.</span><span class="token constant">CONSUME_SUCCESS</span><span class="token punctuation">;</span> <span class="token comment">// 已处理则跳过</span>
+<span class="token punctuation">&#125;</span>
+redis<span class="token punctuation">.</span><span class="token function">setex</span><span class="token punctuation">(</span>msgId<span class="token punctuation">,</span> <span class="token number">3600</span><span class="token punctuation">,</span> <span class="token string">"processed"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 设置过期时间</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li><p><strong>数据库约束-防重表</strong></p>
+<p>插入数据时依赖数据库唯一约束，重复插入会抛出异常：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> orders <span class="token punctuation">(</span>
+    order_id <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">64</span><span class="token punctuation">)</span> <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span><span class="token punctuation">,</span>
+    amount <span class="token keyword">DECIMAL</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<hr>
+<h3 id="3-如何保证消息不丢失"><a href="#3-如何保证消息不丢失" class="headerlink" title="3.如何保证消息不丢失"></a>3.如何保证消息不丢失</h3><h4 id="生产者端保证"><a href="#生产者端保证" class="headerlink" title="生产者端保证"></a>生产者端保证</h4><ul>
+<li>同步发送是最可靠的发送方式，它会等待broker的确认响应</li>
+<li>失败重试机制</li>
+</ul>
+<h4 id="Broker保证"><a href="#Broker保证" class="headerlink" title="Broker保证"></a>Broker保证</h4><ul>
+<li>消息持久化<ul>
+<li><strong>同步刷盘</strong>：消息写入 PageCache 后立即刷盘（性能较低，可靠性高）</li>
+<li><strong>异步刷盘（默认）</strong>：依赖 OS 异步刷盘，性能高但宕机可能丢失未刷盘数据</li>
+</ul>
+</li>
+<li>主从复制：配置主从架构，并设置同步复制</li>
+</ul>
+<h4 id="消费者保证"><a href="#消费者保证" class="headerlink" title="消费者保证"></a>消费者保证</h4><ul>
+<li><p>消费者确认机制</p>
+<ul>
+<li><strong>ACK 机制</strong>：消费者处理成功后需返回 <code>CONSUME_SUCCESS</code>，否则 Broker 会重试（默认 16 次）</li>
+<li><strong>同步提交 Offset</strong>：关闭定时提交（默认 5 秒异步提交），改为处理完成后立即提交 Offset</li>
+</ul>
+</li>
+<li><p>失败处理</p>
+<p>消费失败的进行消息回退，重试次数过多的消息放入<strong>死信队列</strong>，最后人工补偿</p>
+</li>
+</ul>
 
                 
             </div>
