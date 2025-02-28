@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="JVM之垃圾回收器, 小ceng的后端游乐场">
+    <meta name="keywords" content="JVM之垃圾回收器, 小城的后端游乐场">
     <meta name="description" content="总的来说，Java 虚拟机的垃圾回收器可以分为四大类别：串行回收器、并行回收器、CMS 回收器、G1 回收器。
 
 1.串行回收器串行回收器是指使用单线程进行垃圾回收的回收器。因为每次回收时只有一个线程，因此串行回收器在并发能力较弱的计算机上">
@@ -19,7 +19,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>JVM之垃圾回收器 | 小ceng的后端游乐场</title>
+    <title>JVM之垃圾回收器 | 小城的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -66,7 +66,7 @@
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
-                    <span class="logo-span">小ceng的后端游乐场</span>
+                    <span class="logo-span">小城的后端游乐场</span>
                 </a>
             </div>
             
@@ -159,7 +159,7 @@
         
         <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">小ceng的后端游乐场</div>
+        <div class="logo-name">小城的后端游乐场</div>
         <div class="logo-desc">
             
             记录生活与技术中的所学、所想、所悟
@@ -377,14 +377,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.7k
+                    2.8k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    9 分
+                    10 分
                 </div>
                 
 
@@ -463,6 +463,51 @@
 <p>混合回收阶段会首先针对 Collection Set 中的内存进行回收，因为这些垃圾比例较高。G1 回收器的名字 Garbage First 就是这个意思，垃圾优先处理的意思。在混合回收的时候，也会执行多次新生代 GC 和 混合 GC，从而来进行内存的回收。</p>
 <p>必要时进行 Full GC。当在回收阶段遇到内存不足时，G1 会停止垃圾回收并进行一次 Full GC，从而腾出更多空间进行垃圾回收。</p>
 <h4 id="4-2相关参数"><a href="#4-2相关参数" class="headerlink" title="4.2相关参数"></a>4.2相关参数</h4><p>打开 G1 收集器，我们可以使用参数：<code>-XX:+UseG1GC</code>。 设置目标最大停顿时间，可以使用参数：<code>-XX:MaxGCPauseMillis</code>。 设置 GC 工作线程数量，可以使用参数：<code>-XX:ParallelGCThreads</code>。 设置堆使用率触发并发标记周期的执行，可以使用参数：<code>-XX:InitiatingHeapOccupancyPercent</code>。</p>
+<hr>
+<h3 id="5-垃圾回收器对比"><a href="#5-垃圾回收器对比" class="headerlink" title="5.垃圾回收器对比"></a>5.垃圾回收器对比</h3><table>
+<thead>
+<tr>
+<th>回收器</th>
+<th>线程模型</th>
+<th>停顿时间</th>
+<th>内存模型</th>
+<th>适用场景</th>
+<th>jdk默认版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>串行</td>
+<td>单线程</td>
+<td>长</td>
+<td>分代</td>
+<td>客户端&#x2F;小内存</td>
+<td>1.3之前</td>
+</tr>
+<tr>
+<td>并行</td>
+<td>多线程</td>
+<td>长</td>
+<td>分代</td>
+<td>高吞吐量计算任务</td>
+<td>8（默认）</td>
+</tr>
+<tr>
+<td>CMS</td>
+<td>多线程</td>
+<td>短</td>
+<td>分代</td>
+<td>低延迟服务</td>
+<td>8可选</td>
+</tr>
+<tr>
+<td>G1</td>
+<td>多线程</td>
+<td>可控</td>
+<td>分代+Region</td>
+<td>大堆、低延迟</td>
+<td>9+（默认）</td>
+</tr>
+</tbody></table>
 
                 
             </div>

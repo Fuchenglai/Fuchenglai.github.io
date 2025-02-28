@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="索引机制详解, 小ceng的后端游乐场">
+    <meta name="keywords" content="索引机制详解, 小城的后端游乐场">
     <meta name="description" content="索引介绍基本介绍MySQL 官方对索引的定义为：索引（index）是帮助 MySQL 高效获取数据的一种数据结构，本质是排好序的快速查找数据结构。在表数据之外，数据库系统还维护着满足特定查找算法的数据结构，这些数据结构以某种方式指向数据， ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>索引机制详解 | 小ceng的后端游乐场</title>
+    <title>索引机制详解 | 小城的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -64,7 +64,7 @@
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
-                    <span class="logo-span">小ceng的后端游乐场</span>
+                    <span class="logo-span">小城的后端游乐场</span>
                 </a>
             </div>
             
@@ -157,7 +157,7 @@
         
         <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">小ceng的后端游乐场</div>
+        <div class="logo-name">小城的后端游乐场</div>
         <div class="logo-desc">
             
             记录生活与技术中的所学、所想、所悟
@@ -379,7 +379,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    7.2k
+                    7.3k
                 </div>
                 
 
@@ -732,7 +732,8 @@ SELECT * FROM user WHERE address &#x3D; &#39;北京&#39; AND phone &#x3D; &#39;1
 <li>where 条件里用不到的字段不创建索引</li>
 </ul>
 <hr>
-<h3 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h3><h4 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h4><p>覆盖索引：包含所有满足查询需要的数据的索引（SELECT 后面的字段刚好是索引字段），可以利用该索引返回 SELECT 列表的字段，而不必根据索引去聚簇索引上读取数据文件</p>
+<h3 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h3><h4 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h4><p>一句话简要概括：<strong>索引包含了查询所需要的所有列，避免回表查数据行，提升查询性能</strong></p>
+<p>覆盖索引：包含所有满足查询需要的数据的索引（SELECT 后面的字段刚好是索引字段），可以利用该索引返回 SELECT 列表的字段，而不必根据索引去聚簇索引上读取数据文件</p>
 <p>回表查询：要查找的字段不在非主键索引树上时，需要通过叶子节点的主键值去主键索引上获取对应的行数据</p>
 <p>使用覆盖索引，防止回表查询：</p>
 <ul>
@@ -754,7 +755,7 @@ SELECT id,age FROM user WHERE age &#x3D; 30;<span aria-hidden="true" class="line
 <h4 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h4><p>索引条件下推优化（Index Condition Pushdown，ICP）是 MySQL5.6 添加，可以在索引遍历过程中，对索引中包含的字段先做判断，直接过滤掉不满足条件的记录，减少回表次数</p>
 <p>索引下推充分利用了索引中的数据，在查询出整行数据之前过滤掉无效的数据，再去主键索引树上查找</p>
 <ul>
-<li><p>不使用索引下推优化时存储引擎通过索引检索到数据，然后回表查询记录返回给 Server 层，<strong>服务器判断数据是否符合条件</strong></p>
+<li><p>不使用索引下推优化时存储引擎通过索引检索到数据，然后回表查询记录返回给 Server 层，<strong>Server层判断数据是否符合条件</strong></p>
 <p><img src="/2023/12/16/suo-yin-ji-zhi-xiang-jie/MySQL-%E4%B8%8D%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E4%B8%8B%E6%8E%A8.png"></p>
 </li>
 <li><p>使用索引下推优化时，如果<strong>存在某些被索引的列的判断条件</strong>时，由存储引擎在索引遍历的过程中判断数据是否符合传递的条件，将符合条件的数据进行回表，检索出来返回给服务器，由此减少 IO 次数</p>
