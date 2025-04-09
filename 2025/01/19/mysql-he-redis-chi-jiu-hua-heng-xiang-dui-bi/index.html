@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="&#39;MySQL和Redis持久化横向对比&#39;, 小城的后端游乐场">
+    <meta name="keywords" content="MySQL和Redis持久化横向对比, 小城的后端游乐场">
     <meta name="description" content="InnoDB是以页为单位来进行增删改查这些操作的，在访问页之前，需要到磁盘中把页加载到内存中的Buffer Pool中，所以Buffer Pool中的数据也有持久化的问题，这一点容易与Redis的持久化搞混，因此在这篇博客中对MySQL和R">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>&#39;MySQL和Redis持久化横向对比&#39; | 小城的后端游乐场</title>
+    <title>MySQL和Redis持久化横向对比 | 小城的后端游乐场</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -312,12 +312,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">&#39;MySQL和Redis持久化横向对比&#39;</h1>
+                    <h1 class="description center-align post-title">MySQL和Redis持久化横向对比</h1>
                 </div>
             </div>
         </div>
@@ -379,7 +379,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.1k
+                    2.2k
                 </div>
                 
 
@@ -443,6 +443,7 @@
 <li>Everysec，每秒写回（默认）：每秒同步一次，最多丢失1秒数据，平衡性能与安全。</li>
 <li>No，操作系统控制的写回：由操作系统决定同步时机，性能最优但可能丢失较多数据。</li>
 </ul>
+<p>这一点和MySQL的刷盘策略很像</p>
 <h4 id="文件重写"><a href="#文件重写" class="headerlink" title="文件重写"></a>文件重写</h4><p>AOF文件存储的是协议文本，随着时间增长文件体积会变大，重写的目的是解决AOF文件膨胀问题，通过合并冗余命令生成紧凑的新文件。</p>
 <p><strong>原理：</strong>AOF 文件在重写时，Redis 会创建一个新的 AOF 文件，读取数据库中的所有键值对，然后用一条命令将每一个键值对记录到新的 AOF 文件中。比如说，当读取了键值对 “testkey”: “value” 之后，重写机制会记录 set testkey value 这条命令。每次执行重写时，主线程 fork 出 bgrewriteaof 子进程，由子进程来执行重写的工作，这样主线程没有阻塞，仍然可以处理新来的命令。重写期间的新写命令同时写入<strong>原AOF缓冲区</strong>和<strong>重写缓冲区</strong>，确保数据完整性。当重写完成时新文件生成后替换旧文件。、</p>
 <img src="/2025/01/19/mysql-he-redis-chi-jiu-hua-heng-xiang-dui-bi/p20250320170855.png" style="zoom: 80%;">
@@ -627,9 +628,9 @@ save <span class="token number">60</span> <span class="token number">10000</span
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="&#39;MySQL和Redis持久化横向对比&#39;">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="MySQL和Redis持久化横向对比">
                         
-                        <span class="card-title">&#39;MySQL和Redis持久化横向对比&#39;</span>
+                        <span class="card-title">MySQL和Redis持久化横向对比</span>
                     </div>
                 </a>
                 <div class="card-content article-content">

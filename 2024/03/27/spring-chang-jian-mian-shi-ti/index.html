@@ -385,14 +385,14 @@ FactoryBea">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.1k
+                    1.6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    4 分
+                    5 分
                 </div>
                 
 
@@ -427,7 +427,10 @@ FactoryBea">
 <li>global session：在基于portlet的Web应用中，为每个全局HTTP会话创建一个Bean实例。</li>
 </ul>
 <p>这些作用域都是通过在Bean定义中使用作用域属性来指定的。如果没有指定作用域，则默认为singleton。</p>
-<h3 id="4-谈谈你对AOP的理解"><a href="#4-谈谈你对AOP的理解" class="headerlink" title="4.谈谈你对AOP的理解"></a>4.谈谈你对AOP的理解</h3><p>AOP也叫面向切面编程，是基于动态代理来实现的，通过代理原始类来增加额外功能，我们可以将额外功能一次定义然后配合切面达到多次使用的效果，比如记录日志，事物管理等等，提高了代码复用性，开发效率。</p>
+<h3 id="4-谈谈你对ioc的理解"><a href="#4-谈谈你对ioc的理解" class="headerlink" title="4.谈谈你对ioc的理解"></a>4.谈谈你对ioc的理解</h3><p>ioc可以直译为<strong>控制反转</strong>，传统的应用程序组件的创建、组装、销毁都是要程序员控制的，这样子维护这些对象就很耗费程序员精力，在IoC模式下，控制权发生了反转，所有组件不再由程序员创建和配置，而是由IoC容器负责，也就是说程序员不在new一个对象，而是注入一个对象因此，IoC又称为<strong>依赖注入</strong>（DI：Dependency Injection），它解决了一个最主要的问题：将组件的创建+配置与组件的使用相分离，并且，由IoC容器负责管理组件的生命周期。</p>
+<p>Soring有两个核心接口，<code>BeanFactory</code>和<code>ApplicationContext</code>，都可以当做 ioc容器。区别在于，<code>BeanFactory</code>的实现是按需创建，即第一次获取Bean时才创建这个Bean，而<code>ApplicationContext</code>会一次性创建所有的Bean。实际上，<code>ApplicationContext</code>接口<code>BeanFactory</code>接口的子类，并且，<code>ApplicationContext</code>提供了一些额外的功能，包括国际化支持、事件和通知机制等。通常情况下，我们总是使用<code>ApplicationContext</code>，很少会考虑使用<code>BeanFactory</code>。</p>
+<p>因为大部分情况都是使用ApplicationContext，因此我就讲一下它的工作流程吧。首先@ComponentScan注解会扫描指定包下面所有的Class文件，底层就是Java的ClassLoader机制可以在指定的Classpath中根据类名加载指定的Class，创建bean的三种方法：第一个是@Component，第二个是@Configuration+@Bean，FactoryBean的工厂模式，当一个Bean实现了<code>FactoryBean</code>接口后，Spring会先实例化这个工厂，然后调用<code>getObject()</code>创建真正的Bean。Spring创建Bean默认使用Singleton，也就是单例。</p>
+<h3 id="5-谈谈你对AOP的理解"><a href="#5-谈谈你对AOP的理解" class="headerlink" title="5.谈谈你对AOP的理解"></a>5.谈谈你对AOP的理解</h3><p>AOP也叫面向切面编程，是基于动态代理来实现的，通过代理原始类来增加额外功能，我们可以将额外功能一次定义然后配合切面达到多次使用的效果，比如记录日志，事物管理等等，提高了代码复用性，开发效率。</p>
 <p>AOP有五类通知，通知就是在目标方法执行前或者执行后要做的动作：</p>
 <ol>
 <li>前置通知[Before advice]：在连接点前面执行，前置通知不会影响连接点的执行，除非此处抛出异常。 </li>
