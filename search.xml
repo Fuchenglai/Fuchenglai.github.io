@@ -207,6 +207,25 @@
     
     
     <entry>
+      <title>计算机网络常见面试题</title>
+      <link href="/2024/09/27/ji-suan-ji-wang-luo-chang-jian-mian-shi-ti/"/>
+      <url>/2024/09/27/ji-suan-ji-wang-luo-chang-jian-mian-shi-ti/</url>
+      
+        <content type="html"><![CDATA[<h3 id="1-解释交换与路由"><a href="#1-解释交换与路由" class="headerlink" title="1.解释交换与路由"></a>1.解释交换与路由</h3><h4 id="1-1交换（Switching）"><a href="#1-1交换（Switching）" class="headerlink" title="1.1交换（Switching）"></a>1.1交换（Switching）</h4><p><strong>1.定义与层次</strong></p><ul><li><strong>交换</strong>发生在<strong>数据链路层（第二层）</strong>，主要负责在<strong>同一网络（如局域网）</strong>内快速转发数据帧（Frame）。</li><li>典型设备：<strong>交换机（Switch）</strong>。</li></ul><p><strong>2.工作原理</strong></p><ul><li><strong>基于MAC地址</strong>：交换机通过记录设备的MAC地址与端口的对应关系（MAC地址表），决定将数据帧转发到哪个端口。当收到数据帧时，若目标地址已知，则直接转发；若未知，则广播到所有端口（泛洪）。</li><li><strong>全双工通信</strong>：支持同时发送和接收数据，避免冲突。</li></ul><p><strong>3.特点</strong></p><ul><li><strong>高效</strong>：硬件实现（如ASIC芯片），转发速度快。</li><li><strong>局域网内使用</strong>：适用于同一子网或VLAN内的设备通信。</li><li><strong>无逻辑寻址</strong>：仅依赖物理地址（MAC地址），不涉及IP地址。</li></ul><p><strong>示例</strong>：<br>公司内部的办公网络，所有电脑连接到一台交换机，交换机根据MAC地址将文件传输请求直接转发到目标电脑。</p><h4 id="1-2路由（Routing）"><a href="#1-2路由（Routing）" class="headerlink" title="1.2路由（Routing）"></a>1.2路由（Routing）</h4><p><strong>1.定义与层次</strong></p><ul><li><strong>路由</strong>发生在<strong>网络层（第三层）</strong>，负责在不同网络（如广域网或不同子网）之间选择最佳路径传输数据包（Packet）。</li><li>典型设备：<strong>路由器（Router）</strong>。</li></ul><p><strong>2.工作原理</strong></p><ul><li><strong>基于IP地址</strong>：路由器根据目标IP地址和路由表（Routing Table）决定数据包的下一跳路径。</li><li><strong>路由协议</strong>：通过动态路由协议（如OSPF、BGP）或静态路由配置，维护网络拓扑信息，选择最优路径。</li><li><strong>跨网络通信</strong>：连接不同子网或网络（如家庭网络与互联网）。</li></ul><p><strong>3.特点</strong></p><ul><li><strong>逻辑寻址</strong>：依赖IP地址进行路径选择。</li><li><strong>复杂决策</strong>：需考虑网络拥塞、链路成本、策略规则等因素。</li><li><strong>广域网使用</strong>：适用于跨网络、跨地理位置的通信。</li></ul><p><strong>示例</strong>：<br>家庭路由器将你的手机请求（如访问网站）通过互联网服务提供商（ISP）的路由器转发到目标服务器。</p><h4 id="1-3总结"><a href="#1-3总结" class="headerlink" title="1.3总结"></a>1.3总结</h4><ul><li><strong>交换</strong>是局域网内基于MAC地址的快速数据转发，追求效率。</li><li><strong>路由</strong>是跨网络基于IP地址的路径选择，追求全局连通性。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 计算机网络 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>&#39;Redis为什么那么快?&#39;</title>
       <link href="/2024/09/24/redis-wei-shi-me-na-me-kuai/"/>
       <url>/2024/09/24/redis-wei-shi-me-na-me-kuai/</url>
@@ -433,6 +452,25 @@
     
     
     <entry>
+      <title>数据库常见面试笔试题</title>
+      <link href="/2024/05/06/shu-ju-ku-chang-jian-mian-shi-bi-shi-ti/"/>
+      <url>/2024/05/06/shu-ju-ku-chang-jian-mian-shi-bi-shi-ti/</url>
+      
+        <content type="html"><![CDATA[<h3 id="1-什么是数据库的第三范式"><a href="#1-什么是数据库的第三范式" class="headerlink" title="1.什么是数据库的第三范式"></a>1.什么是数据库的第三范式</h3><p>数据库的第三范式（Third Normal Form, 3NF）是关系数据库设计中<strong>规范化</strong>的核心要求之一，旨在消除数据冗余、确保数据依赖合理，从而提升数据一致性和存储效率。它的核心规则是：<strong>所有非主属性必须直接依赖于主键，且不传递依赖于其他非主属性</strong>。</p><p>要满足第三范式（3NF），必须满足以下两个条件：</p><ol><li><strong>已满足第二范式（2NF）</strong>：所有非主属性<strong>完全依赖</strong>于主键（无部分依赖）。</li><li><strong>消除传递依赖</strong>：所有非主属性<strong>直接依赖</strong>于主键，而不能通过其他非主属性间接依赖主键。</li></ol><p><strong>通俗理解</strong>：</p><ul><li>表中每一列数据都应该直接与主键相关，而不是通过其他字段间接关联。</li><li>例如：“学生姓名”直接依赖于“学号”（主键），但“班主任电话”如果通过“班主任姓名”间接依赖“学号”，则违反3NF。</li></ul><p>区别：第二范式处理的是部分依赖的问题，即所有非主属性必须完全依赖于主键，而第三范式解决的是传递依赖的问题。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据库 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>如何基于UDP实现可靠传输</title>
       <link href="/2024/04/30/ru-he-ji-yu-udp-shi-xian-ke-kao-chuan-shu/"/>
       <url>/2024/04/30/ru-he-ji-yu-udp-shi-xian-ke-kao-chuan-shu/</url>
@@ -595,6 +633,31 @@
           
       </categories>
       
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>springcloud alibaba入门</title>
+      <link href="/2024/03/25/alibaba-ru-men/"/>
+      <url>/2024/03/25/alibaba-ru-men/</url>
+      
+        <content type="html"><![CDATA[<img src="/2024/03/25/alibaba-ru-men/spring-cloud-alibaba-img.png" style="zoom:60%;"><p>本质上，SCA是在Spring Cloud的基础上，进行了增强，补充了一些额外的能力，根据阿里多年的业务沉淀做了一些定制化的开发</p><p>注意，要选择对应的版本，springboot 2.x的版本要选择SCA 2021的版本分支：<a href="https://sca.aliyun.com/docs/2021/overview/version-explain/?spm=7145af80.5dae7e57.0.0.34d82fa5vXoANz">https://sca.aliyun.com/docs/2021/overview/version-explain/?spm=7145af80.5dae7e57.0.0.34d82fa5vXoANz</a></p><p>各个组件的版本也要对应</p><img src="/2024/03/25/alibaba-ru-men/Snipaste_2025-05-06_18-32-13.jpg" style="zoom:67%;"><hr><h3 id="微服务请求流程"><a href="#微服务请求流程" class="headerlink" title="微服务请求流程"></a>微服务请求流程</h3><ol><li>Spring Cloud Gateway：网关</li><li>Nacos：服务注册和配置中心</li><li>Sentinel：熔断限流</li><li>Seata：分布式事务</li><li>RocketMQ：消息队列，削峰填谷</li><li>Docker：使用Docker进行容器化部署</li><li>Kubernetes：使用k8s进行容器化部署</li></ol><p><img src="/2024/03/25/alibaba-ru-men/1.png"></p><p>用户的请求首先经过网关（SpringCloud Gateway），网关会把用户请求路由到正确的服务，例如用户如果是要下订单，那么就把用户的请求路由到订单服务， 如果用户要进行点赞操作，那么把请求路由到点赞服务。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式基础 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 框架 </tag>
+            
+        </tags>
       
     </entry>
     
