@@ -4,6 +4,44 @@
   
     
     <entry>
+      <title>分布式基础（三）：网络分区</title>
+      <link href="/2025/06/09/fen-bu-shi-ji-chu-san-wang-luo-fen-qu/"/>
+      <url>/2025/06/09/fen-bu-shi-ji-chu-san-wang-luo-fen-qu/</url>
+      
+        <content type="html"><![CDATA[<h3 id="1-什么是网络分区？"><a href="#1-什么是网络分区？" class="headerlink" title="1.什么是网络分区？"></a>1.什么是网络分区？</h3><p>网络分区指的是在一个分布式网络中，由于网络故障导致网络被划分为两个或多个互不通信的区域的情况。</p><p>在这种情况下，系统的不同部分无法相互通信，但各自可能仍然在正常工作。网络分区是CAP定理（一致性、可用性、分区容错性）中“P”（Partition tolerance，分区容错性）的来源。</p><p>完全避免网络分区是不现实的，这也是为啥CAP中P必须有的原因。然而，可以采取一些措施来减少网络分区的发生频率，并减轻其对系统的影响。</p><ul><li>冗余连接：在关键的网络节点使用多条物理连接，以避免单点故障。</li><li>高质量的网络硬件：使用高性能的路由器和交换机，减少硬件故障的概率。</li><li>实时监控：持续监控网络的状态，包括流量、延迟、丢包率等。</li><li>故障预警：设置自动警报机制，在检测到网络异常时及时通知。</li><li>分区容错：设计系统时，考虑到网络分区的可能性，并确保系统可以在网络分区期间继续提供服务（虽然可能是有限的服务）。</li></ul><h3 id="2-分区和脑裂？"><a href="#2-分区和脑裂？" class="headerlink" title="2.分区和脑裂？"></a>2.分区和脑裂？</h3><p>脑裂是网络分区的一个具体表现，在集群环境中尤为常见。</p><p>它通常指的是在一个有状态的集群系统中，由于网络分区导致原本应该相互协调工作的节点（如数据库服务器）被划分到了不同的网络区域，并且每个区域的节点认为自己是“主节点”，从而开始独立地处理请求。这种情况可能导致数据不一致性和其他一系列问题。</p><p>网络分区是导致脑裂的原因之一。脑裂是网络分区在特定场景（如有状态服务的集群）中的表现形式。简单来说，网络分区是问题的根源，脑裂是由于网络分区在特定系统中所产生的后果。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 微服务 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>微服务的循环依赖问题</title>
+      <link href="/2025/02/17/wei-fu-wu-de-xun-huan-yi-lai-wen-ti/"/>
+      <url>/2025/02/17/wei-fu-wu-de-xun-huan-yi-lai-wen-ti/</url>
+      
+        <content type="html"><![CDATA[<h3 id="1-什么是微服务的循环依赖"><a href="#1-什么是微服务的循环依赖" class="headerlink" title="1.什么是微服务的循环依赖"></a>1.什么是微服务的循环依赖</h3><p>微服务之间的循环依赖是指在微服务架构中，两个或多个服务相互依赖对方的情况。这里的依赖其实就是互相调用。两个微服务互相调用，A调用B，B又反向调用A，或者A调用B，B调用C，C调用A，这都是循环依赖。</p><p>举个例子，假设我们有两个微服务：订单服务（Order Service）和库存服务（Inventory Service）。</p><ol><li>订单服务（Order Service）：<ul><li>当用户下单时，订单服务需要调用库存服务来检查所需商品的库存。</li><li>如果库存充足，订单服务会继续处理订单。</li></ul></li><li>库存服务（Inventory Service）：<ul><li>当库存服务更新库存时，它需要通知订单服务更新订单状态。</li><li>为此，库存服务会调用订单服务的一个接口。</li></ul></li></ol><p>这里的循环依赖出现在：</p><ul><li>订单服务依赖库存服务来验证库存。</li><li>库存服务依赖订单服务来更新订单状态。</li></ul><h3 id="2-循环依赖会带来哪些问题"><a href="#2-循环依赖会带来哪些问题" class="headerlink" title="2.循环依赖会带来哪些问题"></a>2.循环依赖会带来哪些问题</h3><p><strong>1、流量放大</strong>：因为系统之间存在循环依赖，那么就会导致本来下单系统可能只有100 QPS，但是因为存在循环依赖，就会导致这个QPS被放大，因为100个请求调用到订单服务，订单服务就有100个请求调到库存服务，而库存服务又有100个请求再调到订单服务。就导致订单服务有200的QPS了。无形中被放大了流量。</p><p><strong>2、性能问题</strong>：因为存在循环依赖，那么服务之间需要等待彼此的响应，就会无形中拖长请求的RT，让接口性能变的更慢。</p><p><strong>3、互相影响</strong>：如果一个服务出现问题，这个问题可能会通过循环依赖影响到另一个服务。而一个服务中的错误可能通过依赖链传播到其他服务，增加了系统出现级联故障的风险。</p><p><strong>4、发布困难</strong>：每当一个服务需要更新时，我们需要同时考虑他依赖了谁以及谁依赖了他。一般是被依赖的应用先发布。但是因为系统间存在循环依赖，那么在上一个新的功能的时候需要发布时，就会带来很大的问题，那就是谁先发的问题，而谁先发都会有问题。</p><h3 id="3-如何识别循环依赖"><a href="#3-如何识别循环依赖" class="headerlink" title="3.如何识别循环依赖"></a>3.如何识别循环依赖</h3><p>首先，一个一劳永逸的方式，就是有一个<strong>明确地架构图</strong>，架构图中明确的标注出来各个系统处于什么位置，上游系统都有谁，下游系统都有谁，依赖只能是从上到下的，而不能是从下到上的。有了这样一张图，大家就都知道，我自己的系统处于什么位置，我可以依赖谁，谁可以依赖我了。</p><p>如下面这张图，基本上就是一个很明确的从上到下的调用关系。</p><p><img src="/2025/02/17/wei-fu-wu-de-xun-huan-yi-lai-wen-ti/1706015029472-9789907b-30c1-47c1-93fa-a9aac3cbe16f-835717.png"></p><p>其实就是可以通过<strong>链路追踪</strong>来看是否存在循环依赖，当一个调用的trace中，一个应用被调用多次，那么可能就会存在循环依赖的问题。</p><p>还有就是通过各种<strong>评审</strong>来发现了，比如我们前面提到的，循环依赖会导致发布过程存在谁先发的问题，这个问题在发布评审时是一定可以暴露出来的。</p><p>所以，在设计评审，发布评审，TC评审，以及代码评审的时候，需要关注一下是否存在着循环依赖的问题。</p><h3 id="4-如何解决循环依赖问题"><a href="#4-如何解决循环依赖问题" class="headerlink" title="4.如何解决循环依赖问题"></a>4.如何解决循环依赖问题</h3><p>首先，遇到循环依赖的问题，第一件事就是考虑设计的不合理性，一般来说系统会有自己的明确的职责，并且一张架构图中，一个系统一定是有属于他自己的位置的，一个系统又在上游，又在下游，那一定是设计的不合理，所以需要考虑做**<font style="color:#DF2A3F;">重新设计</font>**。</p><p>其次，像前面我们提到的例子，库存需要通知订单更新状态，这个过程我们可以把服务调用改成**<font style="color:#DF2A3F;">消息通信</font>**，通过异步消息来解耦调两个系统之间的相互依赖。这样就可以避免互相影响。</p><p>另外，比较常用的一种方式，那就是引入一个**<font style="color:#DF2A3F;">共享库</font>**，当出现循环依赖时候，可以考虑将共享部分抽取出来作为一个共享库，然后由各个相关服务共同引用这个库。通过在循环依赖的两个微服务中引用共享库，而不是直接调用对方的接口来操作数据。</p><p>上面的共享库，也可以做成一个**<font style="color:#DF2A3F;">共享服务（或者叫中介服务）</font>**，你俩不是互相依赖么，那么干脆我单独搞一个服务出来，你们都直接依赖他而不是做互相依赖。比如我们实际业务中就有一个台账系统，我们会把各个业务流水都写到台账中，所以当我们上游系统之间需要查询数据的时候，就可以直接去台账查，而不需要依赖其他的系统。而台账作为最下游系统，他也不会调用任何其他服务，他最多会提供消息给别的系统。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 微服务 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>SpringAI入门</title>
       <link href="/2025/01/29/springai-ru-men/"/>
       <url>/2025/01/29/springai-ru-men/</url>
@@ -97,7 +135,7 @@
       
       <categories>
           
-          <category> 分布式基础 </category>
+          <category> 微服务 </category>
           
       </categories>
       
@@ -142,6 +180,25 @@
       <categories>
           
           <category> 面经 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>跨域访问问题怎样解决?</title>
+      <link href="/2024/11/13/kua-yu-fang-wen-wen-ti-zen-yang-jie-jue/"/>
+      <url>/2024/11/13/kua-yu-fang-wen-wen-ti-zen-yang-jie-jue/</url>
+      
+        <content type="html"><![CDATA[<h3 id="1-什么是跨域问题？"><a href="#1-什么是跨域问题？" class="headerlink" title="1.什么是跨域问题？"></a>1.什么是跨域问题？</h3><p>跨域访问问题（Cross-Origin Resource Sharing，CORS）是由浏览器的同源策略引起的安全限制。同源策略是一种浏览器安全策略，它要求网页中的所有资源必须来自同一个域名、协议和端口，否则浏览器会阻止跨域的资源请求。</p><p>所以，如果在浏览器访问过程中发现域名、端口或者协议不同的时候，就会出现跨域问题。</p><ol><li>域名不同：如从a.com的页面请求b.com的资源。</li><li>协议不同：如从http的页面请求https的资源。</li><li>端口不同：当页面的端口与请求的资源的端口不一致时，同样会触发跨域问题。</li></ol><h3 id="2-如何解决跨域问题？"><a href="#2-如何解决跨域问题？" class="headerlink" title="2.如何解决跨域问题？"></a>2.如何解决跨域问题？</h3><p>解决跨域访问问题的方法有以下几种：</p><ol><li><strong>CORS（推荐）</strong>：CORS是一种机制，通过在服务器端设置相应的响应头来解决跨域问题。服务器在响应中添加Access-Control-Allow-Origin头，指定允许跨域访问的域名或通配符*，使得浏览器可以放行跨域请求。CORS是目前最常用的解决跨域问题的方式，支持现代浏览器。</li></ol><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@CrossOrigin</span><span class="token punctuation">(</span>origins <span class="token operator">=</span> <span class="token string">"*"</span><span class="token punctuation">)</span><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">HollisTestController</span> <span class="token punctuation">&#123;</span>    <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><p>2.<strong>JSONP</strong>：JSONP是一种跨域通信的技术，它利用<script>标签可以跨域访问的特性，通过动态创建<script>标签来加载跨域资源，服务器返回一个包含回调函数的JavaScript脚本，客户端通过回调函数处理响应数据。不过JSONP只支持GET请求，且只能用于跨域请求JSON数据。</p><p>3.<strong>代理服务器</strong>：可以通过在同源域名下设置一个代理服务器，实现跨域访问。前端将请求发送给代理服务器，代理服务器再转发请求给目标服务器，并将响应返回给前端，从而绕过跨域限制。这种方式需要部署额外的代理服务器，适用于一些特殊情况。</p><h3 id="3-二级域名跨域吗？"><a href="#3-二级域名跨域吗？" class="headerlink" title="3.二级域名跨域吗？"></a>3.二级域名跨域吗？</h3><p>浏览器实施了同源策略，即网页中的脚本只能访问与其来源相同的资源。同源的定义包括协议（如http与https）、域名和端口号，如果这三者中有任何一个不同，就会被视为跨域请求。</p><p><a href="http://www.hollischuang.com中获取/">www.hollischuang.com中获取</a> <a href="http://www.a.hollischuang.com中的资源,同样的规则适用.浏览器会将这两个视为不同的源,除非服务器在响应中配置了允许跨域访问的/">www.a.hollischuang.com中的资源，同样的规则适用。浏览器会将这两个视为不同的源，除非服务器在响应中配置了允许跨域访问的</a> CORS 头部。</p></script></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 计算机网络 </category>
           
       </categories>
       
@@ -201,6 +258,31 @@
     
     
     <entry>
+      <title>并发编程的原子性和数据库的原子性相同吗？</title>
+      <link href="/2024/10/18/bing-fa-bian-cheng-de-yuan-zi-xing-he-shu-ju-ku-de-yuan-zi-xing-xiang-tong-ma/"/>
+      <url>/2024/10/18/bing-fa-bian-cheng-de-yuan-zi-xing-he-shu-ju-ku-de-yuan-zi-xing-xiang-tong-ma/</url>
+      
+        <content type="html"><![CDATA[<p><strong>并发编程中的原子性和ACID事务中的原子性虽然共享了“原子性”这个名字，但其核心含义和应用层面有显著的区别</strong>。它们追求的是类似的“不可分割性”概念，但针对的层次和解决的问题截然不同。</p><p>下面是对两者关键差异的分析：</p><ol><li><p><strong>抽象的层级与应用范围：</strong></p><ul><li><strong>ACID 原子性：</strong> 作用于<strong>事务层面</strong>。一个数据库事务通常包含<strong>多个</strong>操作（如更新多个表的行、读取数据后修改等）。ACID 原子性保证这些操作<strong>作为一个整体</strong>要么<strong>全部发生</strong>，要么<strong>全部不发生</strong>。如果事务中的任何一部分失败（例如违反了约束、死锁、系统崩溃），整个事务必须完全回滚，就像它从未发生过一样。它关注的是业务逻辑或数据修改的完整性单元。</li><li><strong>并发编程原子性：</strong> 作用于<strong>单个操作或指令层面</strong>。它保证<strong>一个特定的、不可再分的操作</strong>（例如对某个内存位置的读写、一个简单的整数加法赋值）在执行时不会被其他线程打断。这个操作要么完全执行完成，要么根本不执行，其他线程观察不到中间状态。它关注的是底层操作在并发访问时的线程安全性，通常针对<strong>内存位置</strong>（如变量）的操作。</li></ul></li><li><p><strong>解决的核心问题：</strong></p><ul><li><strong>ACID 原子性：</strong> 解决<strong>部分失败</strong>（Partial Failure）问题。确保复杂的多步骤操作不会留下不一致的数据状态，特别是在面对错误、中断或崩溃时。</li><li><strong>并发编程原子性：</strong> 解决<strong>竞态条件</strong>（Race Condition）问题。防止多个线程同时读写共享数据时，由于交错执行导致数据损坏或不一致的结果。它确保单个操作的完整性在并发环境下不会被破坏。</li></ul></li><li><p><strong>实现机制：</strong></p><ul><li><strong>ACID 原子性：</strong> 通常通过<strong>预写日志记录</strong>和<strong>回滚日志</strong>来实现。在事务提交前，所有修改会记录在持久化日志中。如果事务失败，使用日志恢复到事务开始前的状态。这是数据库管理系统提供的核心功能。</li><li><strong>并发编程原子性：</strong> 通过低级硬件指令实现，最常见的是<strong>比较并交换</strong>或<strong>原子读取-修改-写入</strong>指令。这些指令由 CPU 直接支持，保证对单个内存字的操作是原子的。高级语言和库在这些基础上构建了锁（Mutexes, Locks）、信号量（Semaphores）、原子变量等同步原语来提供更高级别的原子性保证（如临界区）。</li></ul></li><li><p><strong>粒度：</strong></p><ul><li><strong>ACID 原子性：</strong> 粒度相对较<strong>粗</strong>。一个事务可以包含任意数量的 SQL 语句，操作任意数量的数据行和表。</li><li><strong>并发编程原子性：</strong> 粒度非常<strong>细</strong>。通常保证的是对单个内存位置（如一个 int、一个指针、一个 CPU 字长大小的对象）的一次读写或简单运算（如 i++）的原子性。需要显式使用锁等机制来保护更大范围的操作序列（临界区）具有原子性。</li></ul></li></ol><p><strong>总结与关键区别：</strong></p><table><thead><tr><th align="left">特性</th><th align="left">ACID 原子性</th><th align="left">并发编程原子性</th></tr></thead><tbody><tr><td align="left"><strong>核心层次</strong></td><td align="left">数据库 <strong>事务</strong> 层面</td><td align="left"><strong>单一操作&#x2F;指令</strong> 层面</td></tr><tr><td align="left"><strong>目标单元</strong></td><td align="left">多个数据修改操作组成的<strong>业务单元</strong></td><td align="left">对单个共享<strong>内存位置</strong>的访问或修改</td></tr><tr><td align="left"><strong>解决核心问题</strong></td><td align="left"><strong>部分失败</strong> (Partial Failure)</td><td align="left"><strong>竞态条件</strong> (Race Condition)</td></tr><tr><td align="left"><strong>主要实现机制</strong></td><td align="left">预写日志 (WAL)， 回滚日志</td><td align="left">CPU 原子指令 (CAS, RMW)，锁 (Mutex)</td></tr><tr><td align="left"><strong>粒度</strong></td><td align="left"><strong>粗</strong> (整个事务包含多个操作)</td><td align="left"><strong>细</strong> (单一内存操作)</td></tr></tbody></table><p><strong>类比：</strong></p><ul><li>想象一个银行转账操作（一个事务）：ACID 原子性确保“从A账户扣款”和“向B账户加款”这两个步骤要么都成功，要么都失败，不会出现只扣款不加款（或反之）的情况。</li><li>想象一个多线程计数器共享变量：并发编程原子性确保 <code>count++</code> 这个操作（读当前值、加1、写回）在执行过程中不会被其他线程打断，不会发生两个线程同时读到相同的旧值然后都加1写回导致丢失一次加法的情况（通过使用原子变量或锁）。</li></ul><p><strong>结论：</strong></p><p>尽管共享了“原子性”的名称，并都体现了“不可分割”的核心思想，<strong>ACID事务的原子性和并发编程中的原子性本质上是不同抽象层级、解决不同问题、使用不同机制的概念。</strong></p><p>理解它们的关键在于：</p><ol><li><strong>ACID原子性</strong> 是<strong>数据库事务</strong>的基石属性，确保业务&#x2F;数据逻辑修改的整体性（全有或全无）。</li><li><strong>并发编程原子性</strong> 是<strong>多线程安全</strong>的基石属性，确保对单一共享状态的访问&#x2F;修改不会被并发交错破坏。</li></ol><p>在构建应用程序时，特别是需要操作数据库的多线程&#x2F;分布式应用，通常需要<strong>同时考虑和应用这两种原子性概念</strong>：既要保证数据库操作的事务完整性（ACID），也要保证应用程序内部共享状态在多线程环境下的正确访问（并发原子性），但它们各自的实现方式和关注的侧重点是不同的。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> JUC </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>&#39;Spring是怎样解决循环依赖问题的&#39;</title>
       <link href="/2024/10/13/spring-shi-zen-yang-jie-jue-xun-huan-yi-lai-wen-ti-de/"/>
       <url>/2024/10/13/spring-shi-zen-yang-jie-jue-xun-huan-yi-lai-wen-ti-de/</url>
@@ -230,7 +312,7 @@
       <link href="/2024/09/27/ji-suan-ji-wang-luo-chang-jian-mian-shi-ti/"/>
       <url>/2024/09/27/ji-suan-ji-wang-luo-chang-jian-mian-shi-ti/</url>
       
-        <content type="html"><![CDATA[<h3 id="1-解释交换与路由"><a href="#1-解释交换与路由" class="headerlink" title="1.解释交换与路由"></a>1.解释交换与路由</h3><h4 id="1-1交换（Switching）"><a href="#1-1交换（Switching）" class="headerlink" title="1.1交换（Switching）"></a>1.1交换（Switching）</h4><p><strong>1.定义与层次</strong></p><ul><li><strong>交换</strong>发生在<strong>数据链路层（第二层）</strong>，主要负责在<strong>同一网络（如局域网）</strong>内快速转发数据帧（Frame）。</li><li>典型设备：<strong>交换机（Switch）</strong>。</li></ul><p><strong>2.工作原理</strong></p><ul><li><strong>基于MAC地址</strong>：交换机通过记录设备的MAC地址与端口的对应关系（MAC地址表），决定将数据帧转发到哪个端口。当收到数据帧时，若目标地址已知，则直接转发；若未知，则广播到所有端口（泛洪）。</li><li><strong>全双工通信</strong>：支持同时发送和接收数据，避免冲突。</li></ul><p><strong>3.特点</strong></p><ul><li><strong>高效</strong>：硬件实现（如ASIC芯片），转发速度快。</li><li><strong>局域网内使用</strong>：适用于同一子网或VLAN内的设备通信。</li><li><strong>无逻辑寻址</strong>：仅依赖物理地址（MAC地址），不涉及IP地址。</li></ul><p><strong>示例</strong>：<br>公司内部的办公网络，所有电脑连接到一台交换机，交换机根据MAC地址将文件传输请求直接转发到目标电脑。</p><h4 id="1-2路由（Routing）"><a href="#1-2路由（Routing）" class="headerlink" title="1.2路由（Routing）"></a>1.2路由（Routing）</h4><p><strong>1.定义与层次</strong></p><ul><li><strong>路由</strong>发生在<strong>网络层（第三层）</strong>，负责在不同网络（如广域网或不同子网）之间选择最佳路径传输数据包（Packet）。</li><li>典型设备：<strong>路由器（Router）</strong>。</li></ul><p><strong>2.工作原理</strong></p><ul><li><strong>基于IP地址</strong>：路由器根据目标IP地址和路由表（Routing Table）决定数据包的下一跳路径。</li><li><strong>路由协议</strong>：通过动态路由协议（如OSPF、BGP）或静态路由配置，维护网络拓扑信息，选择最优路径。</li><li><strong>跨网络通信</strong>：连接不同子网或网络（如家庭网络与互联网）。</li></ul><p><strong>3.特点</strong></p><ul><li><strong>逻辑寻址</strong>：依赖IP地址进行路径选择。</li><li><strong>复杂决策</strong>：需考虑网络拥塞、链路成本、策略规则等因素。</li><li><strong>广域网使用</strong>：适用于跨网络、跨地理位置的通信。</li></ul><p><strong>示例</strong>：<br>家庭路由器将你的手机请求（如访问网站）通过互联网服务提供商（ISP）的路由器转发到目标服务器。</p><h4 id="1-3总结"><a href="#1-3总结" class="headerlink" title="1.3总结"></a>1.3总结</h4><ul><li><strong>交换</strong>是局域网内基于MAC地址的快速数据转发，追求效率。</li><li><strong>路由</strong>是跨网络基于IP地址的路径选择，追求全局连通性。</li></ul>]]></content>
+        <content type="html"><![CDATA[<h3 id="1-路由器与交换机的区别是什么？"><a href="#1-路由器与交换机的区别是什么？" class="headerlink" title="1.路由器与交换机的区别是什么？"></a>1.路由器与交换机的区别是什么？</h3><ul><li>在OSI七层模型中，交换机主要工作在数据链路层（第二层），路由器工作在网络层（第三层）。</li><li>交换机转发所依据的对象是物理地址，也就是MAC地址，而路由器转发所依据的对象时网络地址，也就是IP地址。</li><li>交换机主要用于组建局域网，而路由主要功能是将由交换机组好的局域网相互连接起来，或者接入互联网。</li></ul><h3 id="2-ping的原理是什么？"><a href="#2-ping的原理是什么？" class="headerlink" title="2.ping的原理是什么？"></a>2.ping的原理是什么？</h3><p>ping是用来探测本机与网络中另一主机之间是否可达的命令，如果两台主机之间ping不通，则表明这两台主机不能建立起连接。利用ping命令可以检查网络是否通畅或者网络连接速度，很好地分析和判定网络故障。</p><ul><li>ping的原理是基于ICMP（Internet Control Messages Protocol）来工作的，即因特网信报控制协议；</li><li>ping命令利用了ICMP两种类型的控制消息：“echo request”（回显请求）、“echo reply”（回显应答）。</li><li>在主机A上执行ping命令，目标主机是B。在A主机上就会发送“echo request”（回显请求）控制消息，主机B正确接收后即发回“echo reply”（回显应答）控制消息，通过对方回复的数据包来确定两台网络机器是否连接相通，时延是多少。</li></ul><p>ping命令本身处于应用层，相当于一个应用程序。它使用的ICMP协议是一个网络层协议，也就是说，ping是一个应用层直接使用网络层协议的例子。像我们常见的HTTP协议是依赖的传输层协议TCP&#x2F;UDP，而传输层的协议再依赖网络层的IP协议。</p><h3 id="3-ping为什么不需要端口号？"><a href="#3-ping为什么不需要端口号？" class="headerlink" title="3.ping为什么不需要端口号？"></a>3.ping为什么不需要端口号？</h3><p>ping 命令在网络诊断中是一种常用工具，用于测试目标主机的连通性和响应时间。</p><p>ping 命令是基于 ICMP 协议的，ICMP 是 IP 协议的一部分，用于传递控制消息。ping命令本身处于应用层，相当于一个应用程序。它使用的ICMP协议是一个网络层协议。</p><p>但是，我们通常用到的端口号，其实是传输层（如 TCP 和 UDP）的一部分，用于区分同一 IP 地址上的多个服务或应用程序。</p><p><strong>由于，ping是一个应用层直接使用网络层协议的例子，不涉及到传输层，所以不需要指定端口号。</strong></p><h3 id="4-浏览器输入网址，敲回车会发生什么？"><a href="#4-浏览器输入网址，敲回车会发生什么？" class="headerlink" title="4.浏览器输入网址，敲回车会发生什么？"></a>4.浏览器输入网址，敲回车会发生什么？</h3><ol><li><strong>URL解析</strong>，对URL自动编码，然后检查长度，之后根据url查看浏览器是否缓存了该页面</li><li><strong>DNS</strong>查询，依次通过浏览器缓存，OS hosts缓存，路由器缓存，ISP缓存和根域名服务器去查询对应的ip</li><li>浏览器将请求封装为<strong>HTTP</strong>报文，在client和server建立连接之前，会进行<strong>TCP三次握手</strong></li><li>之后将报文从外到里封装为 以太网首部+ip首部+tcp首部+http首部经过<strong>网关和路由器</strong>发送给server</li><li>对于淘宝来说，请求会先到<strong>nginx服务器</strong>上，然后nginx采用默认的轮询算法进行<strong>负载均衡</strong>，携带原来browser的ip把报文发送给<strong>Servlet容器</strong></li><li>Servlet容器接收到请求之后会解析请求行，请求体，请求头，然后交给<strong>MVC</strong>处理</li><li>DispatcherServlet接收到请求后，通过请求路径返回相应的<strong>拦截器和Controller；</strong></li><li>在Controller中会进行业务逻辑的执行，可能会调用下层的Service以及持久层进行数据的CRUD。</li><li>对Controller进行处理并返回ModelAndView；然后在通过ViewResolve对ModelAndView进行处理，返回View视图；最后一步是进行渲染View，产生response</li><li>浏览器接收<strong>response</strong>，HTTP响应报文的头部包含了状态码（Status-Code），并进行<strong>缓存和解码</strong></li><li>浏览器<strong>渲染页面</strong></li></ol>]]></content>
       
       
       <categories>
@@ -667,7 +749,7 @@
       
       <categories>
           
-          <category> 分布式基础 </category>
+          <category> 微服务 </category>
           
       </categories>
       
@@ -865,7 +947,7 @@
       
       <categories>
           
-          <category> 分布式基础 </category>
+          <category> 微服务 </category>
           
       </categories>
       
@@ -884,7 +966,7 @@
       
       <categories>
           
-          <category> 分布式基础 </category>
+          <category> 微服务 </category>
           
       </categories>
       
@@ -923,7 +1005,7 @@
       <link href="/2024/01/29/jvm-zhi-java-xu-ni-ji-nei-cun-jie-gou/"/>
       <url>/2024/01/29/jvm-zhi-java-xu-ni-ji-nei-cun-jie-gou/</url>
       
-        <content type="html"><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Java虚拟机内存结构，也叫<strong>运行时数据区</strong>，根据《Java 虚拟机规范》，Java 虚拟机的内存结构可以<strong>分为公有和私有两部分</strong>。公有指的是所有线程都共享的部分，指的是 <strong>Java 堆、方法区、常量池</strong>。私有指的是每个线程的私有数据，包括：<strong>PC寄存器、Java 虚拟机栈、本地方法栈</strong>。</p><h3 id="1-公有部分：Java堆、方法区、常量池"><a href="#1-公有部分：Java堆、方法区、常量池" class="headerlink" title="1.公有部分：Java堆、方法区、常量池"></a>1.公有部分：Java堆、方法区、常量池</h3><p>在 Java 虚拟机中，线程共享部分包括 Java 堆、方法区及常量池。</p><h4 id="Java堆"><a href="#Java堆" class="headerlink" title="Java堆"></a>Java堆</h4><p>Java 堆指的是从 JVM 划分出来的一块区域，这块区域专门用于 Java 实例对象的内存分配，几乎所有实例对象都在会这里进行内存的分配。</p><p>Java 堆根据对象存活时间的不同，Java 堆还被分为年轻代、老年代两个区域，年轻代还被进一步划分为 Eden 区、From Survivor 0、To Survivor 1 区。如下图所示。</p><p><img src="/2024/01/29/jvm-zhi-java-xu-ni-ji-nei-cun-jie-gou/p_20240328185750.png"></p><p>当有对象需要分配时，一个对象永远优先被分配在年轻代的 Eden 区，等到 Eden 区域内存不够时，Java 虚拟机会启动垃圾回收。此时 Eden 区中没有被引用的对象的内存就会被回收，而一些存活时间较长的对象则会进入到老年代。在 JVM 中有一个名为 -XX:MaxTenuringThreshold 的参数专门用来设置晋升到老年代所需要经历的 GC 次数，即在年轻代的对象经过了指定次数的 GC 后，将在下次 GC 时进入老年代。</p><p>这里让我们思考一个问题：为什么 Java 堆要进行这样一个区域划分呢？</p><p>根据我们的经验，虚拟机中的对象必然有存活时间长的对象，也有存活时间短的对象，这是一个普遍存在的正态分布规律。如果我们将其混在一起，那么因为存活时间短的对象有很多，那么势必导致较为频繁的垃圾回收。而垃圾回收时不得不对所有内存都进行扫描，但其实有一部分对象，它们存活时间很长，对他们进行扫描完全是浪费时间。因此为了提高垃圾回收效率，分区就理所当然了。</p><p>另外一个值得我们思考的问题是：为什么默认的虚拟机配置，Eden：from ：to &#x3D; 8:1:1 呢？</p><p>其实这是 IBM 公司根据大量统计得出的结果。根据 IBM 公司对对象存活时间的统计，他们发现 80% 的对象存活时间都很短。于是他们将 Eden 区设置为年轻代的 80%，这样可以减少内存空间的浪费，提高内存空间利用率。</p><h4 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h4><p>在jvm启动时会加载class文件，把每个类的结构信息放到方法区，方法区指的是存储 Java 类字节码数据的一块区域，它存储了每一个类的结构信息，例如运行时常量池、字段和方法数据、构造方法等。运行时常量池属于方法区的一部分。方法区在不同版本的虚拟机有不同的表现形式，例如在 1.7 版本的 HotSpot 虚拟机中，方法区被称为永久代（Permanent Space），而在 JDK 1.8 中则被称之为 元空间（MetaSpace），并且为了减少OOM发生的可能，元空间使用了直接内存。</p><h3 id="2-私有部分"><a href="#2-私有部分" class="headerlink" title="2.私有部分"></a>2.私有部分</h3><h4 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h4><p>CPU会在多个线程之间进行切换，为了记录每个线程执行的位置。</p><ul><li>若执行的是java方法，那么计数器记录的就是 虚拟机字节码指令地址。</li><li>若执行的是 native 方法，那么计数器保存的值是 空（undefined）。</li></ul><p>程序计数器是唯一一个不会发生OOM的区域</p><h4 id="Java虚拟机栈"><a href="#Java虚拟机栈" class="headerlink" title="Java虚拟机栈"></a>Java虚拟机栈</h4><p><strong>作用</strong>：存储Java方法调用的栈帧（Stack Frame），每个方法调用对应一个栈帧。</p><ul><li><strong>栈帧</strong>包含：<ul><li>局部变量表（方法参数、局部变量）。</li><li>操作数栈（用于计算中间结果）。</li><li>动态链接（指向方法所属类的符号引用）。</li><li>方法返回地址（方法结束后返回的位置）。</li></ul></li></ul><p><strong>特点</strong>：</p><ul><li>线程私有，生命周期与线程相同。</li><li><strong>StackOverflowError</strong>：当栈深度超过限制（如无限递归）。</li><li><strong>OutOfMemoryError</strong>：若栈可动态扩展但内存不足。</li></ul><h4 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h4><p><strong>作用</strong>：为JVM调用本地（Native）方法（如C&#x2F;C++代码）服务。</p><p><strong>特点</strong>：</p><ul><li>线程私有。</li><li>可能抛出与虚拟机栈相同的错误（StackOverflowError&#x2F;OOM）。</li><li>HotSpot JVM中，本地方法栈与虚拟机栈合并。</li></ul><h3 id="3-内存泄露与内存溢出"><a href="#3-内存泄露与内存溢出" class="headerlink" title="3.内存泄露与内存溢出"></a>3.内存泄露与内存溢出</h3><p>内存泄漏（Memory Leak）和内存溢出（OOM）是内存管理中的两个核心问题，虽然都与内存相关，但它们的<strong>本质原因</strong>和<strong>表现场景</strong>不同。以下是详细对比与解析：</p><h4 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h4><p><strong>定义</strong></p><ul><li>内存泄漏：程序在运行过程中，由于代码设计问题或资源管理不当，导致<strong>不再使用的对象无法被垃圾回收（GC）释放</strong>，从而占用内存空间的现象。</li><li>本质：对象该回收的没回收。</li></ul><p><strong>常见场景</strong></p><p>使用了ThreadLocal，在线程执行结束的没有remove，导致对象无法被回收。</p><p><strong>影响</strong></p><ul><li><strong>短期</strong>：可能无明显症状，但内存占用逐步增加。</li><li><strong>长期</strong>：累积到一定程度后，可能触发<strong>内存溢出</strong>（OOM）。</li></ul><h4 id="内存溢出"><a href="#内存溢出" class="headerlink" title="内存溢出"></a>内存溢出</h4><p><strong>定义</strong></p><ul><li>内存溢出：程序在申请内存时，<strong>没有足够的空间</strong>供其使用，导致JVM抛出<code>OutOfMemoryError</code>。</li><li>本质：内存资源不足（“想要的内存不够用了”）。</li></ul><p><strong>常见场景</strong></p><ol><li>堆内存溢出（Java Heap Space）<ul><li>原因：对象数量超过堆容量（如一次性加载超大文件到内存）。</li><li>错误信息：<code>java.lang.OutOfMemoryError: Java heap space</code>。</li></ul></li><li>方法区&#x2F;元空间溢出（Metaspace）<ul><li>原因：加载过多类（如动态生成类、反射滥用）。</li><li>错误信息：<code>java.lang.OutOfMemoryError: Metaspace</code>（Java 8+）。</li></ul></li><li>栈溢出（StackOverflowError）<ul><li>原因：线程请求的栈深度超过JVM限制（如无限递归）。</li><li>错误信息：<code>java.lang.StackOverflowError</code>。</li></ul></li><li>直接内存溢出（Direct Buffer Memory）<ul><li>原因：频繁使用NIO的<code>ByteBuffer.allocateDirect()</code>分配堆外内存，未及时释放。</li><li>错误信息：<code>java.lang.OutOfMemoryError: Direct buffer memory</code>。</li></ul></li><li>GC效率低下导致的OOM<ul><li>原因：垃圾回收器频繁工作，但每次回收的内存极少（如老年代内存不足）。</li><li>错误信息：<code>java.lang.OutOfMemoryError: GC Overhead Limit Exceeded</code>。</li></ul></li></ol><h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h3><p>Java 虚拟机的内存结构是学习虚拟机所必须掌握的地方，其中以 Java 堆的内存模型最为重要，因为线上问题很多时候都是 Java 堆出现问题。因此掌握 Java 堆的划分以及常用参数的调整最为关键。</p>]]></content>
+        <content type="html"><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Java虚拟机内存结构，也叫<strong>运行时数据区</strong>，根据《Java 虚拟机规范》，Java 虚拟机的内存结构可以<strong>分为公有和私有两部分</strong>。公有指的是所有线程都共享的部分，指的是 <strong>Java 堆、方法区、常量池</strong>。私有指的是每个线程的私有数据，包括：<strong>PC寄存器、Java 虚拟机栈、本地方法栈</strong>。</p><h3 id="1-公有部分：Java堆、方法区、常量池"><a href="#1-公有部分：Java堆、方法区、常量池" class="headerlink" title="1.公有部分：Java堆、方法区、常量池"></a>1.公有部分：Java堆、方法区、常量池</h3><p>在 Java 虚拟机中，线程共享部分包括 Java 堆、方法区及常量池。</p><h4 id="Java堆"><a href="#Java堆" class="headerlink" title="Java堆"></a>Java堆</h4><p>Java 堆专门用于 Java 实例对象的内存分配，几乎所有实例对象都在会这里进行内存的分配。</p><p>Java 堆根据对象存活时间的不同，Java 堆还被分为年轻代、老年代两个区域，年轻代还被进一步划分为 Eden 区、From Survivor 0、To Survivor 1 区。如下图所示。</p><p><img src="/2024/01/29/jvm-zhi-java-xu-ni-ji-nei-cun-jie-gou/p_20240328185750.png"></p><p>当有对象需要分配时，一个对象永远优先被分配在年轻代的 Eden 区，等到 Eden 区域内存不够时，Java 虚拟机会启动垃圾回收。此时 Eden 区中没有被引用的对象的内存就会被回收，而一些存活时间较长的对象则会进入到老年代。在 JVM 中有一个名为 -XX:MaxTenuringThreshold 的参数专门用来设置晋升到老年代所需要经历的 GC 次数，即在年轻代的对象经过了指定次数的 GC 后，将在下次 GC 时进入老年代。</p><p>这里让我们思考一个问题：为什么 Java 堆要进行这样一个区域划分呢？</p><p>根据我们的经验，虚拟机中的对象必然有存活时间长的对象，也有存活时间短的对象，这是一个普遍存在的正态分布规律。如果我们将其混在一起，那么因为存活时间短的对象有很多，那么势必导致较为频繁的垃圾回收。而垃圾回收时不得不对所有内存都进行扫描，但其实有一部分对象，它们存活时间很长，对他们进行扫描完全是浪费时间。因此为了提高垃圾回收效率，分区就理所当然了。</p><p>另外一个值得我们思考的问题是：为什么默认的虚拟机配置，Eden：from ：to &#x3D; 8:1:1 呢？</p><p>其实这是 IBM 公司根据大量统计得出的结果。根据 IBM 公司对对象存活时间的统计，他们发现 80% 的对象存活时间都很短。于是他们将 Eden 区设置为年轻代的 80%，这样可以减少内存空间的浪费，提高内存空间利用率。</p><h4 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h4><p>在jvm启动时会加载class文件，把每个类的结构信息放到方法区，方法区指的是存储 Java 类字节码数据的一块区域，它存储了每一个类的结构信息，例如运行时常量池、字段和方法数据、构造方法等。运行时常量池属于方法区的一部分。方法区在不同版本的虚拟机有不同的表现形式，例如在 1.7 版本的 HotSpot 虚拟机中，方法区被称为<strong>永久代（Permanent Space）</strong>，而在 JDK 1.8 中则被称之为 <strong>元空间（MetaSpace）</strong>，并且为了减少OOM发生的可能，元空间使用了直接内存。</p><h3 id="2-私有部分"><a href="#2-私有部分" class="headerlink" title="2.私有部分"></a>2.私有部分</h3><h4 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h4><p>CPU会在多个线程之间进行切换，为了记录每个线程执行的位置。</p><ul><li>若执行的是java方法，那么计数器记录的就是 虚拟机字节码指令地址。</li><li>若执行的是 native 方法，那么计数器保存的值是 空（undefined）。</li></ul><p>程序计数器是唯一一个不会发生OOM的区域</p><h4 id="Java虚拟机栈"><a href="#Java虚拟机栈" class="headerlink" title="Java虚拟机栈"></a>Java虚拟机栈</h4><p><strong>作用</strong>：存储Java方法调用的栈帧（Stack Frame），每个方法调用对应一个栈帧。</p><ul><li><strong>栈帧</strong>包含：<ul><li>局部变量表（方法参数、局部变量）。</li><li>操作数栈（用于计算中间结果）。</li><li>动态链接（指向方法所属类的符号引用）。</li><li>方法返回地址（方法结束后返回的位置）。</li></ul></li></ul><p><strong>特点</strong>：</p><ul><li>线程私有，生命周期与线程相同。</li><li><strong>StackOverflowError</strong>：当栈深度超过限制（如无限递归）。</li><li><strong>OutOfMemoryError</strong>：若栈可动态扩展但内存不足。</li></ul><h4 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h4><p><strong>作用</strong>：为JVM调用本地（Native）方法（如C&#x2F;C++代码）服务。</p><p><strong>特点</strong>：</p><ul><li>线程私有。</li><li>可能抛出与虚拟机栈相同的错误（StackOverflowError&#x2F;OOM）。</li><li>HotSpot JVM中，本地方法栈与虚拟机栈合并。</li></ul><h3 id="3-内存泄露与内存溢出"><a href="#3-内存泄露与内存溢出" class="headerlink" title="3.内存泄露与内存溢出"></a>3.内存泄露与内存溢出</h3><p>内存泄漏（Memory Leak）和内存溢出（OOM）是内存管理中的两个核心问题，虽然都与内存相关，但它们的<strong>本质原因</strong>和<strong>表现场景</strong>不同。以下是详细对比与解析：</p><h4 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h4><p><strong>定义</strong></p><ul><li>内存泄漏：程序在运行过程中，由于代码设计问题或资源管理不当，导致<strong>不再使用的对象无法被垃圾回收（GC）释放</strong>，从而占用内存空间的现象。</li><li>本质：对象该回收的没回收。</li></ul><p><strong>常见场景</strong></p><p>使用了ThreadLocal，在线程执行结束的没有remove，导致对象无法被回收。</p><p><strong>影响</strong></p><ul><li><strong>短期</strong>：可能无明显症状，但内存占用逐步增加。</li><li><strong>长期</strong>：累积到一定程度后，可能触发<strong>内存溢出</strong>（OOM）。</li></ul><h4 id="内存溢出"><a href="#内存溢出" class="headerlink" title="内存溢出"></a>内存溢出</h4><p><strong>定义</strong></p><ul><li>内存溢出：程序在申请内存时，<strong>没有足够的空间</strong>供其使用，导致JVM抛出<code>OutOfMemoryError</code>。</li><li>本质：内存资源不足（“想要的内存不够用了”）。</li></ul><p><strong>常见场景</strong></p><ol><li>堆内存溢出（Java Heap Space）<ul><li>原因：对象数量超过堆容量（如一次性加载超大文件到内存）。</li><li>错误信息：<code>java.lang.OutOfMemoryError: Java heap space</code>。</li></ul></li><li>方法区&#x2F;元空间溢出（Metaspace）<ul><li>原因：加载过多类（如动态生成类、反射滥用）。</li><li>错误信息：<code>java.lang.OutOfMemoryError: Metaspace</code>（Java 8+）。</li></ul></li><li>栈溢出（StackOverflowError）<ul><li>原因：线程请求的栈深度超过JVM限制（如无限递归）。</li><li>错误信息：<code>java.lang.StackOverflowError</code>。</li></ul></li><li>直接内存溢出（Direct Buffer Memory）<ul><li>原因：频繁使用NIO的<code>ByteBuffer.allocateDirect()</code>分配堆外内存，未及时释放。</li><li>错误信息：<code>java.lang.OutOfMemoryError: Direct buffer memory</code>。</li></ul></li><li>GC效率低下导致的OOM<ul><li>原因：垃圾回收器频繁工作，但每次回收的内存极少（如老年代内存不足）。</li><li>错误信息：<code>java.lang.OutOfMemoryError: GC Overhead Limit Exceeded</code>。</li></ul></li></ol><h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h3><p>Java 虚拟机的内存结构是学习虚拟机所必须掌握的地方，其中以 Java 堆的内存模型最为重要，因为线上问题很多时候都是 Java 堆出现问题。因此掌握 Java 堆的划分以及常用参数的调整最为关键。</p>]]></content>
       
       
       <categories>
